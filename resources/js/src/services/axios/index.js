@@ -3,6 +3,8 @@ import axios from "axios";
 /**
  * Service to call HTTP request via Axios
  */
+axios.defaults.withCredentials = true
+axios.defaults.withXSRFToken = true
 
 const ApiService = {
 
@@ -10,9 +12,9 @@ const ApiService = {
    * Set the default HTTP request headers
    */
   setHeader() {
-    axios.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${JwtService.getToken()}`;
+    // axios.defaults.headers.common[
+    //   "Authorization"
+    // ] = `Bearer ${JwtService.getToken()}`;
     axios.defaults.headers.common[
       "Accept"
     ] = `application/json`;

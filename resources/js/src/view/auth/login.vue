@@ -1,8 +1,10 @@
 <script setup>
   import { reactive, ref } from 'vue';
-
+  import { useAuthStore } from '@/services/store/auth.services';
+  
+  const authServices = useAuthStore()
   const login = reactive({
-    user: '',
+    email: '',
     password: ''
   })
   
@@ -13,15 +15,17 @@
     if(id=='user') return [ val => val && val.length > 0 || 'Usuario no puede quedar vacio']
     if(id=='password') return [ 
       val => val && val.length > 0 || 'Contraseña no puede quedar vacio',
-      val => val.length > 8  || 'Debe tener 8 caracteres minimo'
+      val => val.length >= 8  || 'Debe tener 8 caracteres minimo'
     ]
 
   }
   const authLogin = () => {
     loading.value = true
-    setTimeout(() => {
-    loading.value = false
-    }, 2000);
+    console.log(login)
+    authServices.login(login)
+    .then(() => {
+      loading.value = false
+    })
   }
   
 </script>
@@ -42,7 +46,7 @@
                 Bienvenido!
               </div>
               <div class="w-full mt-10 md:mt-5">
-                <q-input v-model="login.user" :rules="rules('user')" placeholder="Usuario" color="primary" >
+                <q-input v-model="login.email" :rules="rules('user')" placeholder="Usuario" color="primary" >
                   <template v-slot:prepend>
                     <q-icon name="eva-person-outline" color="primary" />
                   </template>
@@ -65,7 +69,7 @@
             </div>
           </div>
         </div>
-        <div class="px-2  mx-auto md:w-2/3 mt-2">
+        <div class="px-2  mx-auto md:w-2/3 ">
           <q-btn flat round color="white" :loading="loading" size="xl" type="submit" >
             <q-icon name="eva-arrow-forward-outline" size="xl" class="" />
           </q-btn>
