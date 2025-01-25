@@ -3,7 +3,8 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "dev-home": "vite --host 192.168.31.20 --port 8031"
     },
     "devDependencies": {
         "@quasar/vite-plugin": "^1.9.0",

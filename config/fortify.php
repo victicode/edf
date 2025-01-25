@@ -86,7 +86,7 @@ return [
     |
     */
 
-    'prefix' => 'api/',
+    'prefix' => 'api',
 
     'domain' => null,
 
@@ -116,7 +116,7 @@ return [
 
     'limiters' => [
         'login' => 'login',
-        // 'two-factor' => 'two-factor',
+        'two-factor' => 'two-factor',
     ],
 
     /*

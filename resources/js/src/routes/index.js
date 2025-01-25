@@ -3,10 +3,12 @@ import { createWebHistory, createRouter } from 'vue-router'
 import HomeView from '@/view/dashboard.vue'
 import authLayout from '@/layouts/authLayout.vue'
 import auth from './middlewares/auth'
+import guest from './middlewares/guest'
+
 
 const routes = [
   { 
-    path: '/', 
+    path: '/dashboard', 
     component: HomeView, 
     beforeEnter: auth,
     meta:{
@@ -17,6 +19,7 @@ const routes = [
   { 
     path: '/', 
     component: authLayout,
+    beforeEnter: guest,
     children: [
       {
         path:'/login',

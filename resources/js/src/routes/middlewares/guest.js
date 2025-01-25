@@ -3,9 +3,9 @@ export default function auth (_to, _from, next) {
   document.title = _to.meta.title + ' - edf app'
   const isAuthenticated = storage.getItem('access_token');
 
-  if (isAuthenticated) {
+  if (!isAuthenticated) {
     next();
   } else {
-    next('/login');
+    next('/dashboard');
   }
 };

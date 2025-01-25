@@ -1,33 +1,56 @@
 <script setup>
   import { reactive, ref } from 'vue';
   import { useAuthStore } from '@/services/store/auth.services';
-  
+  import { useRouter } from 'vue-router'
+  import { Notify } from 'quasar'
   const authServices = useAuthStore()
   const login = reactive({
-    email: '',
+    username: '',
     password: ''
   })
   
   const isPwd =  ref(true)
   const loading = ref(false)
+  const router = useRouter();
 
   const rules = (id) => {
-    if(id=='user') return [ val => val && val.length > 0 || 'Usuario no puede quedar vacio']
+    if(id=='user') return [ 
+      val => val && val.length > 0 || 'Usuario no puede quedar vacio',
+      val => (/[,$}#*. %"'()\-;&|<>]/.test(val) == false ) || 'No debe contener "[](),%|&;\'" ',
+    ]
     if(id=='password') return [ 
       val => val && val.length > 0 || 'Contraseña no puede quedar vacio',
       val => val.length >= 8  || 'Debe tener 8 caracteres minimo'
     ]
 
   }
-  const authLogin = () => {
-    loading.value = true
-    console.log(login)
-    authServices.login(login)
-    .then(() => {
-      loading.value = false
+  const showNotify = (type,text) => {
+    Notify.create({
+      color:type,
+      message: text,
+      position:'top',
+      timeout:2000
     })
   }
-  
+  const authLogin = () => {
+    loading.value = true
+    authServices.login(login)
+    .then((response) => {
+      if(response.status !==200){
+        throw response
+      }
+      showNotify('positive', 'Inicio de sesión correcto')
+      setTimeout(() => {
+        loading.value = false
+        router.push('/dashboard')
+      },2000)
+    })
+    .catch((response) =>{
+      showNotify('negative', response.status == 505 ? response.data.error : 'Error de conexión')
+      loading.value = false
+
+    })
+  }
 </script>
 <template>
   <div>
@@ -46,7 +69,7 @@
                 Bienvenido!
               </div>
               <div class="w-full mt-10 md:mt-5">
-                <q-input v-model="login.email" :rules="rules('user')" placeholder="Usuario" color="primary" >
+                <q-input v-model="login.username" :rules="rules('user')" placeholder="Usuario" color="primary" >
                   <template v-slot:prepend>
                     <q-icon name="eva-person-outline" color="primary" />
                   </template>
