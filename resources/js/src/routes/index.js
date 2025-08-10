@@ -19,6 +19,7 @@ const routes = [
   { 
     path: '/', 
     component: authLayout,
+    redirect: '/login',
     beforeEnter: guest,
     children: [
       {

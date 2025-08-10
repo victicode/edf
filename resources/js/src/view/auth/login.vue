@@ -3,7 +3,10 @@
   import { useAuthStore } from '@/services/store/auth.services';
   import { useRouter } from 'vue-router'
   import { Notify } from 'quasar'
+  import tutorial from '@/components/login/tutorial.vue';
+  import storage from '@/services/storage'
   const authServices = useAuthStore()
+  const tutorialView = storage.getItem('tutorial')
   const login = reactive({
     username: '',
     password: ''
@@ -53,52 +56,57 @@
   }
 </script>
 <template>
-  <div>
-    <section class="text-center text-white pt-11 ">
-      <div class="font-bold font-sans mt-2 text-4xl">Inicia sesion</div>
-    </section>
-    <section class="mt-20 mt-md-12 " >
-      <q-form
-        @submit="authLogin"
-        class="w-full h-full"
-      >
-        <div class="mx-auto form__cont" >
-          <div class="w-full h-full">
-            <div class="relative px-10 h-full w-full form pt-12 md:pt-0">
-              <div class="font-bold text-3xl  form_welcome">
-                Bienvenido!
-              </div>
-              <div class="w-full mt-10 md:mt-5">
-                <q-input v-model="login.username" :rules="rules('user')" placeholder="Usuario" color="primary" >
-                  <template v-slot:prepend>
-                    <q-icon name="eva-person-outline" color="primary" />
-                  </template>
-                </q-input>
-
-                <q-input v-model="login.password" :rules="rules('password')" placeholder="Contraseña" color="primary" :type="isPwd ? 'password' : 'text'"  class="q-pt-lg">
-                  <template v-slot:prepend>
-                    <q-icon name="eva-lock-outline"  color="primary"/>
-                  </template>
-                  <template v-slot:append>
-                    <q-icon
-                      :name="isPwd ? 'eva-eye-off-outline' : 'eva-eye-outline'"
-                      class="cursor-pointer"
-                      @click="isPwd = !isPwd"
-                    />
-                  </template>
-                </q-input>
-                <p class="mt-2 text-grey-7 cursor-pointer">Olvidaste tu contraseña?</p>
+  <div class="h-full">
+    <template v-if="tutorialView == 'true'">
+      <section class="text-center text-white pt-11 " >
+        <div class="font-bold font-sans mt-2 text-4xl">Inicia sesion</div>
+      </section>
+      <section class="mt-20 mt-md-12 " >
+        <q-form
+          @submit="authLogin"
+          class="w-full h-full"
+        >
+          <div class="mx-auto form__cont" >
+            <div class="w-full h-full">
+              <div class="relative px-10 h-full w-full form pt-12 md:pt-0">
+                <div class="font-bold text-3xl  form_welcome">
+                  Bienvenido!
+                </div>
+                <div class="w-full mt-10 md:mt-5">
+                  <q-input v-model="login.username" :rules="rules('user')" placeholder="Usuario" color="primary" >
+                    <template v-slot:prepend>
+                      <q-icon name="eva-person-outline" color="primary" />
+                    </template>
+                  </q-input>
+  
+                  <q-input v-model="login.password" :rules="rules('password')" placeholder="Contraseña" color="primary" :type="isPwd ? 'password' : 'text'"  class="q-pt-lg">
+                    <template v-slot:prepend>
+                      <q-icon name="eva-lock-outline"  color="primary"/>
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        :name="isPwd ? 'eva-eye-off-outline' : 'eva-eye-outline'"
+                        class="cursor-pointer"
+                        @click="isPwd = !isPwd"
+                      />
+                    </template>
+                  </q-input>
+                  <p class="mt-2 text-grey-7 cursor-pointer">Olvidaste tu contraseña?</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="px-2  mx-auto md:w-2/3 ">
-          <q-btn flat round color="white" :loading="loading" size="xl" type="submit" >
-            <q-icon name="eva-arrow-forward-outline" size="xl" class="" />
-          </q-btn>
-        </div>
-      </q-form>
-    </section>
+          <div class="px-2  mx-auto md:w-2/3 ">
+            <q-btn flat round color="white" :loading="loading" size="xl" type="submit" >
+              <q-icon name="eva-arrow-forward-outline" size="xl" class="" />
+            </q-btn>
+          </div>
+        </q-form>
+      </section>
+    </template>
+    <template v-else>
+      <tutorial @endTutorial="tutorialView = true"/>
+    </template>
   </div>
 </template>
 

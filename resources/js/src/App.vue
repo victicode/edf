@@ -1,14 +1,13 @@
 <template>
-  <main  class="h-screen md:py-2">
+  <main  class="h-screen ">
     <RouterView class="appMobile "/>
   </main>
 </template>
 <style>
 .appMobile{
-  width: 60%;
+  width: 100%;
   overflow: hidden;
   margin: auto;
-  border-radius: 20px;
 }
 @media (max-width: 780px) {
   .appMobile{
