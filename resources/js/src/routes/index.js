@@ -1,21 +1,14 @@
 import { createWebHistory, createRouter } from 'vue-router'
 
-import HomeView from '@/view/dashboard.vue'
+import HomeView from '@/view/homeView.vue'
 import authLayout from '@/layouts/authLayout.vue'
+import panelLayout from '@/layouts/panelLayout.vue'
+
 import auth from './middlewares/auth'
 import guest from './middlewares/guest'
 
 
 const routes = [
-  { 
-    path: '/dashboard', 
-    component: HomeView, 
-    beforeEnter: auth,
-    meta:{
-      title: 'Bienvenido'
-    }
-  },
-
   { 
     path: '/', 
     component: authLayout,
@@ -38,6 +31,23 @@ const routes = [
       },
     ]
   },
+  { 
+    path: '/', 
+    component: panelLayout,
+    beforeEnter: auth,
+    children: [
+      {
+        path: '/dashboard', 
+        component: HomeView, 
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido'
+        }
+      }
+    ]
+  },
+
+  
 ]
 
 const router = createRouter({
