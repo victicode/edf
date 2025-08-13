@@ -61,7 +61,7 @@
   }
 </script>
 <template>
-  <div class="h-full " >
+  <div class="h-full bg-white" >
     <Transition name="horizontalPage">
       <div class="h-full  md:w-2/3 md:mx-auto login__container" v-if="tutorialView == 'true'" :style=" {backgroundImage:'url('+bg+ ')'}">
         <div style="background: rgb(255 255 255 / 76%);" class="h-full  md:w-full login__container">

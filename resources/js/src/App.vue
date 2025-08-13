@@ -1,14 +1,15 @@
 <script setup>
 import { useQuasar } from 'quasar';
 import { onMounted } from 'vue';
+
 const $q = useQuasar()
 
-onMounted(() =>{
-  $q.addressbarColor.set('#0284c7')
+onMounted(() => {
+  $q.addressbarColor.set('#0284c7');
 })
 </script>
 <template>
-  <main  class="h-screen ">
+  <main  class="h-screen w-full" style="overflow: hidden;">
     <RouterView class="appMobile "/>
   </main>
 </template>

@@ -1,9 +1,9 @@
 <script setup>
 import headerLayout from '@/components/layout/headerLayout.vue';
-
+import infoNewSideBar from '@/components/layout/infoNewSideBar.vue';
 </script>
 <template>
-  <div class="h-full">
+  <div class="h-full bg-stone-100 w-full" style="position: relative; overflow: hidden;">
 
     <headerLayout class="header__container" />
     <section class="page__container">
@@ -14,6 +14,8 @@ import headerLayout from '@/components/layout/headerLayout.vue';
         </transition>
       </router-view>
     </section>
+    <infoNewSideBar />
+
 
   </div>
 </template>
@@ -24,7 +26,7 @@ import headerLayout from '@/components/layout/headerLayout.vue';
   overflow: hidden;
 }
 .page__container{
-  height: 188%;
+  height: 88%;
   overflow: auto;
 }
 </style>

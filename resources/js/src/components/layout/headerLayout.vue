@@ -1,28 +1,39 @@
 <script setup>
   import { storeToRefs } from 'pinia';
   import { useAuthStore } from '@/services/store/auth.services';
+  import { inject } from 'vue';
+  import { useRoute } from 'vue-router';
+  const route = useRoute()
   const { user } = storeToRefs(useAuthStore())
-
+  const emitter = inject('emitter')
+  const showSidebar = () => {
+    emitter.emit('showInfoNews')
+  }
 </script>
 
 <template>
-  <section class="md:px-8 pt-2 px-3 flex justify-between items-center bg-sky-600 header__container" style=" border-bottom-left-radius: 1.5rem; border-bottom-right-radius: 1.5rem;" >
-    <div class="flex items-center">
-      <div class="userAvatar flex flex-center">
-        {{ user.name.charAt(0) }}
-      </div>
-      <div class="ml-3">
-        <div class="text-white" style="font-size: 1rem;">
-          Hola {{ user.name }}
+  <section class="md:px-8 md:mx-28 pt-2 px-3 flex justify-between items-center bg-sky-600 header__container" style=" border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem;" >
+    <template v-if="route.name == 'dashboardAdmin'">
+      <div class="flex items-center" >
+        <div class="userAvatar flex flex-center">
+          {{ user.name.charAt(0) }}
         </div>
-        <div class="text-gray-100 " style="font-size: 0.85rem;">
-          P-201
+        <div class="ml-3" >
+          <div class="text-white" style="font-size: 1rem;">
+            Hola {{ user.name }}
+          </div>
+          <div class="text-gray-100 " style="font-size: 0.85rem;">
+            {{ user.rol_id == 1 ? 'Admin' : 'P-201' }}
+          </div>
         </div>
       </div>
-    </div>
-    <div>
-      <q-icon name="notifications" color="white" size="1.6rem" />
-    </div>
+      <div>
+        <q-btn  icon="notifications" unelevated color="white" flat size="1rem" round @click="showSidebar()" />
+      </div>
+    </template>
+    <template>
+      
+    </template>
   </section>
 </template>
 

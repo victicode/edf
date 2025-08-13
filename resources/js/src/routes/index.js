@@ -39,13 +39,86 @@ const routes = [
       {
         path: '/dashboard', 
         component: HomeView, 
+        name:'dashboardAdmin',
         beforeEnter: auth,
         meta:{
-          title: 'Bienvenido'
+          title: 'Bienvenido',
+          pagTitle: 'Dashboard'
         }
-      }
+      },
+      {
+        path: '/users', 
+        component: () => import('@/view/admin/usersPage.vue'),
+        name:'usersAdmin',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Usuarios'
+        }
+      },
+      {
+        path: '/services', 
+        component: () => import('@/view/admin/servicesPage.vue'),
+        name:'usersAdmin',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Sevicios'
+        }
+      },
+      {
+        path: '/reserves', 
+        component: () => import('@/view/admin/reservesPage.vue'),
+        name:'reservedAdmin',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Reservas'
+        }
+      },
+      {
+        path: '/comun-area', 
+        component: () => import('@/view/admin/comunAreasPage.vue'),
+        name:'comunAreaAdmin',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Areas comunes'
+        }
+      },
+      {
+        path: '/balances', 
+        component: () => import('@/view/admin/balancesPage.vue'),
+        name:'balanceAdmin',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Banlances'
+        }
+      },
+      {
+        path: '/news', 
+        component: () => import('@/view/admin/newsPage.vue'),
+        name:'newsAdmin',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Noticias'
+        }
+      },
+      {
+        path: '/config', 
+        component: () => import('@/view/admin/configPage.vue'),
+        name:'Configuración',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Dashboard'
+        }
+      },
     ]
   },
+  
 
   
 ]

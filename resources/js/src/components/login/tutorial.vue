@@ -78,7 +78,7 @@ const nextStep = () => {
           <div v-for="i in 3" :key="i" class="dotStep" :class="{'active': (step+1) == i }" />
         </div>
         <Transition name="horizontal">
-          <div class="pt-16 " v-if="step==0">
+          <div class="pt-10 " v-if="step==0">
               <div class=" text-center text-bold text-white" style="font-size: 1.25rem;">{{ title[step] }}</div>
               <div class=" text-justify text-subtitle1 mt-2 text-gray-300 mt-5" style="font-weight: 500;">{{ text[step] }}</div>
           </div>
