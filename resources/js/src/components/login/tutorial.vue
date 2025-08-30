@@ -74,23 +74,23 @@ const nextStep = () => {
         <div class=" px-10 py-3 md:py-3 md:px-12 buttonNext"  @click="nextStep()" >
           {{ step==2 ? 'Finalizar' : 'Siguente' }} 
         </div>
-        <div class="  paginationSteps">
+        <div class="  paginationSteps blockx md:hiddenx">
           <div v-for="i in 3" :key="i" class="dotStep" :class="{'active': (step+1) == i }" />
         </div>
         <Transition name="horizontal">
-          <div class="pt-10 " v-if="step==0">
+          <div class="pt-10 blockx md:hiddenx" v-if="step==0">
               <div class=" text-center text-bold text-white" style="font-size: 1.25rem;">{{ title[step] }}</div>
               <div class=" text-justify text-subtitle1 mt-2 text-gray-300 mt-5" style="font-weight: 500;">{{ text[step] }}</div>
           </div>
         </Transition>
         <Transition name="horizontal">
-          <div class="pt-10 " v-if="step==1">
+          <div class="pt-10 blockx md:hiddenx" v-if="step==1">
               <div class=" text-center text-bold text-white" style="font-size: 1.25rem;">{{ title[step] }}</div>
               <div class=" text-justify text-subtitle1 mt-2 text-gray-300 mt-5" style="font-weight: 500;">{{ text[step] }}</div>
           </div>
         </Transition>
         <Transition name="horizontal">
-          <div class="pt-10 " v-if="step==2">
+          <div class="pt-10 blockx md:hiddenx" v-if="step==2">
               <div class=" text-center text-bold text-white" style="font-size: 1.25rem;">{{ title[step] }}</div>
               <div class=" text-justify text-subtitle1 mt-2 text-gray-300 mt-5" style="font-weight: 500;">{{ text[step] }}</div>
           </div>

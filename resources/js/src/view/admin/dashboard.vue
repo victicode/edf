@@ -85,7 +85,7 @@
 }
 @media (max-width: 780px) {
   .boxItem{
-    height: 9.5rem ;
+    height: 7.5rem ;
   }
 }
 
