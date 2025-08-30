@@ -2,45 +2,45 @@
   import { storeToRefs } from 'pinia';
   import { useAuthStore } from '@/services/store/auth.services';
   import bg from '@/assets/img/util/bg3.webp'
-  import wozIcons from '@/assets/icons/index'
-import { useRouter } from 'vue-router';
-  // const wozIcons= wozIcons
+  import mainIcons from '@/assets/icons/index'
+  import { useRouter } from 'vue-router';
+
   const { user } = storeToRefs(useAuthStore())
   const router = useRouter()
   const menu = [
     {
       title:'Usuarios',
-      icon: wozIcons.user,
+      icon: mainIcons.user,
       link:'/users',
     },
     {
       title:'Servicios',
-      icon: wozIcons.services,
+      icon: mainIcons.services,
       link:'/services',
     },
     {
       title:'Reservas',
-      icon: wozIcons.reserve,
+      icon: mainIcons.reserve,
       link:'/reserves',
     },
     {
       title:'Areas comunes',
-      icon: wozIcons.atraction,
+      icon: mainIcons.atraction,
       link:'/comun-area',
     },
     {
       title:'Balance de cuentas',
-      icon: wozIcons.payHouse,
+      icon: mainIcons.payHouse,
       link:'/balances',
     },
     {
       title:'Noticias',
-      icon: wozIcons.news,
+      icon: mainIcons.news,
       link:'/news',
     },
     {
       title:'Ajustes',
-      icon: wozIcons.config,
+      icon: mainIcons.config,
       link:'/config',
     }
   ];
