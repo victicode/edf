@@ -47,7 +47,7 @@ const routes = [
         }
       },
       {
-        path: '/users', 
+        path: '/admin/users', 
         component: () => import('@/view/admin/usersPage.vue'),
         name:'usersAdmin',
         beforeEnter: auth,
@@ -57,9 +57,19 @@ const routes = [
         }
       },
       {
+        path: '/admin/finance', 
+        component: () => import('@/view/admin/financePage.vue'),
+        name:'financePage',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Finanzas'
+        }
+      },
+      {
         path: '/services', 
         component: () => import('@/view/admin/servicesPage.vue'),
-        name:'usersAdmin',
+        name:'servicesAdmin',
         beforeEnter: auth,
         meta:{
           title: 'Bienvenido',
@@ -114,6 +124,26 @@ const routes = [
         meta:{
           title: 'Bienvenido',
           pagTitle: 'Dashboard'
+        }
+      },
+      {
+        path: '/admin/users/list', 
+        component: () => import('@/view/admin/users/usersList.vue'),
+        name:'usersList',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Usuarios'
+        }
+      },
+      {
+        path: '/admin/users/form/add', 
+        component: () => import('@/view/admin/users/createUser.vue'),
+        name:'usersAdd',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Crear Usuario'
         }
       },
     ]

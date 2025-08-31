@@ -2,47 +2,29 @@
   import { storeToRefs } from 'pinia';
   import { useAuthStore } from '@/services/store/auth.services';
   import bg from '@/assets/img/util/bg3.webp'
-  import mainIcons from '@/assets/icons/index'
+  import iconsApp from '@/assets/icons/index'
   import { useRouter } from 'vue-router';
 
   const { user } = storeToRefs(useAuthStore())
   const router = useRouter()
   const menu = [
-    {
-      title:'Usuarios',
-      icon: mainIcons.user,
-      link:'/users',
-    },
-    {
-      title:'Servicios',
-      icon: mainIcons.services,
-      link:'/services',
-    },
-    {
-      title:'Reservas',
-      icon: mainIcons.reserve,
-      link:'/reserves',
-    },
+
     {
       title:'Areas comunes',
-      icon: mainIcons.atraction,
+      icon: iconsApp.atraction,
       link:'/comun-area',
     },
     {
-      title:'Balance de cuentas',
-      icon: mainIcons.payHouse,
-      link:'/balances',
-    },
-    {
       title:'Noticias',
-      icon: mainIcons.news,
+      icon: iconsApp.news,
       link:'/news',
     },
     {
       title:'Ajustes',
-      icon: mainIcons.config,
+      icon: iconsApp.config,
       link:'/config',
-    }
+    },
+    
   ];
 
   const goTo = (url) => {

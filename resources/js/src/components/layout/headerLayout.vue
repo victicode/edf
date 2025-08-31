@@ -2,8 +2,9 @@
   import { storeToRefs } from 'pinia';
   import { useAuthStore } from '@/services/store/auth.services';
   import { inject } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   const route = useRoute()
+  const router = useRouter()
   const { user } = storeToRefs(useAuthStore())
   const emitter = inject('emitter')
   const showSidebar = () => {
@@ -13,7 +14,7 @@
 
 <template>
   <section class="md:px-8 md:mx-28 pt-2 px-3 flex justify-between items-center bg-sky-600 header__container" style=" border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem;" >
-    <template v-if="route.name == 'dashboardAdmin'">
+    <template v-if="['dashboardAdmin', 'financePage', 'usersAdmin' ].includes(route.name) ">
       <div class="flex items-center" >
         <div class="userAvatar flex flex-center">
           {{ user.name.charAt(0) }}
@@ -31,8 +32,15 @@
         <q-btn  icon="notifications" unelevated color="white" flat size="1rem" round @click="showSidebar()" />
       </div>
     </template>
-    <template>
-      
+    <template v-else>
+      <div class="flex items-center">
+        <div class="flex items-center" >
+          <q-btn  icon="arrow_back" unelevated color="white" flat size="1rem" round @click="router.go(-1)" />
+        </div>
+        <div class="text-h6 text-bold text-white ml-2">
+          {{route.meta.pagTitle}}
+        </div>
+      </div>
     </template>
   </section>
 </template>

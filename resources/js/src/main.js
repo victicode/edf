@@ -31,6 +31,6 @@ myApp.use(pinia)
 myApp.use(router)
 
 myApp.provide('emitter', emitter)
-useAuthStore().currentUser().then(() => {
-  myApp.mount('#app')
-})
+
+myApp.mount('#app')
+

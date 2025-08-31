@@ -101,7 +101,7 @@
                           />
                         </template>
                       </q-input>
-                      <p class="mt-2 text-grey-7 cursor-pointer">Olvidaste tu contraseña?</p>
+                      <p class="mt-2 text-grey-7 cursor-pointer">¿Olvidaste tu contraseña?</p>
                     </div>
                   </div>
                 </div>

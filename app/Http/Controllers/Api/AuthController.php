@@ -33,8 +33,6 @@ class AuthController extends Controller
     {
         auth()->user()->tokens()->delete();
 
-        return response()->json([
-            'message' => 'Logged out'
-        ]);
+        return $this->returnSuccess(200, 'Sesión cerrada');
     }
 }

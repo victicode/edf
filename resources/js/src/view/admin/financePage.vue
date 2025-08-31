@@ -9,31 +9,10 @@
   const router = useRouter()
   const menu = [
     {
-      title:'Usuarios',
-      icon: iconsApp.users2,
-      link:'/admin/users/list',
+      title:'Balance de cuentas',
+      icon: iconsApp.payHouse,
+      link:'/balances',
     },
-    {
-      title:'Apartamentos',
-      icon: iconsApp.departmet,
-      link:'/users',
-    },
-    {
-      title:'Visitas',
-      icon: iconsApp.visitor,
-      link:'/users',
-    },
-    {
-      title:'Servicios',
-      icon: iconsApp.services,
-      link:'/services',
-    },
-    {
-      title:'Reservas',
-      icon: iconsApp.reserve,
-      link:'/reserves',
-    },
-
   ];
 
   const goTo = (url) => {

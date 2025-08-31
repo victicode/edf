@@ -33,6 +33,10 @@ export const useAuthStore = defineStore('auth', {
       storage.setItem("access_token",token);
 
     },
+    logoutAction(){
+      storage.deleteItem("access_token");
+      this.user = {};
+    },
     async login(credentials) {
       return await new Promise((resolve, reject) => {
         // ApiService.setHeader()
@@ -83,12 +87,12 @@ export const useAuthStore = defineStore('auth', {
       })
       .catch(( response ) => {
         console.log(response)
-        return 'Error al obtener';
+        reject('Error al obtener usuario');
       });
     },
     async logout(){
       return await new Promise((resolve) => {
-        if (JwtService.getToken()) {
+        if (ApiService.getToken()) {
           ApiService.setHeader();
           ApiService.get("api/auth/logout")
             .then(({ data }) => {

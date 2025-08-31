@@ -13,9 +13,10 @@
     }, 2000);
 </script>
 <template>
-  <div class="" v-if="ready">
+  <div>
+
     <dashboard-admin v-if="user.rol_id == 1" />
     <dashboard-client v-if="user.rol_id == 2" />
   </div>
-  <loaderPage v-else />
+
 </template>

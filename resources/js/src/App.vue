@@ -10,7 +10,12 @@ onMounted(() => {
 </script>
 <template>
   <main  class="h-screen w-full" style="overflow: hidden;">
-    <RouterView class="appMobile "/>
+  
+    <router-view  class="appMobile " v-slot="{ Component }">
+      <transition name="horizontal">
+        <component :is="Component" />
+      </transition>
+    </router-view>
   </main>
 </template>
 <style>
