@@ -1,6 +1,8 @@
 <script setup>
 import headerLayout from '@/components/layout/headerLayout.vue';
 import infoNewSideBar from '@/components/layout/infoNewSideBar.vue';
+import navBarClientLayoutVue from '@/components/layout/navBarClientLayout.vue';
+
 </script>
 <template>
   <div class="h-full bg-stone-100 w-full" style="position: relative; overflow: hidden;">
@@ -15,7 +17,7 @@ import infoNewSideBar from '@/components/layout/infoNewSideBar.vue';
       </router-view>
     </section>
     <infoNewSideBar />
-
+    <navBarClientLayoutVue />
 
   </div>
 </template>
