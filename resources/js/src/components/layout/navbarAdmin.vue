@@ -1,0 +1,89 @@
+<script setup>
+  import iconsApp from '@/assets/icons/index'
+ 
+</script>
+<template>
+  <q-tabs
+    no-caps
+    right-icon="-"
+    active-color="terciary"
+    align="justify"
+    class="bg-white text-dark shadow-0 fixed-bottom bottom-tab q-py-md-xs q-px-md-lg flex q-py-xs userNavbar" 
+  >
+    <q-route-tab class="q-px-xs-sm q-pt-sm q-px-md-lg" :to="'/dashboard'" exact >
+      <div class="flex flex-center column">
+        <div v-html="iconsApp.home" />
+        <span class="q-mt-xs text-dark text-subtitle2">Inicio</span>
+      </div>
+    </q-route-tab>
+    <q-route-tab class="q-px-xs-sm q-pt-sm q-px-md-lg" :to="'/admin/users'" exact >
+      <div class="flex flex-center column">
+        <div v-html="iconsApp.users" />
+        <span class="q-mt-xs text-dark text-subtitle2">Usuarios</span>
+      </div>
+    </q-route-tab>
+    <q-route-tab class="q-px-xs-sm q-pt-sm q-px-md-lg" :to="'/admin/finance'" exact >
+      <div class="flex flex-center column">
+        <div v-html="iconsApp.finance" />
+        <span class="q-mt-xs text-dark text-subtitle2">Finanzas</span>
+      </div>
+    </q-route-tab>
+    <q-route-tab class="q-px-xs-sm q-pt-sm q-px-md-lg" @click="logout()" >
+      <div class="flex flex-center column">
+        <div v-html="iconsApp.logout" class="q-mt-xs " />
+        <span class="q-mt-xs text-dark text-subtitle2 ">Salir</span>
+      </div>
+    </q-route-tab>
+
+    
+  </q-tabs>
+</template>
+
+
+<style lang="scss">
+.userNavbar{
+
+padding-top: 0px!important;
+& .q-tab__indicator {
+  bottom: 97%!important;
+  display: none;
+}
+& .q-tab--active {
+  & span {
+    color:#ffc701!important;
+  }
+  & path {
+    stroke: #ffc701;
+  }
+}
+}
+.q-tab__label{
+    font-size: 0.72rem!important;
+  }
+</style>
+<style lang="scss" scoped>
+  .notificationBadge1{
+    height: 15px;
+    width: 15px;
+    background: red;
+    position: absolute;
+    border-radius: 50%;
+    left: 65%;
+    bottom: 55%;
+  }
+  .w-100{
+    width: 100%!important;
+  }
+  .bottom-tab{
+    border-top: 1.5px solid $grey-5;
+    width: 100%;
+    height: 10%;
+    z-index: 2;
+  }
+  @media screen and (max-width: 820px){
+    .bottom-tab{
+      width: 100%;
+      left: 0%;
+    }
+  }
+</style>

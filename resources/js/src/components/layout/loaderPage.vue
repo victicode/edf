@@ -15,6 +15,7 @@ import logo from '@/assets/img/logo/logo.webp'
 .overFlow{
   position: absolute;
   top:0;
+  z-index: 3;
 }
 .logo__contanier{
   width: 8rem;

@@ -13,7 +13,7 @@
 
 <template>
   <section class="md:px-8 md:mx-28 pt-2 px-3 flex justify-between items-center bg-sky-600 header__container" style=" border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem;" >
-    <template v-if="route.name == 'dashboardAdmin'">
+    <template v-if="['dashboardAdmin', 'financePage', 'usersAdmin' ].includes(route.name) ">
       <div class="flex items-center" >
         <div class="userAvatar flex flex-center">
           {{ user.name.charAt(0) }}

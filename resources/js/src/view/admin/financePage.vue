@@ -8,23 +8,11 @@
   const { user } = storeToRefs(useAuthStore())
   const router = useRouter()
   const menu = [
-
     {
-      title:'Areas comunes',
-      icon: iconsApp.atraction,
-      link:'/comun-area',
+      title:'Balance de cuentas',
+      icon: iconsApp.payHouse,
+      link:'/balances',
     },
-    {
-      title:'Noticias',
-      icon: iconsApp.news,
-      link:'/news',
-    },
-    {
-      title:'Ajustes',
-      icon: iconsApp.config,
-      link:'/config',
-    },
-    
   ];
 
   const goTo = (url) => {

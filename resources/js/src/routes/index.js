@@ -47,7 +47,7 @@ const routes = [
         }
       },
       {
-        path: '/users', 
+        path: '/admin/users', 
         component: () => import('@/view/admin/usersPage.vue'),
         name:'usersAdmin',
         beforeEnter: auth,
@@ -57,9 +57,19 @@ const routes = [
         }
       },
       {
+        path: '/admin/finance', 
+        component: () => import('@/view/admin/financePage.vue'),
+        name:'financePage',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Finanzas'
+        }
+      },
+      {
         path: '/services', 
         component: () => import('@/view/admin/servicesPage.vue'),
-        name:'usersAdmin',
+        name:'servicesAdmin',
         beforeEnter: auth,
         meta:{
           title: 'Bienvenido',
