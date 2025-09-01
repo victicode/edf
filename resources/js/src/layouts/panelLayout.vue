@@ -35,7 +35,7 @@ import storage from '@/services/storage'
   <div class="h-full bg-stone-100 w-full" style="position: relative; overflow: hidden;">
     <template v-if="ready">
       <headerLayout class="header__container" />
-      <section class="page__container">
+      <section :class="{'page__container': ['dashboardAdmin', 'financePage', 'usersAdmin' ].includes(route.name), 'page_continerFull': !(['dashboardAdmin', 'financePage', 'usersAdmin' ].includes(route.name))}">
         <router-view v-slot="{ Component }">
           <transition name="horizontal">
             <component :is="Component" />
@@ -58,6 +58,11 @@ import storage from '@/services/storage'
 }
 .page__container{
   height: 78%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.page__container{
+  height: 88%;
   overflow-x: hidden;
   overflow-y: auto;
 }

@@ -21,7 +21,7 @@ const goTo = (url) => {
       <div style="height: 100%; width: 2px; background: lightcyan; width: 2px;" />
       <div class="text-subtitle1 text-bold text-white text-center bg-primary tabItem rightItem" @click="changeTab('admin')" :class="{'active':tabActive == 'admin'}" style="width: calc(50% - 1px);" >Administradores</div>
     </div>
-    <div class="px-4 md:px-0">
+    <div class="px-4 md:px-0 md:flex md:mx-auto md:justify-end md:w-5/6">
       <q-btn color="primary" unelevated class="w-full mt-5 md:mx-5 createButton " style="border-radius: 0.5rem;" @click="goTo('/admin/users/form/add')">
         <div class="flex items-center py-1" >
           <q-icon name="eva-plus-outline"/>
