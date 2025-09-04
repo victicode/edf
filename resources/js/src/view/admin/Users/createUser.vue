@@ -58,7 +58,7 @@ import { useUserStore } from '@/services/store/users.store';
   >
     <Transition name="horizontal">
       <div class="row w-full" v-if="step==0">
-        <div class="col-md-6 col-12 my-2 px-2 md:px-12">
+        <div class="col-md-6 col-12 my-0 px-2 md:px-12">
           <div class="text-subtitle2 text-bold text-black">
             Nombre completo
           </div>
@@ -71,7 +71,7 @@ import { useUserStore } from '@/services/store/users.store';
               :rules="[ val => val && val.length > 0 || 'Nombre es requerido']"
             />
         </div>
-        <div class="col-md-6 col-12 my-2 px-2 md:px-12">
+        <div class="col-md-6 col-12 my-0 px-2 md:px-12">
           <div class="text-subtitle2 text-bold text-black">
             Nombre de usuario
           </div>
@@ -84,7 +84,7 @@ import { useUserStore } from '@/services/store/users.store';
               :rules="[ val => val && val.length > 0 || 'Contraseña es requerida']"
             />
         </div>
-        <div class="col-md-6 col-12 my-2 px-2 md:px-12">
+        <div class="col-md-6 col-12 my-0 px-2 md:px-12">
           <div class="text-subtitle2 text-bold text-black">
             Correo electronico
           </div>
@@ -97,8 +97,7 @@ import { useUserStore } from '@/services/store/users.store';
               :rules="[ val => val && val.length > 0 || 'Correo electronico es requerido']"
             />
         </div>
-        
-        <div class="col-md-6 col-12 my-2 px-2 md:px-12">
+        <div class="col-md-6 col-12 my-0 px-2 md:px-12">
           <div class="text-subtitle2 text-bold text-black">
             Contraseña
           </div>
@@ -133,7 +132,7 @@ import { useUserStore } from '@/services/store/users.store';
     </Transition>
     <Transition name="horizontal">
       <div class="row w-full" v-if="step==1">
-        <div class="col-md-6 col-12 md:my-2 mb-1 px-2 md:px-12">
+        <div class="col-md-6 col-12 md:my-0 mb-1 px-2 md:px-12">
           <div class="text-subtitle2 text-bold text-black">
             Nombre completo
           </div>
@@ -146,7 +145,7 @@ import { useUserStore } from '@/services/store/users.store';
               :rules="[ val => val && val.length > 0 || 'Nombre es requerido']"
             />
         </div>
-        <div class="col-md-6 col-12 my-2 px-2 md:px-12">
+        <div class="col-md-6 col-12 my-0 px-2 md:px-12">
           <div class="text-subtitle2 text-bold text-black">
             Nombre de usuario
           </div>
@@ -156,11 +155,10 @@ import { useUserStore } from '@/services/store/users.store';
               v-model="formData.username"
               class="form__inputsR mt-2"
               color="primary"
-              type="password"
               :rules="[ val => val && val.length > 0 || 'Nombre de usuario es requerido']"
             />
         </div>
-        <div class="col-md-6 col-12 my-2 px-2 md:px-12">
+        <div class="col-md-6 col-12 my-0 px-2 md:px-12">
           <div class="text-subtitle2 text-bold text-black">
             Correo electronico
           </div>
@@ -173,8 +171,7 @@ import { useUserStore } from '@/services/store/users.store';
               :rules="[ val => val && val.length > 0 || 'Correo electronico es requerido']"
             />
         </div>
-        
-        <div class="col-md-6 col-12 my-2 px-2 md:px-12">
+        <div class="col-md-6 col-12 my-0 px-2 md:px-12">
           <div class="text-subtitle2 text-bold text-black">
             Contraseña
           </div>
@@ -184,10 +181,11 @@ import { useUserStore } from '@/services/store/users.store';
               v-model="formData.password"
               class="form__inputsR mt-2"
               color="primary"
+              type="password"
               :rules="[ val => val && val.length > 0 || 'Contraseña es requerida']"
             />
         </div>
-        <div class="col-12 my-2 px-2 md:px-12 flex justify-end">
+        <div class="col-12 my-0 px-2 md:px-12 flex justify-end">
           <q-btn color="primary " style="border-radius: 0.5rem;" type="submit" :loading="loading">
             <div class="px-10 py-1" >
               Siguiente

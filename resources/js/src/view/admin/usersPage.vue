@@ -16,7 +16,7 @@
     {
       title:'Apartamentos',
       icon: iconsApp.departmet,
-      link:'/users',
+      link:'/admin/department/list',
     },
     {
       title:'Visitas',

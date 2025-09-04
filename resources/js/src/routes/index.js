@@ -137,6 +137,18 @@ const routes = [
         }
       },
       {
+        path: '/admin/department/list', 
+        component: () => import('@/view/admin/Department/departmentList.vue'),
+        name:'departmentList',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Apartamentos'
+        }
+      },
+
+      
+      {
         path: '/admin/users/form/add', 
         component: () => import('@/view/admin/users/createUser.vue'),
         name:'usersAdd',
