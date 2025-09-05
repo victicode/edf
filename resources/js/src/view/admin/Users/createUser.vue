@@ -17,6 +17,12 @@ import { useUserStore } from '@/services/store/users.store';
     username:'',
     email:'',
     password:'',
+
+    apartment: {
+      id:0,
+      number:'Selecciona un apartamento'
+    }
+
   })
 
   const titleOfSection = [ 

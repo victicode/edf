@@ -1,27 +1,55 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import iconsApp from '@/assets/icons/index'
+import { useApartmentStore } from '@/services/store/apartment.store';
 
+const apartmentStore = useApartmentStore()
 
-const tabActive = ref('users')
-const changeTab = (tab) => {
-  tabActive.value = tab
-}
-const modal = ref('')
+const page = ref(1)
+const search = ref('')
+const filter = ref(0)
+const lastPage = ref(1)
+const ready = ref(false)
 const router = useRouter()
+
 const goTo = (url) => {
   router.push(url)
 }
+
+const apartments = ref([])
+const getApartment = () => {
+  ready.value =  false;
+
+  const data = {
+    page: page.value,
+    search: search.value,
+    filter: filter.value,
+
+  }
+  apartmentStore.getPaginationApartment(data)
+  .then((response) =>{
+    if(response.code !== 200) throw response
+    apartments.value = response.data.data;
+    lastPage.value = response.data.last_page;
+    setTimeout(() => {
+      ready.value =  true;
+    }, 1000);
+  })
+  .catch(() =>{
+
+  })
+}
+
+onMounted(() =>{
+  getApartment()
+})
 </script>
 
 <template>
-  <div class="">
-    <!-- <div class="flex mt-5 justify-between  md:mx-auto items-center md:w-2/6 bg-primary mx-4 " style=" height: 2.8rem; overflow: hidden;border-radius: 0.7rem; ">
-      
-    </div> -->
-    <div class="px-4 md:px-0 md:flex md:mx-auto md:justify-end md:w-5/6">
-      <q-btn color="primary" unelevated class="w-full mt-5 md:mx-5 createButton " style="border-radius: 0.5rem;" @click="goTo('/admin/users/form/add')">
+  <div class="h-full"  style="overflow: auto;">
+    <div class="px-4 md:px-0 md:flex  md:justify-end md:w-6/6">
+      <q-btn color="primary" unelevated class="w-full mt-5 md:mx-24 createButton " style="border-radius: 0.5rem;" @click="goTo('/admin/department/form/add')">
         <div class="flex items-center py-1" >
           <q-icon name="eva-plus-outline"/>
           <div class="q-pt-xs text-bold pl-1">
@@ -30,53 +58,78 @@ const goTo = (url) => {
         </div>
       </q-btn>
     </div>
-    <div class="mt-5 px-2">
-      <div class="flex items-end justify-between p-2 py-3  apartamentContainer relative" style="">
-        <div class="flex">
-          <div class="imgItem__container ">
+    <div class="mt-5 md:mt-8 px-2 md:mx-24  pb-5"  style="overflow: auto;" v-if="ready">
+      <div class="px-2 pt-3 mt-4  apartamentContainer relative" style="" v-for="apartment in apartments" :key="apartment.id">
+        <div class="flex items-center w-full pb-3">
+          <div class="imgItem__container w">
             <div v-html="iconsApp.apartment" class="flex flex-center px-0 h-full"/>
           </div>
-          <div class="px-2">
+          <div class="px-2 infoItem">
             <div class=" text-bold  text-black" style="font-weight: bold; font-size: 1.3rem;"> 
-             #A-12
+             #{{apartment.number}}
+            </div>
+            <div class="mt-1 ellipsis w-full" style="font-weight: 500; font-size: 0.89rem;">
+              Ubicación: {{apartment.address}}
             </div>
             <div class="mt-1" style="font-weight: 500; font-size: 0.89rem;">
-              Ubicación: P1
-            </div>
-            <div class="mt-1" style="font-weight: 500; font-size: 0.89rem;">
-              Area: 65MT²
+              Area: {{apartment.area}} mt²
             </div>
           </div>
         </div>
-        <div class="flex pr-8">
+        <div class="flex w-full justify-end py-1" style="border-top: 1px solid lightgrey;">
           <div>
-
-            <q-btn icon="eva-settings-outline"  color="primary" round  />
+            <q-btn icon="eva-person-outline" class="mx-1" flat color="primary" round size="0.85rem" />
           </div>
+          <div>
+            <q-btn icon="eva-settings-outline" class="mx-1" flat color="primary" round size="0.85rem" />
+          </div>
+          <div>
+            <q-btn icon="eva-trash-2-outline" class="mx-1" flat color="negative" round size="0.85rem" />
+          </div>
+          
         </div>
-        <div class="availableBadge px-8 py-1">
-          Disponible
+        <div class="itemBadge px-8 py-1" :class="{'bg-positive':!apartment.owner, 'bg-negative':apartment.owner}">
+          {{!apartment.owner ? 'Disponible' : 'Habitado'}}
         </div>
       </div>
+      <div class="flex justify-center mt-4">
+
+        <q-pagination
+          v-model="page"
+          color="primary"
+          :max="lastPage"
+          :max-pages="4"
+          :boundary-numbers="false"
+          @update:model-value="getApartment()"
+        />
+      </div>
+    </div>
+    <div v-else class="flex flex-center py-24">
+       <q-spinner-dots
+          color="primary"
+          size="7rem"
+        />
     </div>
   </div>
 </template>
 <style lang="scss">
-.availableBadge{
-  background: $positive;
+.itemBadge{
   color: white;
   font-size: 0.9rem;
-  top: 1.2rem;
-  right: -2rem;
+  top: 0;
+  right: 0;
   position: absolute;
-  // border-bottom-left-radius: 0.8rem;
-  transform: rotate(45deg);
+  border-bottom-left-radius: 0.8rem;
+  // transform: rotate(45deg);
 }
 .imgItem__container{
   width: 4.2rem; 
   height: 4.2rem; 
   border-radius: 0.8rem; 
   background: $primary;
+}
+.infoItem{
+  width: calc(100% - 4.2rem);
 }
 .apartamentContainer{
   overflow: hidden;

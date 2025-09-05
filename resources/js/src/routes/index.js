@@ -147,7 +147,6 @@ const routes = [
         }
       },
 
-      
       {
         path: '/admin/users/form/add', 
         component: () => import('@/view/admin/users/createUser.vue'),
@@ -156,6 +155,16 @@ const routes = [
         meta:{
           title: 'Bienvenido',
           pagTitle: 'Crear Usuario'
+        }
+      },
+      {
+        path: '/admin/department/form/add', 
+        component: () => import('@/view/admin/Department/createDepartment.vue'),
+        name:'departmentAdd',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Agregar apartamento'
         }
       },
     ]

@@ -15,6 +15,8 @@ class UserController extends Controller
         $validated = $this->validateFieldsFromInput($request->all());
 
         if (count($validated) > 0) return $this->returnFail(400, $validated[0]);
+
+        
         User::create([
             'name'      =>  $request->name,
             'email'     =>  $request->email,
@@ -36,7 +38,7 @@ class UserController extends Controller
             'name.required'     => 'El nombre es requerido.',
             'name.regex'        => 'Nombre no valido',
             'email.required'    => 'El email es requerido.',
-            'email.email'       => 'Emil no valido',
+            'email.email'       => 'Email no valido',
             'username.required' => 'Nombre de usuario es requerido',
             'username.regex'    => 'Nombre de usuario no valido',
             'password.required'     => 'La contraseña es requerida',

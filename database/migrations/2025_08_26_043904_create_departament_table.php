@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('departament', function (Blueprint $table) {
+        Schema::create('departaments', function (Blueprint $table) {
             $table->id();
             $table->string('number');
             $table->string('address')->nullable();
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('code_pay')->nullable();
             $table->string('floor');
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->nulleable()->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

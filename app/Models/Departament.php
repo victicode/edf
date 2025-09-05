@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Models\Api;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class DepartamentController extends Model
+class Departament extends Model
 {
     /** @use HasFactory<\Database\Factories\Api\DepartamentControllerFactory> */
     use HasFactory;
@@ -20,4 +21,9 @@ class DepartamentController extends Model
         'user_id'
 
     ];
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class,'user_id', 'id');
+    }
 }

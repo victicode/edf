@@ -58,12 +58,14 @@ import storage from '@/services/storage'
 }
 .page__container{
   height: 78%;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
+  // overflow-x: hidden;
+  // overflow-y: auto;
 }
-.page__container{
+.page_continerFull{
   height: 88%;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
+  // overflow-x: hidden;
+  // overflow-y: auto;
 }
 </style>
