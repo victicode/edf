@@ -1,17 +1,50 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/services/store/users.store';
 
-
+const userStore = useUserStore()
 const tabActive = ref('users')
+const page = ref(1)
+const search = ref('')
+const ready = ref(false)
+
 const changeTab = (tab) => {
   tabActive.value = tab
+  getUsers()
 }
-const modal = ref('')
 const router = useRouter()
+
 const goTo = (url) => {
   router.push(url)
 }
+
+const users = ref([])
+
+const getUsers = () => {
+
+  ready.value =  false;
+
+  const data = {
+    page: page.value,
+    search: search.value,
+    rol: tabActive.value == 'users' ? 2 : 1
+  }
+  userStore.getUsers(data)
+  .then((response) =>{
+    if(response.code !== 200) throw response
+    users.value = response.data;
+    setTimeout(() => {
+      ready.value =  true;
+    }, 1000);
+  })
+  .catch(() =>{
+  })
+}
+
+onMounted(() => {
+  getUsers()
+})
 </script>
 
 <template>
@@ -31,12 +64,42 @@ const goTo = (url) => {
         </div>
       </q-btn>
     </div>
-    <div class="mt-5">
+    <div class="mt-4">
+      <div class="px-4">
+        <div v-for="user in users" :key="user.id" class="px-2 py-3 mb-5 userListContainer flex items-center justify-between">
+          <div class="flex items-center">
+            <div style="height: 2.8rem; width: 2.8rem; background: #b5b5b5; border-radius: 0.5rem; font-size: 2rem; font-weight: bold;" class="flex flex-center text-white">
+              {{ user.name.charAt(0).toUpperCase() }}
+            </div>
+            <div class="ml-2">
+              <div class="text-subtitle1 text-bold text-black" style="line-height:1.7;">{{ user.name }}</div>
+              <div class="text-body2 text-grey-6 ">{{  user.apartaments.length > 0 ?  user.apartaments[0].number : 'Apt. no asignado'}}</div>
+            </div>
+          </div>
+          <div class="flex justify-end py-1">
+            <div v-if="user.apartaments.length  == 0">
+              <q-btn icon="add_home_work" class="mx-1" flat color="primary" round size="0.75rem" />
+            </div>
+            <div>
+              <q-btn icon="eva-settings-outline" class="mx-1" flat color="primary" round size="0.75rem" />
+            </div>
+            <div>
+              <q-btn icon="eva-trash-2-outline" class="mx-1" flat color="negative" round size="0.75rem" />
+            </div>
+            
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>
 </template>
 <style lang="scss">
+.userListContainer{
+  overflow: hidden;
+  border-radius: .5rem;
+  box-shadow: 0px 2px 6px 0px rgb(199, 199, 199);
+}
 
 .createButton{
   width: auto;

@@ -19,7 +19,7 @@ class AuthController extends Controller
 
         $user = User::where('username', request()->username)->first();
 
-        if (! $user || ! Hash::check(request()->password, $user->password)) {
+        if (! $user || !Hash::check(request()->password, $user->password)) {
             return $this->returnFail(505, 'Credenciales no validas');
         }
 

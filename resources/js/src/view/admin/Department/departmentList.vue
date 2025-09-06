@@ -18,6 +18,7 @@ const goTo = (url) => {
 }
 
 const apartments = ref([])
+
 const getApartment = () => {
   ready.value =  false;
 
@@ -25,7 +26,6 @@ const getApartment = () => {
     page: page.value,
     search: search.value,
     filter: filter.value,
-
   }
   apartmentStore.getPaginationApartment(data)
   .then((response) =>{

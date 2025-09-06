@@ -21,6 +21,20 @@ class DepartamentController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     */
+    public function apartmentsByfind(Request $request)
+    {   
+        $departaments = [];
+        if($request->find == 'available'){
+
+            $departaments = Departament::where('user_id', null)->get();
+        }
+        return $this->returnSuccess(200, $departaments);
+
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function storeApartment(Request $request)

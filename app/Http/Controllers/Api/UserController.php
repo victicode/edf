@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Departament;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -17,20 +18,37 @@ class UserController extends Controller
         if (count($validated) > 0) return $this->returnFail(400, $validated[0]);
 
         
-        User::create([
+       $user = User::create([
             'name'      =>  $request->name,
             'email'     =>  $request->email,
             'username'  =>  $request->username,
-            'password'  =>  bcrypt($request->password),
-            'rol_id'    =>  '',
+            'phone'     =>  $request->phone,
+            'password'  =>  bcrypt($request->password) ,
+            'rol_id'    =>  2,
         ]);
+
+        if($request->idApartament != 0){
+            Departament::find($request->idApartament)->update([
+                'user_id' => $user->id
+            ]);
+        }
+
+        return $this->returnSuccess(200, 'ok');
+
+    }
+
+    public function getOwners(Request $request) {
+
+        $owners = User::with(['apartaments'])->where('rol_id', $request->rol)->orderBy('name', 'asc')->where('id', '!=', $request->user()->id)->get();
+
+        return $this->returnSuccess(200, $owners);
     }
 
     private function validateFieldsFromInput($inputs){
         $rules =[
             'name'      => ['required', 'regex:/^[a-zA-Z-À-ÿ .]+$/i'],
             'email'     => ['required', 'email'],
-            'username'  => ['required', 'regex:/^[a-zA-Z-À-ÿ .]+$/i'],
+            'username'  => ['required', 'regex:/^[a-zA-Z-À-ÿ0-9 .]+$/i'],
             'password'  => ['required', 'min:8'],
 
         ];

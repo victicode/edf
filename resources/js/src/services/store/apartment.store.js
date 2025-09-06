@@ -61,6 +61,24 @@ export const useApartmentStore = defineStore('Apartment', {
         
       })
     },
+    async getApartmentsByFind(find) {
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.get('/api/apartments/byFind?find='+find+'&')
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+          
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+        
+      })
+    },
     async deleteApartment(id) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {

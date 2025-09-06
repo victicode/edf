@@ -8,6 +8,7 @@ export const useUserStore = defineStore('User', {
         if (!ApiService.getToken()) {
           throw '';
         }
+        ApiService.setHeader();
         ApiService.post('/api/users', data)
         .then(({data}) => {
           if(data.code !=200) throw data;
@@ -43,13 +44,13 @@ export const useUserStore = defineStore('User', {
       })
 
     },
-    async getPaginationUsers(data) {
+    async getUsers(data) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.get('/api/users?page='+data.page+'&'+'search='+data.search+'&searchType='+data.searchType+'&')
+        ApiService.get('/api/users?page='+data.page+'&'+'search='+data.search+'&'+'rol='+data.rol+'&')
         .then(({data}) => {
           if(data.code !=200) throw data;
           

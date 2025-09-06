@@ -1,43 +1,85 @@
 <script setup>
+
 import { onMounted, ref, watch} from 'vue';
 import { Notify } from 'quasar'
 import { useUserStore } from '@/services/store/users.store';
+import { useApartmentStore } from '@/services/store/apartment.store';
+import phoneNumberInput from '@/components/layout/phoneNumberInput.vue';
+import { useRouter } from 'vue-router';
+  const router = useRouter()
   const userStore = useUserStore()
-  const emit = defineEmits(['closeModal', 'updateList'])
+  const apartmentStore = useApartmentStore()
+  const apartmentsOptions = ref([])
+  const getAvailableApartaments = () => {
+    apartmentStore.getApartmentsByFind('available')
+    .then((response) => {
+      console.log(response)
+
+
+      apartmentsOptions.value = [
+        {
+          id:0,
+          number:'Selecciona un apartamento'
+        },
+        ...response.data
+      ]
+    })
+  }
   const props = defineProps({
     dialog: Boolean,
     rifa: Object,
   })
+
   const isPwd =  ref('true')
 
-  const step = ref(1)
+  const step = ref(0)
   const loading = ref(false)
   const formData = ref({
     name:'',
     username:'',
     email:'',
+    phone:'',
     password:'',
 
     apartment: {
       id:0,
       number:'Selecciona un apartamento'
-    }
-
+    },
+    idApartament:0
   })
 
   const titleOfSection = [ 
     'Datos de propietario',
     'Asignación del inmobiliario'
   ]
+
+
   const createUser = () => {
+
+    if(step.value == 0 ) {
+      step.value++
+      return 
+    }
     loading.value = true 
 
-    step.value++
-    setTimeout(() => {
-      alert('holaaaa')
+    formData.value.idApartament = formData.value.apartment.id
+
+    formData.value.apartment.id
+    userStore.createUser(formData.value)
+    .then((response) =>{
+      showNotify('positive', 'Usuario creado con exito')
+      setTimeout(() => {
+        loading.value = false
+        router.go(-1)
+      }, 1000);
+    })
+    .catch((response) => {
+      console.log(response)
       loading.value = false
 
-    }, 2000);
+      showNotify('negative', response)
+
+    })
   }
 
 
@@ -51,12 +93,13 @@ import { useUserStore } from '@/services/store/users.store';
 
 
   onMounted(() => {
+    getAvailableApartaments()
   })
   
 </script>
 <template>
 <div class="md:px-20 md:mx-16 px-2">
-  <div class="text-center text-black text-h5 text-bold md:mt-4 mt-8 mb-8">
+  <div class="text-center text-black text-h5 text-bold md:mt-4 mt-5 mb-3">
     {{ titleOfSection[step]}}
   </div>
   <q-form
@@ -64,7 +107,7 @@ import { useUserStore } from '@/services/store/users.store';
   >
     <Transition name="horizontal">
       <div class="row w-full" v-if="step==0">
-        <div class="col-md-6 col-12 my-0 px-2 md:px-12">
+        <div class="col-md-6 md:my-0 col-12 my-1 px-2 md:px-12">
           <div class="text-subtitle2 text-bold text-black">
             Nombre completo
           </div>
@@ -77,7 +120,7 @@ import { useUserStore } from '@/services/store/users.store';
               :rules="[ val => val && val.length > 0 || 'Nombre es requerido']"
             />
         </div>
-        <div class="col-md-6 col-12 my-0 px-2 md:px-12">
+        <div class="col-md-6 md:my-0 col-12 my-1 px-2 md:px-12">
           <div class="text-subtitle2 text-bold text-black">
             Nombre de usuario
           </div>
@@ -87,10 +130,10 @@ import { useUserStore } from '@/services/store/users.store';
               v-model="formData.username"
               class="form__inputsR mt-2"
               color="primary"
-              :rules="[ val => val && val.length > 0 || 'Contraseña es requerida']"
+              :rules="[ val => val && val.length > 0 || 'Nombre de usuario es requerido']"
             />
         </div>
-        <div class="col-md-6 col-12 my-0 px-2 md:px-12">
+        <div class="col-md-6 md:my-0 col-12 my-1 px-2 md:px-12">
           <div class="text-subtitle2 text-bold text-black">
             Correo electronico
           </div>
@@ -103,29 +146,41 @@ import { useUserStore } from '@/services/store/users.store';
               :rules="[ val => val && val.length > 0 || 'Correo electronico es requerido']"
             />
         </div>
-        <div class="col-md-6 col-12 my-0 px-2 md:px-12">
+        <div class="col-md-6 md:my-0 col-12 my-1 px-2 md:px-12">
           <div class="text-subtitle2 text-bold text-black">
             Contraseña
           </div>
           <q-input
-              borderless
-              clearable
-              v-model="formData.password"
-              class="form__inputsR mt-2"
-              color="primary"
-              :type="isPwd ? 'password' : 'text'" 
-              :rules="[ val => val && val.length > 0 || 'Nombre de usuario es requerido']"
-            >
-              <template v-slot:append>
-                <q-icon
-                  :name="isPwd ? 'eva-eye-off-outline' : 'eva-eye-outline'"
-                  class="cursor-pointer"
-                  @click="isPwd = !isPwd"
-                />
-              </template>
-            </q-input>
+            borderless
+            clearable
+            v-model="formData.password"
+            class="form__inputsR mt-2"
+            color="primary"
+            :type="isPwd ? 'password' : 'text'" 
+            :rules="[ val => val && val.length > 0 || 'Contraseña es requerida']"
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="isPwd ? 'eva-eye-off-outline' : 'eva-eye-outline'"
+                class="cursor-pointer"
+                @click="isPwd = !isPwd"
+              />
+            </template>
+          </q-input>
           
         </div>
+        <div class="col-md-6 md:my-0 col-12 my-1 px-2 md:px-12">
+          <div class="text-subtitle2 text-bold text-black">
+            Telefono
+          </div>
+          <phoneNumberInput 
+            v-model="formData.phone"
+            label="Tu Teléfono"
+            placeholder="412-1234567"
+            :rules="[val => !!val || 'El teléfono es requerido']"
+          />
+        </div>
+        
         <div class="col-12 my-2 px-2 md:px-12 flex justify-end">
           <q-btn color="primary " style="border-radius: 0.5rem;" type="submit" :loading="loading">
             <div class="px-10 py-1" >
@@ -138,65 +193,55 @@ import { useUserStore } from '@/services/store/users.store';
     </Transition>
     <Transition name="horizontal">
       <div class="row w-full" v-if="step==1">
-        <div class="col-md-6 col-12 md:my-0 mb-1 px-2 md:px-12">
+        <div class="col-md-6 md:my-0 col-12 my-1 px-2 md:px-12">
           <div class="text-subtitle2 text-bold text-black">
-            Nombre completo
+            Selecciona el apartamento
           </div>
-          <q-input
-              borderless
-              clearable
-              v-model="formData.name"
-              class="form__inputsR mt-2"
-              color="primary"
-              :rules="[ val => val && val.length > 0 || 'Nombre es requerido']"
-            />
+          <q-select
+            borderless
+            class="form__inputsR mt-2"
+            v-model="formData.apartment"
+            option-value="id"
+            option-label="number"
+            :options="apartmentsOptions"
+            behavior="menu"
+          >
+
+            <template v-slot:option="scope">
+              <q-item v-bind="scope.itemProps">
+                <div class="w-full">
+                  <div class="flex items-center justify-between w-full">
+                    <div class="text-subtitle1 " style="font-weight: 500;">
+                      {{ scope.opt.id != 0 ? '#' :'' }} {{ scope.opt.number }}
+                    </div>
+                    <div v-if="scope.opt.id != 0" class="text-positive text-subtitle2 pl-2">
+                      Disponible
+                    </div>
+                  </div>
+                  <div class="text-caption text-grey-6" v-if="scope.opt.id != 0" >
+                    {{ scope.opt.area }} mt²
+                  </div>
+                </div>
+              </q-item>
+            </template>
+          </q-select>
         </div>
-        <div class="col-md-6 col-12 my-0 px-2 md:px-12">
-          <div class="text-subtitle2 text-bold text-black">
-            Nombre de usuario
+
+        <div class="col-12 my-2 px-2 md:px-12 flex items-center justify-between">
+          <div class="flex items-center" style="width: 50%; box-sizing: border-box;">
+            <q-btn color="grey-9 " style="border-radius: 0.5rem;" @click="step--">
+              <div class="px-8 py-1 " >
+                Volver
+              </div>
+            </q-btn>
           </div>
-          <q-input
-              borderless
-              clearable
-              v-model="formData.username"
-              class="form__inputsR mt-2"
-              color="primary"
-              :rules="[ val => val && val.length > 0 || 'Nombre de usuario es requerido']"
-            />
-        </div>
-        <div class="col-md-6 col-12 my-0 px-2 md:px-12">
-          <div class="text-subtitle2 text-bold text-black">
-            Correo electronico
+          <div class="flex items-center justify-end" style="width: 50%; box-sizing: border-box;">
+            <q-btn color="primary " style="border-radius: 0.5rem;" type="submit" :loading="loading">
+              <div class="px-8 py-1 " >
+                Siguiente
+              </div>
+            </q-btn>
           </div>
-          <q-input
-              borderless
-              clearable
-              v-model="formData.email"
-              class="form__inputsR mt-2"
-              color="primary"
-              :rules="[ val => val && val.length > 0 || 'Correo electronico es requerido']"
-            />
-        </div>
-        <div class="col-md-6 col-12 my-0 px-2 md:px-12">
-          <div class="text-subtitle2 text-bold text-black">
-            Contraseña
-          </div>
-          <q-input
-              borderless
-              clearable
-              v-model="formData.password"
-              class="form__inputsR mt-2"
-              color="primary"
-              type="password"
-              :rules="[ val => val && val.length > 0 || 'Contraseña es requerida']"
-            />
-        </div>
-        <div class="col-12 my-0 px-2 md:px-12 flex justify-end">
-          <q-btn color="primary " style="border-radius: 0.5rem;" type="submit" :loading="loading">
-            <div class="px-10 py-1" >
-              Siguiente
-            </div>
-          </q-btn>
         </div>
 
       </div>
@@ -214,12 +259,12 @@ import { useUserStore } from '@/services/store/users.store';
   }
 }
 @media (max-width: 780px) {
-.form__inputsR{
-  & .q-field__inner {
+  .form__inputsR{
+    & .q-field__inner {
 
-    padding: 0px 1rem;
+      padding: 0px 1rem;
+    }
   }
-}
 }
 
 </style>
