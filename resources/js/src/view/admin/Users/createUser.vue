@@ -10,12 +10,25 @@ import { useRouter } from 'vue-router';
   const userStore = useUserStore()
   const apartmentStore = useApartmentStore()
   const apartmentsOptions = ref([])
+  const rolOptions = ref([
+    {
+      id:0,
+      title:'Selecciona el tipo de usuario'
+    },
+    {
+      id:2,
+      title:'Propietario'
+    },
+    {
+      id:3,
+      title:'Inquilino'
+    },
+  ])
+
   const getAvailableApartaments = () => {
     apartmentStore.getApartmentsByFind('available')
     .then((response) => {
       console.log(response)
-
-
       apartmentsOptions.value = [
         {
           id:0,
@@ -40,16 +53,21 @@ import { useRouter } from 'vue-router';
     email:'',
     phone:'',
     password:'',
-
+    rol_id: {
+      id:0,
+      title:'Selecciona el tipo de usuario'
+    },
     apartment: {
       id:0,
       number:'Selecciona un apartamento'
     },
-    idApartament:0
+    idApartament:0,
+    idRol:1
+
   })
 
   const titleOfSection = [ 
-    'Datos de propietario',
+    'Datos del usuario',
     'Asignación del inmobiliario'
   ]
 
@@ -60,11 +78,12 @@ import { useRouter } from 'vue-router';
       step.value++
       return 
     }
+
     loading.value = true 
-
     formData.value.idApartament = formData.value.apartment.id
+    formData.value.idRol = formData.value.rol_id.id
 
-    formData.value.apartment.id
+
     userStore.createUser(formData.value)
     .then((response) =>{
       showNotify('positive', 'Usuario creado con exito')
@@ -193,6 +212,21 @@ import { useRouter } from 'vue-router';
     </Transition>
     <Transition name="horizontal">
       <div class="row w-full" v-if="step==1">
+        <div class="col-md-6 md:my-0 col-12 my-1 mb-4 px-2 md:px-12">
+          <div class="text-subtitle2 text-bold text-black">
+            Tipo de usuario
+          </div>
+          <q-select
+            borderless
+            class="form__inputsR mt-2"
+            v-model="formData.rol_id"
+            option-value="id"
+            option-label="title"
+            :options="rolOptions"
+            behavior="menu"
+          >
+          </q-select>
+        </div>
         <div class="col-md-6 md:my-0 col-12 my-1 px-2 md:px-12">
           <div class="text-subtitle2 text-bold text-black">
             Selecciona el apartamento
@@ -227,7 +261,7 @@ import { useRouter } from 'vue-router';
           </q-select>
         </div>
 
-        <div class="col-12 my-2 px-2 md:px-12 flex items-center justify-between">
+        <div class="col-12 mb-2 mt-5 px-2 md:px-12 flex items-center justify-between">
           <div class="flex items-center" style="width: 50%; box-sizing: border-box;">
             <q-btn color="grey-9 " style="border-radius: 0.5rem;" @click="step--">
               <div class="px-8 py-1 " >

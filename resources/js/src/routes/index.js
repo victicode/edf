@@ -158,6 +158,16 @@ const routes = [
         }
       },
       {
+        path: '/admin/users/assing-apartment/:id', 
+        component: () => import('@/view/admin/users/assingApartment.vue'),
+        name:'assingDepartment',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Asignar Apartamento'
+        }
+      },
+      {
         path: '/admin/department/form/add', 
         component: () => import('@/view/admin/Department/createDepartment.vue'),
         name:'departmentAdd',

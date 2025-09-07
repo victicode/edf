@@ -16,8 +16,8 @@ Route::middleware('auth:sanctum')->group(function ()
     });
     Route::prefix('users')->name('user.')->group(function () {
         Route::get('/', [UserController::class, 'getOwners']);
-
         Route::post('/', [UserController::class, 'store']);
+        Route::post('/assing_apartmet', [DepartamentController::class, 'assingApartment']);
 
         
     });

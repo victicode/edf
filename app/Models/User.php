@@ -23,8 +23,11 @@ class User extends Authenticatable
         'username',
         'phone',
         'password',
-        'rol_id'
+        'status',
+        'rol_id',
     ];
+
+    public $appends  =   ['status_label'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -49,7 +52,20 @@ class User extends Authenticatable
         ];
     }
 
+    public function getStatusLabelAttribute(){
+        $status = [
+            '---',
+            'Solvente',
+            'Moroso',
+        ];
+
+        return $status[$this->status]; 
+
+    }
     public function apartaments() {
         return $this->hasMany(Departament::class);
+    }
+    public function rol() {
+        return $this->belongsTo(Rol::class);
     }
 }

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
 use App\Models\Departament;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 
 class DepartamentController extends Controller
@@ -58,6 +59,21 @@ class DepartamentController extends Controller
 
     }
 
+
+    public function assingApartment(Request $request)
+    {
+        //
+        if($request->user()->id == 1){
+
+            Departament::find($request->idApartament)->update([
+                'user_id' => $request->user
+            ]);
+        }
+
+        return $this->returnSuccess(200, 'ok');
+
+
+    }
     /**
      * Display the specified resource.
      */

@@ -7,6 +7,8 @@
   const router = useRouter()
   const { user } = storeToRefs(useAuthStore())
   const emitter = inject('emitter')
+  const materialIcons = inject('materialIcons')
+
   const showSidebar = () => {
     emitter.emit('showInfoNews')
   }
@@ -29,13 +31,13 @@
         </div>
       </div>
       <div>
-        <q-btn  icon="notifications" unelevated color="white" flat size="1rem" round @click="showSidebar()" />
+        <q-btn  :icon="materialIcons.roundNotifications" unelevated color="white" flat size="1rem" round @click="showSidebar()" />
       </div>
     </template>
     <template v-else>
       <div class="flex items-center">
         <div class="flex items-center" >
-          <q-btn  icon="arrow_back" unelevated color="white" flat size="1rem" round @click="router.go(-1)" />
+          <q-btn  :icon="materialIcons.outlinedArrowBack" unelevated color="white" flat size="1rem" round @click="router.go(-1)" />
         </div>
         <div class="text-h6 text-bold text-white ml-2">
           {{route.meta.pagTitle}}
