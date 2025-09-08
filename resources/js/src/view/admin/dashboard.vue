@@ -12,7 +12,7 @@
     {
       title:'Areas comunes',
       icon: iconsApp.atraction,
-      link:'/comun-area',
+      link:'/admin/comun-area/list',
     },
     {
       title:'Noticias',

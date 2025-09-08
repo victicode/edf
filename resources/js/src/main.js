@@ -16,6 +16,8 @@ import {
   outlinedPaid,
   outlinedEvent,
   outlinedHomeWork,
+  outlinedClose,
+  outlinedFactCheck,
 } from '@quasar/extras/material-icons-outlined/index.js'
 
 import { 
@@ -35,7 +37,10 @@ const materialIcons = {
   outlinedPaid,
   outlinedEvent,
   outlinedHomeWork,
+  outlinedClose,
   roundNotifications,
+  outlinedFactCheck,
+
 }
 const pinia = createPinia()
 

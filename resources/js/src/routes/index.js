@@ -146,6 +146,16 @@ const routes = [
           pagTitle: 'Apartamentos'
         }
       },
+      {
+        path: '/admin/comun-area/list', 
+        component: () => import('@/view/admin/ComunAreas/comunAreasList.vue'),
+        name:'comunAreasList',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Areas comunes'
+        }
+      },
 
       {
         path: '/admin/users/form/add', 
@@ -177,6 +187,18 @@ const routes = [
           pagTitle: 'Agregar apartamento'
         }
       },
+      {
+        path: '/admin/comun-area/form/add', 
+        component: () => import('@/view/admin/ComunAreas/createComunArea.vue'),
+        name:'comunAreaAdd',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Agregar area común'
+        }
+      },
+
+      
     ]
   },
   
