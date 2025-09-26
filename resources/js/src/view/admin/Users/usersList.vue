@@ -144,7 +144,16 @@ onMounted(() => {
               </q-btn>
             </div>
             <div>
-              <q-btn icon="eva-trash-2-outline" class="mx-1" color="negative" flat size="0.9rem" />
+              <q-btn icon="eva-trash-2-outline" class="mx-1" color="negative" flat size="0.9rem" >
+                <q-tooltip
+                  transition-show="flip-right"
+                  transition-hide="flip-left"
+                  class="bg-black text-body2 px-2"
+                >
+                  Borrar usuario
+                </q-tooltip> 
+              </q-btn>
+                
             </div>
             
           </div>

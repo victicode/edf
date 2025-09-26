@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ComunAreaController;
 use App\Http\Controllers\Api\DepartamentController;
 use App\Http\Controllers\Api\UserController;
 
@@ -25,6 +26,12 @@ Route::middleware('auth:sanctum')->group(function ()
         Route::get('/', [DepartamentController::class, 'paginationApartment']);
         Route::post('/', [DepartamentController::class, 'storeApartment']);
         Route::get('/byFind', [DepartamentController::class, 'apartmentsByfind']);
+
+    });
+    Route::prefix('comun-area')->name('comun.area.')->group(function () {
+        Route::get('/', [ComunAreaController::class, 'paginationAreas']);
+        Route::post('/', [ComunAreaController::class, 'storeArea']);
+        Route::get('/bySearch', [ComunAreaController::class, 'AreasBySearch']);
 
     });
 });

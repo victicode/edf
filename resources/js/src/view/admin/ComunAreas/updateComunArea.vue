@@ -59,6 +59,10 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
     })
   }
 
+  const getComunAreaById = () => {
+    
+  }
+
 
   onMounted(() => {
   })

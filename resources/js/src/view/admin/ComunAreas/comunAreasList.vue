@@ -2,9 +2,10 @@
 import { inject, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import iconsApp from '@/assets/icons/index'
-import { useApartmentStore } from '@/services/store/apartment.store';
+import { useComunAreaStore } from '@/services/store/comunArea.store';
 
-const apartmentStore = useApartmentStore()
+
+const comunAreaStore = useComunAreaStore()
 
 const page = ref(1)
 const materialIcons = inject('materialIcons')
@@ -18,9 +19,9 @@ const goTo = (url) => {
   router.push(url)
 }
 
-const apartments = ref([])
+const comunAreas = ref([])
 
-const getApartment = () => {
+const getComunArea = () => {
   ready.value =  false;
 
   const data = {
@@ -28,10 +29,11 @@ const getApartment = () => {
     search: search.value,
     filter: filter.value,
   }
-  apartmentStore.getPaginationApartment(data)
+
+  comunAreaStore.getPaginationComunArea(data)
   .then((response) =>{
     if(response.code !== 200) throw response
-    apartments.value = response.data.data;
+    comunAreas.value = response.data.data;
     lastPage.value = response.data.last_page;
     setTimeout(() => {
       ready.value =  true;
@@ -43,7 +45,7 @@ const getApartment = () => {
 }
 
 onMounted(() =>{
-  getApartment()
+  getComunArea()
 })
 </script>
 
@@ -60,25 +62,25 @@ onMounted(() =>{
       </q-btn>
     </div>
     <div class="mt-5 md:mt-8 px-2 md:mx-24  pb-5"  style="overflow: auto;" v-if="ready">
-      <div class="px-2 pt-6 mt-4  apartamentContainer relative" style="" >
+      <!-- <div class="px-2 pt-6 md:pt-3 mt-4  apartamentContainer relative" style="" > -->
 
-      <!-- <div class="px-2 pt-3 mt-4  apartamentContainer relative" style="" v-for="apartment in apartments" :key="apartment.id"> -->
+      <div class="px-2 pt-3 mt-4  apartamentContainer relative" style="" v-for="comunArea in comunAreas" :key="comunArea.id">
         <div class="flex items-center w-full pb-3">
           <div class="imgItem__container w">
             <div v-html="iconsApp.comunArea" class="flex flex-center px-0 h-full"/>
           </div>
           <div class="px-2 infoItem">
             <div class=" text-bold  text-black" style="font-weight: bold; font-size: 1.3rem;"> 
-             Salón de eventos
+             {{comunArea.name}}
             </div>
             <div class="mt-1 ellipsis w-full" style="font-weight: 500; font-size: 0.89rem;">
-              Precio por uso: 90 S/.
+              Costo por uso: {{ comunArea.price == 0 ? 'Sin reserva' : comunArea.price +'  S/.'}}.
             </div>
             <div class="mt-1" style="font-weight: 500; font-size: 0.89rem;">
-              Garantia: 500 S/.
+              Garantia: {{ comunArea.warranty_price == 0 ? 'Sin garantia' : comunArea.price + ' S/.'}}
             </div>
             <div class="mt-1" style="font-weight: 500; font-size: 0.89rem;">
-              11 persona(s)
+             Capacidad: {{ comunArea.capacity }} persona(s)
             </div>
 
           </div>
@@ -121,7 +123,7 @@ onMounted(() =>{
           
         </div>
         <!-- <div class="itemBadge px-8 py-1" :class="{'bg-positive':!apartment.owner, 'bg-negative':apartment.owner}"> -->
-        <div class="itemBadge px-7 py-1 bg-positive" >
+        <div class="itemBadge md:px-7 px-4 py-1 bg-positive" >
 
           Disponible
         </div>
