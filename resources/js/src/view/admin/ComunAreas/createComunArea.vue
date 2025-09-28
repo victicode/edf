@@ -35,9 +35,11 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
   const createArea = () => {
     loading.value = true 
 
-    comunAreaStore.createComuArea(formData.value)
+    comunAreaStore.createComunArea(formData.value)
     .then((response) => {
       if(response.code !==200) throw response 
+
+      
       showNotify('positive', 'Apartamento creado con exito')
       setTimeout(()=>{
         loading.value = false

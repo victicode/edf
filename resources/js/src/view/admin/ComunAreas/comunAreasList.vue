@@ -77,7 +77,7 @@ onMounted(() =>{
               Costo por uso: {{ comunArea.price == 0 ? 'Sin reserva' : comunArea.price +'  S/.'}}.
             </div>
             <div class="mt-1" style="font-weight: 500; font-size: 0.89rem;">
-              Garantia: {{ comunArea.warranty_price == 0 ? 'Sin garantia' : comunArea.price + ' S/.'}}
+              Garantia: {{ comunArea.warranty_price == 0 ? 'Sin garantia' : comunArea.warranty_price + ' S/.'}}
             </div>
             <div class="mt-1" style="font-weight: 500; font-size: 0.89rem;">
              Capacidad: {{ comunArea.capacity }} persona(s)
