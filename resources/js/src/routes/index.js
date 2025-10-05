@@ -197,7 +197,16 @@ const routes = [
           pagTitle: 'Agregar area común'
         }
       },
-
+      {
+        path: '/admin/comun-area/form/update/:id', 
+        component: () => import('@/view/admin/ComunAreas/updateComunArea.vue'),
+        name:'comunAreaUpdate',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Editar area común'
+        }
+      },
       
     ]
   },

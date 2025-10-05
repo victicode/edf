@@ -99,7 +99,7 @@ onMounted(() =>{
             </q-btn>
           </div>
           <div>
-            <q-btn icon="eva-settings-outline" class="mx-1" flat color="primary" round size="0.85rem" >
+            <q-btn icon="eva-settings-outline" class="mx-1" flat color="primary" round size="0.85rem"  @click="goTo('/admin/comun-area/form/update/'+comunArea.id)">
               <q-tooltip
                   transition-show="flip-right"
                   transition-hide="flip-left"

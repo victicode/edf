@@ -30,7 +30,7 @@ export const useComunAreaStore = defineStore('ComunArea', {
         if (!ApiService.getToken()) {
           throw '';
         }
-        ApiService.get('/api/users/byId/'+id)
+        ApiService.get('/api/comun-area/byId/'+id)
         .then(({data}) => {
           if(data.code !=200) throw data;
   

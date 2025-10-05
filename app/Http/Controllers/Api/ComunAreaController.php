@@ -16,6 +16,11 @@ class ComunAreaController extends Controller
         return $this->returnSuccess(200, $departaments);
 
     }
+    public function comunAreaById($id){
+        $area = ComunArea::find($id);
+
+        return $this->returnSuccess(200, $area);
+    }
     public function storeArea(Request $request){
         //
         $validated = $this->validateFieldsFromInput($request->all());
@@ -31,7 +36,7 @@ class ComunAreaController extends Controller
             'max_time_reserve' => $request->maxTime,
             'timeFrom' => $request->timeFrom,
             'timeTo' => $request->timeTo,
-            'rules' =>$request->rules,
+            'rules' => nl2br(htmlspecialchars($request->rules)),
         ]);
 
         return $this->returnSuccess(200, 'ok');
@@ -47,7 +52,7 @@ class ComunAreaController extends Controller
             'maxTime'       => ['required'],
             'timeFrom'      => ['required'],
             'timeTo'        => ['required'],
-            'rules'         => ['required', 'regex:/^[a-z 0-9 A-Z-À-ÿ ., \- \r\n  &]+$/i'],
+            'rules'         => ['required', 'regex:/^[a-z 0-9 A-Z-À-ÿ ., \- \r \n  &]+$/i'],
         ];
         $messages = [
             'name.required'          => 'Nombre del area es requerido.',

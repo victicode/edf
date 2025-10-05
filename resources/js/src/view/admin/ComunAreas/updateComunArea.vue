@@ -1,13 +1,17 @@
 <script setup>
 import { onMounted, ref, watch} from 'vue';
 import { Notify } from 'quasar'
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useComunAreaStore } from '@/services/store/comunArea.store';
 
   const comunAreaStore = useComunAreaStore()
   const router = useRouter()
+  const route = useRoute()
+  const comunArea = ref({})
   const loading = ref(false)
   const step = ref(0)
+  const ready = ref(false)
+
   const formData = ref({
     name: '',
     capacity: '',
@@ -60,11 +64,18 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
   }
 
   const getComunAreaById = () => {
-    
+    comunAreaStore.getComunAreaById(route.params.id)
+    .then((response) => {
+      comunArea.value = response.data
+      setTimeout(() => {
+        ready.value = true
+      }, 500);
+    })
   }
 
 
   onMounted(() => {
+    getComunAreaById()
   })
   
 </script>
@@ -78,7 +89,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
     class="h-full"
   >
 
-    <div class=" w-full h-full" >
+    <div class=" w-full h-full" v-if="ready" >
       <Transition name="horizontal">
 
         <div class="row w-full" v-if="step==0">
@@ -91,7 +102,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
                 dense
                 borderless
                 clearable
-                v-model="formData.name"
+                v-model="comunArea.name"
                 class="form__inputsR mt-1"
                 color="primary"
                 :rules="[ val => val && val.length > 0 || 'Nombre de area es requerido']"
@@ -105,7 +116,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
                 dense
                 borderless
                 clearable
-                v-model="formData.capacity"
+                v-model="comunArea.capacity"
                 class="form__inputsR mt-1"
                 color="primary"
                 :rules="[ val => !(!val) || 'El aforo es requerido']"
@@ -119,7 +130,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
                 dense
                 borderless
                 clearable
-                v-model="formData.price"
+                v-model="comunArea.price"
                 class="form__inputsR mt-1"
                 color="primary"
                 hint="Dejar en 0 si no requiere reserva"
@@ -133,7 +144,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
                 dense
                 borderless
                 clearable
-                v-model="formData.warrantyPrice"
+                v-model="comunArea.warranty_price"
                 class="form__inputsR mt-1"
                 color="primary"
                 hint="Dejar en 0 si no aplica garantia"
@@ -148,7 +159,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
             <q-input
               borderless
               clearable
-              v-model="formData.description"
+              v-model="comunArea.description"
               class="form__inputsR mt-1"
               color="primary"
             />
@@ -168,7 +179,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
                   dense
                   borderless
                   clearable
-                  v-model="formData.maxTime"
+                  v-model="comunArea.max_time_reserve"
                   class="form__inputsR mt-1"
                   autofocus
                   color="primary"
@@ -184,7 +195,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
                   <div class="text-body2 text-black" style="font-weight: medium;">
                     Desde:
                   </div>
-                  <q-input v-model="formData.timeFrom" mask="time" :rules="['time']" dense
+                  <q-input v-model="comunArea.timeFrom" mask="time" :rules="['time']" dense
                     borderless
                     clearable
                     class="form__inputsR mt-1"
@@ -193,7 +204,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
                     <template v-slot:append>
                       <q-icon name="eva-clock-outline" class="cursor-pointer">
                         <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                          <q-time v-model="formData.timeFrom">
+                          <q-time v-model="comunArea.timeFrom">
                             <div class="row items-center justify-end">
                               <q-btn v-close-popup label="Aceptar" color="primary" flat />
                             </div>
@@ -208,7 +219,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
                   <div class="text-body2 text-black" style="font-weight: medium;">
                     Hasta:
                   </div>
-                  <q-input v-model="formData.timeTo" mask="time" :rules="['time']" dense
+                  <q-input v-model="comunArea.timeTo" mask="time" :rules="['time']" dense
                     borderless
                     clearable
                     class="form__inputsR mt-1"
@@ -217,7 +228,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
                     <template v-slot:append>
                       <q-icon name="eva-clock-outline" class="cursor-pointer">
                         <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                          <q-time v-model="formData.timeTo">
+                          <q-time v-model="comunArea.timeTo">
                             <div class="row items-center justify-end">
                               <q-btn v-close-popup label="Aceptar" color="primary" flat />
                             </div>
@@ -239,7 +250,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
                 borderless
                 clearable
                 type="textarea"
-                v-model="formData.rules"
+                v-model="comunArea.rules"
                 class="form__inputsR mt-1"
                 color="primary"
                 :rules="[ val => val && val.length > 0 || 'Indica las reglas']"
@@ -261,7 +272,13 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
           </div>
         </q-btn>
       </div>
-
+    </div>
+    <div class="h-4/6 flex flex-center" v-else> 
+      <q-spinner
+        color="primary"
+        size="10rem"
+        :thickness="5"
+      />
     </div>
 
   </q-form>
