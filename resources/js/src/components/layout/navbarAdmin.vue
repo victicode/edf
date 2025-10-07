@@ -1,9 +1,12 @@
 <script setup>
+  import { storeToRefs } from 'pinia';
+  import { useAuthStore } from '@/services/store/auth.services';
   import iconsApp from '@/assets/icons/index'
   const emit = defineEmits(['logoutModal'])
- const logout = () => {
-  emit('logoutModal')
- }
+  const { user } = storeToRefs(useAuthStore())
+  const logout = () => {
+    emit('logoutModal')
+  }
 </script>
 <template>
   <q-tabs
@@ -19,7 +22,7 @@
         <span class="q-mt-xs text-dark text-subtitle2">Inicio</span>
       </div>
     </q-route-tab>
-    <q-route-tab class="q-px-xs-sm q-pt-sm q-px-md-lg" :to="'/admin/users'" exact >
+    <q-route-tab class="q-px-xs-sm q-pt-sm q-px-md-lg" v-if="user.rol_id == 1" :to="'/admin/users'" exact >
       <div class="flex flex-center column">
         <div v-html="iconsApp.users" />
         <span class="q-mt-xs text-dark text-subtitle2">Usuarios</span>

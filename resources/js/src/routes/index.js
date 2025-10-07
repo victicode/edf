@@ -207,6 +207,18 @@ const routes = [
           pagTitle: 'Editar area común'
         }
       },
+
+      {
+        
+        path: '/client/reserves/list', 
+        component: () => import('@/view/client/Reserves/reserveList.vue'),
+        name:'reserveClient',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Reservas'
+        }
+      },
       
     ]
   },

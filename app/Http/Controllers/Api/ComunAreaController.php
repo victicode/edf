@@ -36,9 +36,43 @@ class ComunAreaController extends Controller
             'max_time_reserve' => $request->maxTime,
             'timeFrom' => $request->timeFrom,
             'timeTo' => $request->timeTo,
-            'rules' => nl2br(htmlspecialchars($request->rules)),
+            'rules' => htmlspecialchars($request->rules),
+            //'rules' => nl2br(htmlspecialchars($request->rules)),
+            
         ]);
 
+        return $this->returnSuccess(200, 'ok');
+
+    }
+    public function updateArea(Request $request, $id){
+
+        
+        $validated = $this->validateFieldsFromInput($request->all());
+        if (count($validated) > 0) return $this->returnFail(400, $validated[0]);
+
+        $area = ComunArea::find($id);
+
+        if(!$area) return $this->returnFail(400, 'Area común no encontrada');
+
+        $area->update([
+            'name' => $request->name ?? $area->name,
+            'capacity' => $request->capacity ?? $area->capacity,
+            'price' => $request->price ?? $area->price,
+            'warranty_price' => $request->warrantyPrice ?? $area->warranty_price,
+            'description'  => $request->description ?? $area->description,
+            'max_time_reserve' => $request->maxTime ?? $area->max_time_reserve,
+            'timeFrom' => $request->timeFrom ?? $area->timeFrom,
+            'timeTo' => $request->timeTo ?? $area->timeTo,
+            'rules' => htmlspecialchars($request->rules),
+        ]);
+
+        return $this->returnSuccess(200, 'ok');
+
+    }
+    public function deleteArea($id){
+        $area = ComunArea::find($id);
+        if(!$area) return $this->returnFail(400, 'Area común no encontrada');
+        $area->delete();
         return $this->returnSuccess(200, 'ok');
 
     }
@@ -54,6 +88,8 @@ class ComunAreaController extends Controller
             'timeTo'        => ['required'],
             'rules'         => ['required', 'regex:/^[a-z 0-9 A-Z-À-ÿ ., \- \r \n  &]+$/i'],
         ];
+
+        
         $messages = [
             'name.required'          => 'Nombre del area es requerido.',
             'name.regex'             => 'Nombre no valido',

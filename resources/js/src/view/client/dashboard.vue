@@ -2,40 +2,55 @@
   import { storeToRefs } from 'pinia';
   import { useAuthStore } from '@/services/store/auth.services';
   import bg from '@/assets/img/util/bg3.webp'
-  import wozIcons from '@/assets/icons/index'
-  // const wozIcons= wozIcons
+  import iconsApp from '@/assets/icons/index'
+  import { useRouter } from 'vue-router';
+
   const { user } = storeToRefs(useAuthStore())
+  const router = useRouter()
+  const menu = [
+    {
+      title:'Mi Perfil',
+      icon: iconsApp.users2,
+      link:'/client/profile',
+    },
+    {
+      title:'Apartamento',
+      icon: iconsApp.departmet,
+      link:'/client/department/list',
+    },
+    {
+      title:'Reservas',
+      icon: iconsApp.reserve,
+      link:'/client/reserves/list',
+    },
+    {
+      title:'Visitas',
+      icon: iconsApp.visitor,
+      link:'/client/visits/list',
+    },
+    {
+      title:'Servicios',
+      icon: iconsApp.services,
+      link: '/client/services/list',
+    },
+    
+
+  ];
+
+  const goTo = (url) => {
+    router.push(url)
+  }
 </script>
 <template>
   <div class="h-full w-full px-2">
-    <div class="row pt-5  md:px-16">
-      <div class="col-md-2 md:px-8 col-6 px-4 my-3">
-        <div class="boxItem" :style=" {backgroundImage:'url('+bg+ ')'}"> 
+    <div class="row md:pt-10 pt-5  md:px-20">
+      <div class="col-md-2 md:px-8 col-6 px-4 my-3" v-for="(items, key) in menu" :key="key" @click="goTo(items.link)">
+        <div class="boxItem" :style=" {backgroundImage:'url('+bg+ ')'}" > 
           <div class="h-full w-full flex column justify-center" style="background: rgb(242 242 242 / 92%);">
-            <div class="text-primary text-center text-subtitle1 text-bold">
-              Condominio
+            <div class="text-primary text-center text-subtitle1 px-2 text-bold ellipsis" style="width: 100%;">
+              {{ items.title }}
             </div>
-            <div v-html="wozIcons.departmet" class="flex flex-center mt-2"/>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-2 md:px-8 col-6 px-4 my-3">
-        <div class="boxItem" :style=" {backgroundImage:'url('+bg+ ')'}"> 
-          <div class="h-full w-full flex column justify-center" style="background: rgb(242 242 242 / 92%);">
-            <div class="text-primary text-center text-subtitle1 text-bold">
-              Usuario
-            </div>
-            <div v-html="wozIcons.user" class="flex flex-center mt-2"/>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-2 md:px-8 col-6 px-4 my-3">
-        <div class="boxItem" :style=" {backgroundImage:'url('+bg+ ')'}"> 
-          <div class="h-full w-full flex column justify-center" style="background: rgb(242 242 242 / 92%);">
-            <div class="text-primary text-center text-subtitle1 text-bold">
-              Administración 
-            </div>
-            <div v-html="wozIcons.admin" class="flex flex-center mt-2"/>
+            <div v-html="items.icon" class="flex flex-center mt-2"/>
           </div>
         </div>
       </div>
@@ -62,7 +77,7 @@
 }
 @media (max-width: 780px) {
   .boxItem{
-    height: 9.5rem ;
+    height: 7.5rem ;
   }
 }
 

@@ -31,8 +31,11 @@ Route::middleware('auth:sanctum')->group(function ()
     Route::prefix('comun-area')->name('comun.area.')->group(function () {
         Route::get('/', [ComunAreaController::class, 'paginationAreas']);
         Route::post('/', [ComunAreaController::class, 'storeArea']);
-        Route::get('/byId/{id}', [ComunAreaController::class, 'comunAreaById']);
+        Route::post('/u/{id}', [ComunAreaController::class, 'updateArea']);
+        Route::post('/d/{id}', [ComunAreaController::class, 'deleteArea']);
 
+
+        Route::get('/byId/{id}', [ComunAreaController::class, 'comunAreaById']);
         Route::get('/bySearch', [ComunAreaController::class, 'AreasBySearch']);
 
     });

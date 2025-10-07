@@ -24,6 +24,27 @@ export const useComunAreaStore = defineStore('ComunArea', {
       })
 
     },
+    async updateComunArea(data) {
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.post('/api/comun-area/u/'+data.id, data)
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+          
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          if(response.data.code == 403){
+            reject(response.data);
+          }
+          reject(response.data.error);
+        });
+        
+      })
+
+    },
     
     async getComunAreaById(id) {
       return await new Promise((resolve, reject) => {
@@ -85,7 +106,7 @@ export const useComunAreaStore = defineStore('ComunArea', {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.post('/api/users/d/'+id)
+        ApiService.post('/api/comun-area/d/'+id)
         .then(({data}) => {
           if(data.code !=200) throw data;
           

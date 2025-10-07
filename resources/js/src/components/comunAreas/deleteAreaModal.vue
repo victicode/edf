@@ -1,14 +1,14 @@
 <script setup>
 import { Notify } from 'quasar'
 import { ref, watch} from 'vue';
-import { useAuthStore } from '@/services/store/auth.services';
 import { useRouter } from 'vue-router';
+import { useComunAreaStore } from '@/services/store/comunArea.store';
 
-// import { useClientStore } from '@/services/store/client.store';
-  const emit = defineEmits(['closeModal'])
-  const authStore = useAuthStore()
+  const emit = defineEmits(['closeModal', 'updateList'])
+  const comunAreaStore = useComunAreaStore()
   const props = defineProps({
     dialog: Boolean,
+    comunArea: Object
   })
   const router = useRouter()
   const loading = ref(false)
@@ -16,24 +16,34 @@ import { useRouter } from 'vue-router';
   const hideModal = () => {
     emit('closeModal')
   }
+  const updateList = () => {
+    emit('closeModal')
+    emit('updateList')
+  }
 
+  const deleteComunArea = () => {
+    loading.value = true
+    comunAreaStore.deleteComunArea(props.comunArea.id)
+    .then((response) =>{
+      loading.value = false
+      updateList()
+    })
+    .catch(() => {
+      loading.value = false
+      showNotify('negative', 'Error al borrar area común')
+    })
+  }
+
+  const showNotify = (type,text) => {
+    Notify.create({
+      color:type,
+      message: text,
+      timeout:2000
+    })
+  }
   watch(() => props.dialog, (newValue) => {
     dialog.value = newValue
   });
-
-const logout = () => {
-  loading.value = true
-  authStore.logout()
-  .then((response) =>{
-    loading.value = false
-    router.push('/login')
-  })
-  .catch(() => {
-    loading.value = false
-
-  })
-  // console.log('sssss')
-}
 
 </script>
 <template>
@@ -42,14 +52,14 @@ const logout = () => {
           <div>
             <q-card-section class="q-px-none">
               <div class="text-h6 text-center text-black pb-2" style="border-bottom: 1px solid lightgray;">
-                Cierre de sesión
+                Borrar area común
               </div>
             </q-card-section>
             <section class="content__modalSectionRifa md:mt-5 mt-0 ">
               <q-card-section class="q-pt-none q-px-sm ">
                 <div class="px-2">
                    <div class="text-h6 text-center text-black">
-                    ¿Estas seguro que deseas cerrar la sesión?
+                    ¿Estas seguro de borrar <b>"{{ comunArea.name }}"</b> de areas comunes?
                   </div>
                 </div>
               </q-card-section>
@@ -58,7 +68,7 @@ const logout = () => {
           <section class="pb-5">
             <div class="flex justify-evenly mt-5">
               <q-btn label="No"  unelevated class="q-mx-sm " color="primary" outline  style="border-radius: 0.8rem; padding:0px  2rem!important; font-size: 1rem;  " @click="hideModal()" />
-              <q-btn label="Si"  unelevated class="q-mx-sm " color="primary" outline  style="border-radius: 0.8rem; padding:0px  2rem!important; font-size: 1rem;  " :loading="loading" @click="logout()"/>
+              <q-btn label="Si"  unelevated class="q-mx-sm " color="primary" outline  style="border-radius: 0.8rem; padding:0px  2rem!important; font-size: 1rem;  " :loading="loading" @click="deleteComunArea()"/>
             </div>
           </section>
 

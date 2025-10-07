@@ -12,37 +12,27 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
   const step = ref(0)
   const ready = ref(false)
 
-  const formData = ref({
-    name: '',
-    capacity: '',
-    price: 0,
-    warrantyPrice: 0,
-    description:'',
-    maxTime: 1,
-    timeFrom: '',
-    timeTo: '',
-    rules: '',
-
-  })
 
   const backButton = () => {
     step.value--
   } 
   const nextStep = () => {
     if(step.value == 1) {
-      createArea()
+      updateComunArea()
       return
     }
 
     step.value++
   }
-  const createArea = () => {
+  const updateComunArea = () => {
     loading.value = true 
+    comunArea.value.warrantyPrice =  comunArea.value.warranty_price
+    comunArea.value.maxTime =  comunArea.value.max_time_reserve
 
-    comunAreaStore.createComuArea(formData.value)
+    comunAreaStore.updateComunArea(comunArea.value)
     .then((response) => {
       if(response.code !==200) throw response 
-      showNotify('positive', 'Apartamento creado con exito')
+      showNotify('positive', 'Area común actualizada con exito')
       setTimeout(()=>{
         loading.value = false
         router.go(-1)
@@ -51,7 +41,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
     })
     .catch((response) =>{
       loading.value = false
-
+      showNotify('negative', response)
     })
   }
 
@@ -195,7 +185,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
                   <div class="text-body2 text-black" style="font-weight: medium;">
                     Desde:
                   </div>
-                  <q-input v-model="comunArea.timeFrom" mask="time" :rules="['time']" dense
+                  <q-input v-model="comunArea.timeFrom" mask="time" dense
                     borderless
                     clearable
                     class="form__inputsR mt-1"
@@ -219,7 +209,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
                   <div class="text-body2 text-black" style="font-weight: medium;">
                     Hasta:
                   </div>
-                  <q-input v-model="comunArea.timeTo" mask="time" :rules="['time']" dense
+                  <q-input v-model="comunArea.timeTo" mask="time" dense
                     borderless
                     clearable
                     class="form__inputsR mt-1"
