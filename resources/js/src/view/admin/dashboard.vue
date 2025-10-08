@@ -33,7 +33,7 @@
 </script>
 <template>
   <div class="h-full w-full px-2">
-    <div class="row md:pt-10 pt-5  md:px-16">
+    <div class="row md:pt-10 pt-5  md:px-20">
       <div class="col-md-2 md:px-8 col-6 px-4 my-3" v-for="(items, key) in menu" :key="key" @click="goTo(items.link)">
         <div class="boxItem" :style=" {backgroundImage:'url('+bg+ ')'}" > 
           <div class="h-full w-full flex column justify-center" style="background: rgb(242 242 242 / 92%);">

@@ -250,7 +250,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
         </div>
       </Transition>
 
-      <div class="w-full mb-2 px-2 md:px-12 flex justify-center mt-5">
+      <div class="w-full mb-2 px-2 md:px-12 flex justify-center mt-10">
         <q-btn color="grey-7" style="border-radius: 0.5rem;" @click="backButton()" v-if="step == 1" class="me-7"> 
           <div class="md:px-10 px-5 py-1" >
             Volver

@@ -75,82 +75,91 @@ onMounted(() =>{
     <div class=" pb-5" style="overflow: auto; height: 88%;">
       <div class="mt-5 md:mt-0 px-2 md:mx-24  pb-5"   v-if="ready">
         <!-- <div class="px-2 pt-6 md:pt-3 mt-4  apartamentContainer relative" style="" > -->
-  
-        <div class="px-2 pt-3 mt-4  apartamentContainer relative" style="" v-for="comunArea in comunAreas" :key="comunArea.id">
-          <div class="flex items-center w-full pb-3">
-            <div class="imgItem__container w">
-              <div v-html="iconsApp.comunArea" class="flex flex-center px-0 h-full"/>
+        <template v-if="comunAreas.length > 0">
+          <div class="px-2 pt-3 mt-4  apartamentContainer relative" style="" v-for="comunArea in comunAreas" :key="comunArea.id">
+            <div class="flex items-center w-full pb-3">
+              <div class="imgItem__container w">
+                <div v-html="iconsApp.comunArea" class="flex flex-center px-0 h-full"/>
+              </div>
+              <div class="px-2 infoItem">
+                <div class=" text-bold  text-black" style="font-weight: bold; font-size: 1.3rem;"> 
+                 {{comunArea.name}}
+                </div>
+                <div class="mt-1 ellipsis w-full" style="font-weight: 500; font-size: 0.89rem;">
+                  Costo por uso: {{ comunArea.price == 0 ? 'Sin reserva' : comunArea.price +'  S/.'}}.
+                </div>
+                <div class="mt-1" style="font-weight: 500; font-size: 0.89rem;">
+                  Garantia: {{ comunArea.warranty_price == 0 ? 'Sin garantia' : comunArea.warranty_price + ' S/.'}}
+                </div>
+                <div class="mt-1" style="font-weight: 500; font-size: 0.89rem;">
+                 Capacidad: {{ comunArea.capacity }} persona(s)
+                </div>
+    
+              </div>
             </div>
-            <div class="px-2 infoItem">
-              <div class=" text-bold  text-black" style="font-weight: bold; font-size: 1.3rem;"> 
-               {{comunArea.name}}
+            <div class="flex w-full justify-end py-1" style="border-top: 1px solid lightgrey;">
+              <div>
+                <q-btn :icon="materialIcons.outlinedFactCheck" class="mx-1" flat color="yellow-9" round size="0.85rem" >
+                    <q-tooltip
+                      transition-show="flip-right"
+                      transition-hide="flip-left"
+                      :class="'bg-black text-body2 px-2'"
+                    >
+                      Historial de reservas
+    
+                    </q-tooltip>   
+                </q-btn>
               </div>
-              <div class="mt-1 ellipsis w-full" style="font-weight: 500; font-size: 0.89rem;">
-                Costo por uso: {{ comunArea.price == 0 ? 'Sin reserva' : comunArea.price +'  S/.'}}.
-              </div>
-              <div class="mt-1" style="font-weight: 500; font-size: 0.89rem;">
-                Garantia: {{ comunArea.warranty_price == 0 ? 'Sin garantia' : comunArea.warranty_price + ' S/.'}}
-              </div>
-              <div class="mt-1" style="font-weight: 500; font-size: 0.89rem;">
-               Capacidad: {{ comunArea.capacity }} persona(s)
-              </div>
-  
-            </div>
-          </div>
-          <div class="flex w-full justify-end py-1" style="border-top: 1px solid lightgrey;">
-            <div>
-              <q-btn :icon="materialIcons.outlinedFactCheck" class="mx-1" flat color="yellow-9" round size="0.85rem" >
+              <div>
+                <q-btn icon="eva-settings-outline" class="mx-1" flat color="primary" round size="0.85rem"  @click="goTo('/admin/comun-area/form/update/'+comunArea.id)">
                   <q-tooltip
-                    transition-show="flip-right"
-                    transition-hide="flip-left"
-                    :class="'bg-black text-body2 px-2'"
-                  >
-                    Historial de reservas
-  
-                  </q-tooltip>   
-              </q-btn>
+                      transition-show="flip-right"
+                      transition-hide="flip-left"
+                      :class="'bg-black text-body2 px-2'"
+                    >
+                      Editar area común
+                    </q-tooltip>  
+                </q-btn>
+              </div>
+              <div>
+                <q-btn icon="eva-trash-2-outline" class="mx-1" flat color="negative" round size="0.85rem"  @click="selectArea(comunArea.id)">
+                  <q-tooltip
+                      transition-show="flip-right"
+                      transition-hide="flip-left"
+                      :class="'bg-black text-body2 px-2'"
+                    >
+                      Borrar area común
+                    </q-tooltip>  
+                </q-btn>
+              </div>
+              
             </div>
-            <div>
-              <q-btn icon="eva-settings-outline" class="mx-1" flat color="primary" round size="0.85rem"  @click="goTo('/admin/comun-area/form/update/'+comunArea.id)">
-                <q-tooltip
-                    transition-show="flip-right"
-                    transition-hide="flip-left"
-                    :class="'bg-black text-body2 px-2'"
-                  >
-                    Editar area común
-                  </q-tooltip>  
-              </q-btn>
+            <!-- <div class="itemBadge px-8 py-1" :class="{'bg-positive':!apartment.owner, 'bg-negative':apartment.owner}"> -->
+            <div class="itemBadge md:px-7 px-4 py-1 bg-positive" >
+    
+              Disponible
             </div>
-            <div>
-              <q-btn icon="eva-trash-2-outline" class="mx-1" flat color="negative" round size="0.85rem"  @click="selectArea(comunArea.id)">
-                <q-tooltip
-                    transition-show="flip-right"
-                    transition-hide="flip-left"
-                    :class="'bg-black text-body2 px-2'"
-                  >
-                    Borrar area común
-                  </q-tooltip>  
-              </q-btn>
-            </div>
-            
           </div>
-          <!-- <div class="itemBadge px-8 py-1" :class="{'bg-positive':!apartment.owner, 'bg-negative':apartment.owner}"> -->
-          <div class="itemBadge md:px-7 px-4 py-1 bg-positive" >
-  
-            Disponible
+          <div class="flex justify-center mt-4">
+    
+            <q-pagination
+              v-model="page"
+              color="primary"
+              :max="lastPage"
+              :max-pages="4"
+              :boundary-numbers="false"
+              @update:model-value="getApartment()"
+            />
           </div>
-        </div>
-        <div class="flex justify-center mt-4">
-  
-          <q-pagination
-            v-model="page"
-            color="primary"
-            :max="lastPage"
-            :max-pages="4"
-            :boundary-numbers="false"
-            @update:model-value="getApartment()"
-          />
-        </div>
+        </template>
+        <template v-else>
+          <div class="flex flex-center column py-24">
+            <q-icon name="eva-search-outline" size="3rem" color="primary" />
+            <div class="text-h6 text-primary mt-2">
+              No se encontraron areas comúnes
+            </div>
+          </div>
+        </template>
         
       </div>
       <div v-else class="flex flex-center py-24">

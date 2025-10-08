@@ -196,6 +196,7 @@ import { useRouter } from 'vue-router';
             v-model="formData.phone"
             label="Tu Teléfono"
             placeholder="412-1234567"
+            class="phoneUser"
             :rules="[val => !!val || 'El teléfono es requerido']"
           />
         </div>
@@ -284,6 +285,9 @@ import { useRouter } from 'vue-router';
 </div>
 </template>
 <style lang="scss">
+.phoneUser.form__inputsSelect .prefixInput .q-field__inner{
+  border: 0px solid rgb(223, 223, 223);
+}
 .form__inputsR{
   & .q-field__inner {
     box-shadow: 0px 3px 5px 0px #bfbfbfa3;

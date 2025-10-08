@@ -40,7 +40,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
       if(response.code !==200) throw response 
 
       
-      showNotify('positive', 'Apartamento creado con exito')
+      showNotify('positive', 'Area común creada con exito')
       setTimeout(()=>{
         loading.value = false
         router.go(-1)
@@ -247,7 +247,7 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
         </div>
       </Transition>
 
-      <div class="w-full mb-2 px-2 md:px-12 flex justify-center mt-5">
+      <div class="w-full mb-2 px-2 md:px-12 flex justify-center mt-10">
         <q-btn color="grey-7" style="border-radius: 0.5rem;" @click="backButton()" v-if="step == 1" class="me-7"> 
           <div class="md:px-10 px-5 py-1" >
             Volver

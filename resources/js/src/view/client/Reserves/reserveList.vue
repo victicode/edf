@@ -1,7 +1,15 @@
+<script setup>
+
+</script>
 <template>
   <div class="h-full"  style="overflow: hidden;">
     <div style="height: 90%; ">
-
+      <div class="flex flex-center column py-24">
+        <q-icon name="eva-search-outline" size="3rem" color="primary" />
+        <div class="text-h6 text-primary mt-2">
+          No se encontraron reservas
+        </div>
+      </div>
     </div>
     <div class="px-4  md:px-0 md:flex  md:justify-center items-center md:w-6/6" style="height: 10%;">
       
@@ -9,7 +17,7 @@
         <div class="flex items-center py-1" >
           <q-icon name="eva-plus-outline"/>
           <div class="q-pt-xs text-bold pl-1">
-            Agregar area común
+            Agregar reserva
           </div>
         </div>
       </q-btn>
@@ -19,6 +27,6 @@
 
 <style lang="scss">
 .createBookingButton {
-width: 80%;
+  width: 80%;
 }
 </style>
