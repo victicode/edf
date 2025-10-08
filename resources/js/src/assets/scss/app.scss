@@ -8,22 +8,20 @@
 .horizontal-enter-active{
   transform: translatex(0px);
   transition: all 0.5s ease;
-
 }
 .horizontal-leave-active{
   transition: all 0.5s ease;
-
   transform: translatex(0px);
 }
 .horizontal-leave-to {
   transition: all 0.5s ease;
   position: absolute;
-  transform: translatex(-500px);
+  transform: translatex(-300px);
   opacity: 0;
 }
 .horizontal-enter-from {
   transition: all 0.5s ease;
-  transform: translatex(500px);
+  transform: translatex(300px);
   position: absolute;
   opacity: 0;
 }

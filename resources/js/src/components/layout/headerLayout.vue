@@ -1,17 +1,29 @@
 <script setup>
   import { storeToRefs } from 'pinia';
   import { useAuthStore } from '@/services/store/auth.services';
-  import { inject } from 'vue';
+  import { inject, ref, onMounted, watch} from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   const route = useRoute()
   const router = useRouter()
   const { user } = storeToRefs(useAuthStore())
   const emitter = inject('emitter')
   const materialIcons = inject('materialIcons')
-
+  const pagTitle = ref(route.meta.pagTitle)
   const showSidebar = () => {
     emitter.emit('showInfoNews')
   }
+
+  const changePagTitle = (title) => {
+    pagTitle.value = title
+  }
+  watch(route, (newValue) => {
+    pagTitle.value = newValue.meta.pagTitle
+  });
+
+
+  onMounted(() =>{
+    emitter.on('pagTitle', changePagTitle) 
+  })
 </script>
 
 <template>
@@ -40,7 +52,7 @@
           <q-btn  :icon="materialIcons.outlinedArrowBack" unelevated color="white" flat size="1rem" round @click="router.go(-1)" />
         </div>
         <div class="text-h6 text-bold text-white ml-2">
-          {{route.meta.pagTitle}}
+          {{pagTitle}}
         </div>
       </div>
     </template>

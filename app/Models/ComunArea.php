@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ComunArea extends Model
 {
     //
+    use SoftDeletes;
     protected $table = "comun_areas";
 
     protected $fillable = [
@@ -20,4 +22,10 @@ class ComunArea extends Model
         "timeTo",
         "rules"
     ];
+    public $appends  =   ['pay_label'];
+
+    public function getPayLabelAttribute(){
+        return $this->price == 0 && $this->warranty_price == 0 ? 'Gratis' : 'Pago';
+    }
+
 }

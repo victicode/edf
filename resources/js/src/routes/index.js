@@ -209,7 +209,6 @@ const routes = [
       },
 
       {
-        
         path: '/client/reserves/list', 
         component: () => import('@/view/client/Reserves/reserveList.vue'),
         name:'reserveClient',
@@ -219,6 +218,16 @@ const routes = [
           pagTitle: 'Reservas'
         }
       },
+      {
+        path: '/client/reserves/form/add', 
+        component: () => import('@/view/client/Reserves/createReserve.vue'),
+        name:'reserveClientAdd',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Reservas'
+        }
+      }
       
     ]
   },

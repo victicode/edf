@@ -1,5 +1,9 @@
 <script setup>
-
+import { useRouter } from 'vue-router';
+  const router = useRouter()
+  const goTo = (url) => {
+    router.push(url) 
+  }
 </script>
 <template>
   <div class="h-full"  style="overflow: hidden;">
@@ -12,8 +16,7 @@
       </div>
     </div>
     <div class="px-4  md:px-0 md:flex  md:justify-center items-center md:w-6/6" style="height: 10%;">
-      
-      <q-btn color="primary" unelevated class="w-full mt-0 md:mx-24 createBookingButton md:w-4/5" style="border-radius: 0.5rem;"  >
+      <q-btn color="primary" unelevated class="w-full mt-0 md:mx-24 createBookingButton md:w-4/5" style="border-radius: 0.5rem;" @click="goTo('/client/reserves/form/add')" >
         <div class="flex items-center py-1" >
           <q-icon name="eva-plus-outline"/>
           <div class="q-pt-xs text-bold pl-1">
@@ -26,7 +29,12 @@
 </template>
 
 <style lang="scss">
-.createBookingButton {
+.createBookingButton{
   width: 80%;
+}
+@media screen and (max-width: 820px){
+  .createBookingButton{
+    width: 100%;
+  }
 }
 </style>

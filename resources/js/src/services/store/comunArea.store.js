@@ -119,6 +119,24 @@ export const useComunAreaStore = defineStore('ComunArea', {
       })
 
     },
+    async getAllComunAreas(){
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.get('/api/comun-area/all')
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+          
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+        
+      })
+    }
     
   },
 })

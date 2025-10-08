@@ -12,9 +12,12 @@ class ComunAreaController extends Controller
     //
     public function paginationAreas(Request $request)
     {
-        $departaments = ComunArea::paginate(15);
-        return $this->returnSuccess(200, $departaments);
-
+        $comunAreas = ComunArea::paginate(40);
+        return $this->returnSuccess(200, $comunAreas);
+    }
+    public function getAll(){
+        $comunAreas = ComunArea::get();
+        return $this->returnSuccess(200, $comunAreas);
     }
     public function comunAreaById($id){
         $area = ComunArea::find($id);
