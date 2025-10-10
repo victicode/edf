@@ -19,7 +19,7 @@ const logout = () => {
     </q-route-tab>
     <q-route-tab class="q-px-xs-sm q-pt-sm q-px-md-lg" v-if="user.rol_id == 1" :to="'/admin/users'" exact>
       <div class="flex flex-center column">
-        <div v-html="iconsApp.users" />
+        <div v-html="iconsApp.user3" />
         <span class="q-mt-xs text-dark text-subtitle2">Usuarios</span>
       </div>
     </q-route-tab>

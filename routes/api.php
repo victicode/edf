@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function ()
     Route::prefix('bookings')->name('booking.')->group(function () {
         Route::get('/', [BookingController::class, 'getBookingsByUser']);
         Route::post('/', [BookingController::class, 'storeBooking']);
+        Route::get('/availableBooking/{id}', [BookingController::class, 'getAvaibleBookingByDay']);
         
 
     });

@@ -20,12 +20,16 @@ class ComunArea extends Model
         "max_time_reserve",
         "timeFrom",
         "timeTo",
-        "rules"
+        "rules",
+        "icon"
     ];
-    public $appends  =   ['pay_label'];
+    public $appends  =   ['pay_label', 'format_rules'];
 
     public function getPayLabelAttribute(){
         return $this->price == 0 && $this->warranty_price == 0 ? 'Gratis' : 'Pago';
+    }
+    public function getFormatRulesAttribute(){
+        return nl2br(htmlspecialchars($this->rules));
     }
 
 }

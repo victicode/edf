@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\ComunArea;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -58,6 +59,21 @@ class BookingController extends Controller
         if(!$booking) return $this->returnFail(400, 'Reserva no encontrada');
         $booking->delete();
         return $this->returnSuccess(200, 'ok');
+    }
+    public function getAvaibleBookingByDay(Request $request, $idArea){
+
+        $area = ComunArea::find($idArea);
+        $date = date('Y-m-d',strtotime($request->date));
+        $bookingInDay = Booking::where('comun_area_id', $idArea)->where('date', $date)->get();
+        $notAvailable = [];
+
+        foreach ($bookingInDay as $booking) {
+           array_push($notAvailable, substr($booking->time_from, 0, 2));
+        }
+
+
+
+        return $this->returnSuccess(200, [ 'bookings' => $bookingInDay, 'notAvailable' => $notAvailable]);
     }
     private function validateFieldsFromInput($inputs){
         $rules =[

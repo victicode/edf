@@ -3,15 +3,28 @@ import { onMounted, ref, inject } from 'vue';
 import { Notify } from 'quasar'
 import { useRouter, useRoute } from 'vue-router';
 import { useComunAreaStore } from '@/services/store/comunArea.store';
+import { useReserveStore } from '@/services/store/reserve.store';
 import iconsApp from '@/assets/icons/index'
 import moment from 'moment';
+const myLocale = {
+  /* starting with Sunday */
+  days: 'Domingo_Lunes_Martes_Miércoles_Jueves_Viernes_Sábado'.split('_'),
+  daysShort: 'Dom_Lun_Mar_Mié_Jue_Vie_Sáb'.split('_'),
+  months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split('_'),
+  monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
+  firstDayOfWeek: 1, // 0-6, 0 - Sunday, 1 Monday, ...
+  format24h: true,
+  pluralDay: 'dias'
+}
 
 const comunAreaStore = useComunAreaStore()
+const reserveStore = useReserveStore()
 const emitter = inject('emitter')
 const comunAreas = ref([])
-const comunArea = ref({})
+const selectedComunArea = ref({})
 const router = useRouter()
 const route = useRoute()
+const disabledTime = ref(true)
 const ready = ref(false)
 const loading = ref(false)
 const step = ref(1)
@@ -28,7 +41,7 @@ const formData = ref({
 })
 
 const selectArea = (id) => {
-  comunArea.value = comunAreas.value.find((area) => area.id == id)
+  selectedComunArea.value = comunAreas.value.find((area) => area.id == id)
   nextStep()
 }
 const backButton = () => {
@@ -49,17 +62,34 @@ const nextStep = () => {
 const getComunsArea = () => {
   emitter.emit('pagTitle', 'Selecciona area común')
   comunAreaStore.getAllComunAreas()
-    .then((response) => {
-      if (response.code !== 200) throw response
+  .then((response) => {
+    if (response.code !== 200) throw response
 
-      comunAreas.value = response.data
-      setTimeout(() => {
-        ready.value = true
-      }, 100)
-    })
-    .catch((response) => {
-      showNotify('positive', 'Error al obtener areas comunes')
-    })
+    comunAreas.value = response.data
+    setTimeout(() => {
+      ready.value = true
+    }, 100)
+  })
+  .catch((response) => {
+    showNotify('positive', 'Error al obtener areas comunes')
+  })
+}
+const getAvaibleBookingByDay = () =>{
+  
+  const data = {
+    idArea: selectedComunArea.value.id,
+    date: formData.value.date
+  }
+
+  reserveStore.getAvailableReserveInDayByArea(data)
+  .then((response) => {
+    disabledTime.value = false
+
+    console.log(response)
+  })
+}
+const optionsFn = (date) => {
+  return date >=  moment().format('YYYY/MM/DD')
 }
 
 const showNotify = (type, text) => {
@@ -85,8 +115,9 @@ onMounted(() => {
             <div v-for="comunArea in comunAreas" class="row selectAreaItem items-center mb-5 px-4 md:px-5 md:py-5 py-3"
               :key="comunArea.id" @click="selectArea(comunArea.id)">
               <div class="col-10">
-                <div class="text-subtitle1 text-black q-mt-xs" style="line-height: 1.2; font-weight: 500;">{{
-                  comunArea.name }}</div>
+                <div class="text-subtitle1 text-black q-mt-xs" style="line-height: 1.2; font-weight: 500;">
+                  {{comunArea.name }}
+                </div>
                 <div class="q-mt-xs text-body2" style="font-weight: 500;">
                   Costo: S/{{ comunArea.price }}
                   <i v-if="comunArea.warranty_price > 0">
@@ -103,120 +134,138 @@ onMounted(() => {
           </div>
         </Transition>
         <Transition name="horizontal">
-          <div class="h-full " style="overflow: auto;" v-if="step > 1">
+          <div class="h-full " style="overflow: hidden;" v-if="step > 1">
 
             <div class=" w-full h-full ">
-              <div style="height: 90%;">
+              <div style="height: 84%; overflow: auto;" class="pb-5">
                 <div class="row w-full pt-5">
                   <div class="col-12 px-3">
-                    <div class="w-full row selectAreaItem items-center mb-5 pr-4 pl-2 py-2">
-                      <div class="text-subtitle1 text-black q-pt-xs col-10 "
+                    <div class="w-full row selectAreaItem items-center mb-5 pr-4 pl-2 md:px-4 py-2">
+                      <div class="text-subtitle1 text-black q-pt-xs col-10 pl-1"
                         style="line-height: 1.2; font-weight: 500;">
-                        {{ comunArea.name }}
+                        {{ selectedComunArea.name }}
                       </div>
 
                       <div class="text-subtitle2 text-white  px-6"
                         style="position: absolute; top: 0; right: 0; border-bottom-left-radius: 1rem; letter-spacing: 1px; letter-spacing: 1px;"
-                        :class="{ 'bg-primary': comunArea.pay_label == 'Pago', 'bg-positive': comunArea.pay_label == 'Gratis' }">
-                        {{ comunArea.pay_label }}
+                        :class="{ 'bg-primary': selectedComunArea.pay_label == 'Pago', 'bg-positive': selectedComunArea.pay_label == 'Gratis' }">
+                        {{ selectedComunArea.pay_label }}
                       </div>
                       <div class="col-12 row mt-1">
-                        <div class="col-3 bg-primary  flex flex-center py-1" style=" border-radius: 0.5rem;">
+                        <div class="col-3 col-md-1 bg-primary  flex flex-center py-1" style=" border-radius: 0.5rem;">
                           <div>
-                            <div v-html="iconsApp.gym" />
+                            <div v-html="iconsApp[selectedComunArea.icon]" />
                           </div>
                         </div>
                         <div class="col-8 pl-2">
                           <div class="q-mt-xs text-body2x text-black" style="font-weight: 500;">
-                            Costo: S/{{ comunArea.price }}
-                            <i v-if="comunArea.warranty_price > 0">
-                              + S/{{ comunArea.warranty_price }}
+                            Costo: S/{{ selectedComunArea.price }}
+                            <i style="font-weight: 500;" v-if="selectedComunArea.warranty_price > 0">
+                              + S/{{ selectedComunArea.warranty_price }}
                               <span class="text-warning" style="font-size: 0.75rem;">garantia</span>
                             </i>
                           </div>
                           <div class="q-mt-xs text-body2x text-black" style="font-weight: 500;">
-                            Capcidad: {{ comunArea.capacity }} personas
+                            Capcidad: {{ selectedComunArea.capacity }} personas
                           </div>
                           <div class="q-mt-xs text-body2x text-black" style="font-weight: 500;">
-                            Max. de reserva: {{ comunArea.max_time_reserve }} hora(s)
+                            Max. de reserva: {{ selectedComunArea.max_time_reserve }} hora(s)
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                   <template v-if="step == 2">
-                    <div class="col-12 col-md-6 row md:px-5">
-                      <div class="col-12 text-subtitle1 headerSection my-1 py-2 px-4">
-                        Selecciona la fecha
-                      </div>
-                      <div class="col-12 row mt-3 px-3 md:px-2">
-                        <div class="col-12">
-                          <div class="text-subtitle2 text-black" style="font-weight: medium;">
-                            Fecha de reserva:
+                    <div class="col-12 col-md-6 row">
+                      <div class="col-12 row md:px-5 ">
+                        <div class="col-12 text-subtitle1 headerSection my-1 py-2 px-4">
+                          Selecciona la fecha
+                        </div>
+                        <div class="col-12 row mt-3 px-3 md:px-2">
+                          <div class="col-12">
+                            <div class="text-subtitle2 text-black" style="font-weight: medium;">
+                              Fecha de reserva:
+                            </div>
+                            <q-input v-model="formData.date" :rules="[ val =>!(!val) || 'Fecha es requerida']" dense borderless clearable
+                              class="form__inputsReverse mt-1" color="primary">
+                              <template v-slot:append>
+                                <q-icon name="eva-calendar-outline" class="cursor-pointer">
+                                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                    <q-date 
+                                      mask="DD-MM-YYYY"
+                                      v-model="formData.date" 
+                                      :options="optionsFn" 
+                                      @update:model-value="getAvaibleBookingByDay" 
+                                      :navigation-min-year-month="moment().format('YYYY/MM')"
+                                      :locale="myLocale"
+                                    >
+                                      <div class="row items-center justify-end">
+                                        <q-btn v-close-popup label="Aceptar" color="primary" flat />
+                                      </div>
+                                    </q-date>
+                                  </q-popup-proxy>
+                                </q-icon>
+                              </template>
+                            </q-input>
                           </div>
-                          <q-input v-model="formData.date" mask="date" :rules="['date']" dense borderless clearable
-                            class="form__inputsReverse mt-1" color="primary">
-                            <template v-slot:append>
-                              <q-icon name="eva-calendar-outline" class="cursor-pointer">
-                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                  <q-date v-model="formData.date">
-                                    <div class="row items-center justify-end">
-                                      <q-btn v-close-popup label="Aceptar" color="primary" flat />
-                                    </div>
-                                  </q-date>
-                                </q-popup-proxy>
-                              </q-icon>
-                            </template>
-                          </q-input>
+                        </div>
+                      </div>
+                      <div class="col-12 row md:px-5">
+                        <div class="col-12 text-subtitle1 headerSection my-1 py-2 px-4">
+                          Selecciona la hora
+                        </div>
+                        <div class="col-12 row mt-3 px-3 md:px-2">
+                          <div class="col-6  pr-2 md:pr-4">
+                            <div class="text-subtitle2 text-black" style="font-weight: medium;">
+                              Desde:
+                            </div>
+                            <q-input v-model="formData.time_from" :rules="[ val =>!(!val) || 'Hora de entrada es requerida']" dense borderless clearable
+                              class="form__inputsReverse mt-1" color="primary" :readonly="disabledTime" :disable="disabledTime">
+                              <template v-slot:append>
+                                <q-icon name="eva-clock-outline" class="cursor-pointer">
+                                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                    <q-time v-model="formData.time_from" mask="hh:ss A">
+                                      <div class="row items-center justify-end">
+                                        <q-btn v-close-popup label="Aceptar" color="primary" flat />
+                                      </div>
+                                    </q-time>
+                                  </q-popup-proxy>
+                                </q-icon>
+                              </template>
+                            </q-input>
+  
+                          </div>
+                          <div class="col-6  pl-2 md:pl-4">
+                            <div class="text-subtitle2 text-black" style="font-weight: medium;">
+                              Hasta:
+                            </div>
+                            <q-input v-model="formData.time_to" :rules="[ val =>!(!val) || 'Hora de salida es requerida']"  dense borderless clearable
+                              class="form__inputsReverse mt-1" color="primary" :readonly="disabledTime" :disable="disabledTime">
+                              <template v-slot:append>
+                                <q-icon name="eva-clock-outline" class="cursor-pointer">
+                                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                    <q-time v-model="formData.time_to" mask="hh:ss A">
+                                      <div class="row items-center justify-end">
+                                        <q-btn v-close-popup label="Aceptar" color="primary" flat />
+                                      </div>
+                                    </q-time>
+                                  </q-popup-proxy>
+                                </q-icon>
+                              </template>
+                            </q-input>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div class="col-12 col-md-6 row md:px-5">
-                      <div class="col-12 text-subtitle1 headerSection my-1 py-2 px-4">
-                        Selecciona la hora
+                    <div class="col-12 col-md-6  md:px-5" >
+                      <div class="w-full text-subtitle1 headerSection my-1 py-2 px-4">
+                        Reglas
                       </div>
                       <div class="col-12 row mt-3 px-3 md:px-2">
-                        <div class="col-6  pr-2 md:pr-4">
-                          <div class="text-subtitle2 text-black" style="font-weight: medium;">
-                            Desde:
-                          </div>
-                          <q-input v-model="formData.time_from" mask="time" :rules="['time']" dense borderless clearable
-                            class="form__inputsReverse mt-1" color="primary">
-                            <template v-slot:append>
-                              <q-icon name="eva-clock-outline" class="cursor-pointer">
-                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                  <q-time v-model="formData.time_from">
-                                    <div class="row items-center justify-end">
-                                      <q-btn v-close-popup label="Aceptar" color="primary" flat />
-                                    </div>
-                                  </q-time>
-                                </q-popup-proxy>
-                              </q-icon>
-                            </template>
-                          </q-input>
-
-                        </div>
-                        <div class="col-6  pl-2 md:pl-4">
-                          <div class="text-subtitle2 text-black" style="font-weight: medium;">
-                            Hasta:
-                          </div>
-                          <q-input v-model="formData.time_to" mask="time" :rules="['time']" dense borderless clearable
-                            class="form__inputsReverse mt-1" color="primary">
-                            <template v-slot:append>
-                              <q-icon name="eva-clock-outline" class="cursor-pointer">
-                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                  <q-time v-model="formData.time_to">
-                                    <div class="row items-center justify-end">
-                                      <q-btn v-close-popup label="Aceptar" color="primary" flat />
-                                    </div>
-                                  </q-time>
-                                </q-popup-proxy>
-                              </q-icon>
-                            </template>
-                          </q-input>
-                        </div>
+                        <div class="text-grey-9" style="font-size: 0.95rem; line-height: 1.7;" v-html="selectedComunArea.format_rules" />
                       </div>
                     </div>
+  
                   </template>
                   <template v-if="step == 3">
                     <div class="col-12 col-md-6 row md:px-5">
@@ -237,10 +286,16 @@ onMounted(() => {
                   </template>
                 </div>
               </div>
-              <div style="height: 10%;">
-                <div class="row">
+              <div style="height: 17%;" class="buttonSection">
+                <div class="row py-4 ">
+                  <div class="col-12 pb-4 px-5">
+                    <div class="w-full flex justify-between text-black" >
+                      <div style="font-weight: 500; font-size: 1.1rem;">Total a pagar:</div>
+                      <div style="font-weight: 500; font-size: 1.1rem;">S/{{ selectedComunArea.price + selectedComunArea.warranty_price }}</div>
+                    </div>                
+                  </div>
 
-                  <div class="col-6 flex flex-center">
+                  <div class="col-6 flex flex-center ">
                     <q-btn color="grey-8" class="" style="width: 80%; border-radius: 0.5rem;" @click="backButton()"
                       v-if="step > 1">
                       <div class="py-1 md:py-2">
@@ -272,6 +327,12 @@ onMounted(() => {
   </div>
 </template>
 <style lang="scss">
+.buttonSection{
+  box-shadow: 0px -5px 10px 0px rgb(207 207 207)
+}
+.md\:order-3{
+  order:3
+}
 .text-body2x {
   font-size: 0.9rem;
 }

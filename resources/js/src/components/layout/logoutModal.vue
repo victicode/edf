@@ -38,7 +38,7 @@ const logout = () => {
 </script>
 <template>
   <q-dialog v-model="dialog" class="createPayMethodDialog" persistent backdrop-filter="blur(0.5px)">
-    <q-card class="dialog_document public w-full" style="border-radius:1rem">
+    <q-card class="dialog_document public " style="border-radius:1rem">
       <div>
         <q-card-section class="q-px-none">
           <div class="text-h6 text-center text-black pb-2" style="border-bottom: 1px solid lightgray;">
@@ -49,7 +49,7 @@ const logout = () => {
           <q-card-section class="q-pt-none q-px-sm ">
             <div class="px-2">
               <div class="text-h6 text-center text-black">
-                ¿Seguro que deseas <br> cerrar la sesión?
+                ¿Seguro que deseas  cerrar la sesión?
               </div>
             </div>
           </q-card-section>
@@ -80,9 +80,11 @@ const logout = () => {
   position: relative;
 
   & .dialog_document {
+
     max-width: 90%;
     border-radius: 1rem !important;
     // height: 100%;
+    width: 30%;
 
   }
 
@@ -112,6 +114,11 @@ const logout = () => {
   & .q-item__label {
 
     color: goldenrod !important;
+  }
+}
+@media screen and (max-width: 820px) {
+  .dialog_document {
+    width: 100%;
   }
 }
 </style>

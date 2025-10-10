@@ -4,23 +4,23 @@ import ApiService from '@/services/axios'
 export const useReserveStore = defineStore('Reserve', {
   actions: {
     async getReservesByUser() {
-        return await new Promise((resolve, reject) => {
-          if (!ApiService.getToken()) {
-            throw '';
-          }
-          ApiService.setHeader();
-          ApiService.get('/api/bookings')
-          .then(({data}) => {
-            if(data.code !=200) throw data;
-            
-            resolve(data);
-          }).catch(( {response}) => {
-            console.log(response)
-            reject(response.data.error);
-          });
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.get('/api/bookings')
+        .then(({data}) => {
+          if(data.code !=200) throw data;
           
-        })
-      },
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+        
+      })
+    },
     async createReserve(data) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
@@ -86,7 +86,24 @@ export const useReserveStore = defineStore('Reserve', {
       })
 
     },
-    
+    async getAvailableReserveInDayByArea(data){
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.get('/api/bookings/availableBooking/'+data.idArea+'?date='+data.date+'&')
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+          
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+      })
+
+    },
     async deleteReserve(id) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
@@ -102,9 +119,7 @@ export const useReserveStore = defineStore('Reserve', {
           console.log(response)
           reject(response.data.error);
         });
-        
       })
-
     }
     
   },
