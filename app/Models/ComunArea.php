@@ -31,5 +31,7 @@ class ComunArea extends Model
     public function getFormatRulesAttribute(){
         return nl2br(htmlspecialchars($this->rules));
     }
+    
+
 
 }

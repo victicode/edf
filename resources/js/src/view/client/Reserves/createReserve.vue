@@ -37,19 +37,29 @@ const formData = ref({
   reference: '',
   note: '',
   pay_method: '',
+  is_exclusive: false,
 
 })
+const hourOptionsFrom = ref([])
+const hourOptionsTo = ref([])
+const minOptionsFrom = ref([0])
+const temporal = ref([])
 
 const selectArea = (id) => {
   selectedComunArea.value = comunAreas.value.find((area) => area.id == id)
   nextStep()
 }
+
 const backButton = () => {
+  if (step.value == 2) {
+    cleanForm()
+    // return
+  }
   step.value--
+
   emitter.emit('pagTitle', 'Selecciona area común')
-
-
 }
+
 const nextStep = () => {
   if (step.value == 3) {
     createReserve()
@@ -59,12 +69,26 @@ const nextStep = () => {
   step.value++
 
 }
+const cleanForm = () => {
+  formData.value ={
+    date: '',
+    time_from: '',
+    time_to: '',
+    amount: 0,
+    vaucher: '',
+    reference: '',
+    note: '',
+    pay_method: '',
+    is_exclusive: false,
+
+  }
+  disabledTime.value = true
+}
 const getComunsArea = () => {
   emitter.emit('pagTitle', 'Selecciona area común')
   comunAreaStore.getAllComunAreas()
   .then((response) => {
     if (response.code !== 200) throw response
-
     comunAreas.value = response.data
     setTimeout(() => {
       ready.value = true
@@ -84,12 +108,25 @@ const getAvaibleBookingByDay = () =>{
   reserveStore.getAvailableReserveInDayByArea(data)
   .then((response) => {
     disabledTime.value = false
+    hourOptionsFrom.value = response.data.availableFrom
+    temporal.value = response.data.availableTo
 
-    console.log(response)
   })
 }
 const optionsFn = (date) => {
   return date >=  moment().format('YYYY/MM/DD')
+}
+const limitToTime = () => {
+
+  let fromHour = parseInt(formData.value.time_from.substring(0, 2))
+  let maxHour = []
+
+  for (let index = 1; index <= selectedComunArea.value.max_time_reserve; index++) {
+    maxHour.push(fromHour+index)
+  }
+  hourOptionsTo.value = temporal.value;
+  hourOptionsTo.value = hourOptionsTo.value.filter((h) => maxHour.includes(h))
+
 }
 
 const showNotify = (type, text) => {
@@ -219,12 +256,19 @@ onMounted(() => {
                             <div class="text-subtitle2 text-black" style="font-weight: medium;">
                               Desde:
                             </div>
-                            <q-input v-model="formData.time_from" :rules="[ val =>!(!val) || 'Hora de entrada es requerida']" dense borderless clearable
-                              class="form__inputsReverse mt-1" color="primary" :readonly="disabledTime" :disable="disabledTime">
+                            <q-input v-model="formData.time_from" mask="time" :rules="['time']" dense borderless clearable
+                              class="form__inputsReverse mt-1 q-pb-sm" color="primary" :readonly="disabledTime" :disable="disabledTime">
                               <template v-slot:append>
                                 <q-icon name="eva-clock-outline" class="cursor-pointer">
-                                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                    <q-time v-model="formData.time_from" mask="hh:ss A">
+                                  <q-popup-proxy cover transition-show="scale" transition-hide="scale"> 
+                                    <q-time 
+                                      v-model="formData.time_from" 
+                                      :hour-options="hourOptionsFrom" :minute-options="minOptionsFrom" 
+                                      @update:model-value="limitToTime" 
+                                      format24h
+                                    >
+                                      <!-- <q-time v-model="formData.time_from" mask="hh:ss A" :options="hourAvailable"> -->
+                                      
                                       <div class="row items-center justify-end">
                                         <q-btn v-close-popup label="Aceptar" color="primary" flat />
                                       </div>
@@ -239,12 +283,12 @@ onMounted(() => {
                             <div class="text-subtitle2 text-black" style="font-weight: medium;">
                               Hasta:
                             </div>
-                            <q-input v-model="formData.time_to" :rules="[ val =>!(!val) || 'Hora de salida es requerida']"  dense borderless clearable
-                              class="form__inputsReverse mt-1" color="primary" :readonly="disabledTime" :disable="disabledTime">
+                            <q-input v-model="formData.time_to" mask="time" :rules="['time']" dense borderless clearable
+                              class="form__inputsReverse mt-1 q-pb-sm" color="primary" :readonly="disabledTime" :disable="disabledTime">
                               <template v-slot:append>
                                 <q-icon name="eva-clock-outline" class="cursor-pointer">
                                   <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                    <q-time v-model="formData.time_to" mask="hh:ss A">
+                                    <q-time v-model="formData.time_to" format24h :hour-options="hourOptionsTo" :minute-options="minOptionsFrom">
                                       <div class="row items-center justify-end">
                                         <q-btn v-close-popup label="Aceptar" color="primary" flat />
                                       </div>
@@ -254,6 +298,17 @@ onMounted(() => {
                               </template>
                             </q-input>
                           </div>
+                        </div>
+                        <div class="col-12 row mt-0 px-3 md:px-2" v-if="selectedComunArea.type == 2">
+                          <q-checkbox
+                              v-model="formData.is_exclusive"
+                              color="primary"
+    
+                          >
+                            <div class="text-grey-9 mt-1">
+                              Reservar de forma exclusiva
+                            </div>
+                          </q-checkbox>
                         </div>
                       </div>
                     </div>

@@ -61,19 +61,41 @@ class BookingController extends Controller
         return $this->returnSuccess(200, 'ok');
     }
     public function getAvaibleBookingByDay(Request $request, $idArea){
-
-        $area = ComunArea::find($idArea);
-        $date = date('Y-m-d',strtotime($request->date));
-        $bookingInDay = Booking::where('comun_area_id', $idArea)->where('date', $date)->get();
-        $notAvailable = [];
-
-        foreach ($bookingInDay as $booking) {
-           array_push($notAvailable, substr($booking->time_from, 0, 2));
+        date_default_timezone_set('America/Caracas');
+        $area = ComunArea::find($idArea); // Find comun area
+        $date = date('Y-m-d',strtotime($request->date)); // get formatDate
+        $bookingInDay = Booking::where('comun_area_id', $idArea)->where('date', $date)->get(); 
+        $availableFrom  = range(intval(substr($area->timeFrom, 0, 2)), intval(substr($area->timeTo, 0, 2))); // set default available hours
+        $availableTo    = range(intval(substr($area->timeFrom, 0, 2)), intval(substr($area->timeTo, 0, 2))); // set default available hours
+        $notAvailableFrom = []; 
+        $notAvailableTo = []; 
+        // if()
+        if($date == date('Y-m-d')){
+            $hour = date('H'); // get formatDate
+            $availableFrom  = range(intval($hour), intval(substr($area->timeTo, 0, 2))); // set default available hours
         }
 
 
+        foreach ($bookingInDay as $booking) {
+            array_push($notAvailableFrom, intval(substr($booking->time_from, 0, 2))); //add init hour of booking
 
-        return $this->returnSuccess(200, [ 'bookings' => $bookingInDay, 'notAvailable' => $notAvailable]);
+            array_push($notAvailableTo, intval(substr($booking->time_to, 0, 2))); //add more hours of booking
+
+            if($booking->booking_hour > 1) {
+                for ($i=1; $i < $booking->booking_hour; $i++) { 
+                    array_push($notAvailableFrom, intval(substr($booking->time_from, 0, 2)) + $i); //add more hours of booking
+                    array_push($notAvailableTo, intval(substr($booking->time_from, 0, 2)) + $i); //add more hours of booking
+
+                }
+            }
+        }
+
+        $result = array_diff($availableFrom, $notAvailableFrom); // diff between available and not available
+        $availableFrom = array_values($result); // format simple array
+
+        $result = array_diff($availableTo, $notAvailableTo); // diff between available and not available
+        $availableTo = array_values($result); // format simple array
+        return $this->returnSuccess(200, [ 'bookings' => $bookingInDay, 'availableFrom' => $availableFrom, 'availableTo' => $availableTo,]);
     }
     private function validateFieldsFromInput($inputs){
         $rules =[
