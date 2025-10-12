@@ -23,7 +23,6 @@ const emitter = inject('emitter')
 const comunAreas = ref([])
 const selectedComunArea = ref({})
 const router = useRouter()
-const route = useRoute()
 const disabledTime = ref(true)
 const ready = ref(false)
 const loading = ref(false)
@@ -32,13 +31,8 @@ const formData = ref({
   date: '',
   time_from: '',
   time_to: '',
-  amount: 0,
-  vaucher: '',
-  reference: '',
   note: '',
-  pay_method: '',
   is_exclusive: false,
-
 })
 const hourOptionsFrom = ref([])
 const hourOptionsTo = ref([])
@@ -74,13 +68,8 @@ const cleanForm = () => {
     date: '',
     time_from: '',
     time_to: '',
-    amount: 0,
-    vaucher: '',
-    reference: '',
     note: '',
-    pay_method: '',
     is_exclusive: false,
-
   }
   disabledTime.value = true
 }
@@ -137,6 +126,39 @@ const showNotify = (type, text) => {
   })
 }
 
+const createReserve = () => {
+  formData.value.comun_area = selectedComunArea.value.id
+  formData.value.amount = selectedComunArea.value.price + selectedComunArea.value.warranty_price
+  formData.value.exclusive = formData.value.is_exclusive ? 1 : 0;
+
+  loading.value = true
+  reserveStore.createReserve(formData.value)
+  .then((response) => {
+    console.log(response)
+    setTimeout(() => {
+      loading.value = false
+      showNotify('positive', 'Reserva realizada con exito')
+
+      if(!response.data.toPay){
+        router.push('/client/reserves/confirm-reserve')
+        return
+      }
+  
+      router.push('/client/reserves/pay-reserve')
+      
+    }, 2000);
+
+  })
+  .catch((response) => {
+    console.log(response)
+    setTimeout(() => {
+      loading.value = false
+      showNotify('negative', 'Error al realizar reserva')
+
+    }, 2000);
+
+  })
+}
 
 onMounted(() => {
   getComunsArea()
@@ -325,7 +347,7 @@ onMounted(() => {
                   <template v-if="step == 3">
                     <div class="col-12 col-md-6 row md:px-5">
                       <div class="col-12 text-subtitle1 headerSection my-1 py-2 px-4">
-                        Información adicional
+                        Información adicional de reserva
                       </div>
                       <div class="col-12 row mt-3 px-3 md:px-2">
                         <div class="col-12">
@@ -334,7 +356,7 @@ onMounted(() => {
                           </div>
                           <q-input dense borderless clearable type="textarea" v-model="formData.note"
                             class="form__inputsReverse mt-1" color="primary"
-                            :rules="[val => val && val.length > 0 || 'Indica las reglas']" />
+                          />
                         </div>
                       </div>
                     </div>
@@ -351,7 +373,7 @@ onMounted(() => {
                   </div>
 
                   <div class="col-6 flex flex-center ">
-                    <q-btn color="grey-8" class="" style="width: 80%; border-radius: 0.5rem;" @click="backButton()"
+                    <q-btn color="grey-8" class="" style="width: 90%; border-radius: 0.5rem;" @click="backButton()"
                       v-if="step > 1">
                       <div class="py-1 md:py-2">
                         Volver
@@ -359,19 +381,16 @@ onMounted(() => {
                     </q-btn>
                   </div>
                   <div class="col-6 flex flex-center">
-                    <q-btn color="primary" class="" style="width: 80%; border-radius: 0.5rem;" type="submit"
+                    <q-btn color="primary" class="" style="width: 100%; border-radius: 0.5rem;" type="submit"
                       :loading="loading">
                       <div class="py-1 md:py-2">
-                        Siguiente
+                        {{ step ==3 ? 'Guardar reserva' :'Siguiente'}}
                       </div>
                     </q-btn>
                   </div>
                 </div>
               </div>
-
             </div>
-
-
           </div>
         </Transition>
       </q-form>

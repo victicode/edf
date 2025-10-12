@@ -17,10 +17,9 @@ class Booking extends Model
         "time_from", 
         "time_to", 
         "amount", 
-        "vaucher", 
-        "reference", 
         "note", 
-        "pay_method"
+        "status",
+        "is_exclusive"
     ];
     public $appends  =   ['booking_hour'];
 

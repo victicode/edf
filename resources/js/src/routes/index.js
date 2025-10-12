@@ -227,6 +227,26 @@ const routes = [
           title: 'Bienvenido',
           pagTitle: 'Reservas'
         }
+      },
+      {
+        path: '/client/reserves/confirm-reserve', 
+        component: () => import('@/view/client/Reserves/confirmReserve.vue'),
+        name:'reserveConfirm',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Reservas realizada'
+        }
+      },
+      {
+        path: '/client/reserves/pay-reserve', 
+        component: () => import('@/view/client/Reserves/payReserve.vue'),
+        name:'reservePay',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Realiza el pago'
+        }
       }
       
     ]
