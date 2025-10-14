@@ -28,30 +28,6 @@ const goTo = (url) => {
   router.push(url);
 }
 
-const goBack = () => {
-  router.go(-1);
-}
-
-const getStatusColor = (status) => {
-  const colors = {
-    0: 'bg-red-500', // Cancelada
-    1: 'bg-orange-500', // Pago pendiente
-    2: 'bg-yellow-500', // Pendiente de aprob.
-    3: 'bg-green-500' // Exitoso
-  };
-  return colors[status] || 'bg-gray-500';
-}
-
-const getStatusText = (status) => {
-  const statuses = {
-    0: 'Cancelada',
-    1: 'Pago pendiente',
-    2: 'Pendiente de aprob.',
-    3: 'Confirmada'
-  };
-  return statuses[status] || 'Desconocido';
-}
-
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString('es-ES', {
     day: '2-digit',
@@ -66,10 +42,13 @@ const formatTime = (time) => {
 
 const getPaymentStatus = (booking) => {
   if (booking.amount > 0) {
-    return booking.pay_method == 1 ? 'Pagado vía Transferencia' :
-      booking.pay_method == 2 ? 'Pagado vía Efectivo' : 'Pagado';
+    return !booking.pay  
+    ? 'Pagado vía Transferencia' 
+    : booking.pay_method == 2 
+    ? 'Pagado vía Efectivo' 
+    : 'Pagado';
   }
-  return 'Sin pago';
+  return '✅';
 }
 
 const getPaymentAmount = (booking) => {
@@ -91,13 +70,15 @@ onMounted(() => {
 
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-20">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <!-- <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div> -->
+        <q-spinner-dots color="primary" size="7rem" />
+
       </div>
 
       <!-- Content -->
-      <div v-else class="px-4 py-6">
+      <div v-else class="px-4 py-6 md:px-28">
         <!-- Lista de reservas -->
-        <div v-if="reserves.length > 0" class="space-y-3">
+        <div v-if="reserves.length > 0" class="space-y-3 md:px-5">
           <div v-for="reserve in reserves" :key="reserve.id"
             class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" style="position: relative;">
 
@@ -111,9 +92,9 @@ onMounted(() => {
                   </h3>
                 </div>
                 <!-- Estado badge -->
-                <span :class="getStatusColor(reserve.status)"
+                <span :class="'bg-'+reserve.status_color"
                   class="inline-block px-3 py-2 text-xs font-bold text-white badgeReserve">
-                  {{ getStatusText(reserve.status) }}
+                  {{ reserve.status_label }}
                 </span>
               </div>
 
@@ -201,7 +182,7 @@ onMounted(() => {
     </div>
 
     <!-- Botón flotante para crear reserva -->
-    <div class="px-4  md:px-0 md:flex  md:justify-center items-center md:w-full" style="height: 10%;">
+    <div class="px-4  md:px-0 md:flex  md:justify-center items-center md:w-full md:px-12" style="height: 10%;">
       <q-btn color="primary" unelevated class="w-full mt-0 md:mx-24 createBookingButton md:w-full"
         style="border-radius: 0.5rem; width: 100%;" @click="goTo('/client/reserves/form/add')">
         <div class="flex items-center py-2">
