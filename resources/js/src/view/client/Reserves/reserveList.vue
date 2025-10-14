@@ -85,7 +85,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="h-full bg-gray-50">
+  <div class="h-full">
 
     <div class="" style="height: 90%;">
 
