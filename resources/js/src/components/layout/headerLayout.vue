@@ -1,39 +1,40 @@
 <script setup>
-  import { storeToRefs } from 'pinia';
-  import { useAuthStore } from '@/services/store/auth.services';
-  import { inject, ref, onMounted, watch} from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
-  const route = useRoute()
-  const router = useRouter()
-  const { user } = storeToRefs(useAuthStore())
-  const emitter = inject('emitter')
-  const materialIcons = inject('materialIcons')
-  const pagTitle = ref(route.meta.pagTitle)
-  const showSidebar = () => {
-    emitter.emit('showInfoNews')
-  }
+import { storeToRefs } from 'pinia';
+import { useAuthStore } from '@/services/store/auth.services';
+import { inject, ref, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+const route = useRoute()
+const router = useRouter()
+const { user } = storeToRefs(useAuthStore())
+const emitter = inject('emitter')
+const materialIcons = inject('materialIcons')
+const pagTitle = ref(route.meta.pagTitle)
+const showSidebar = () => {
+  emitter.emit('showInfoNews')
+}
 
-  const changePagTitle = (title) => {
-    pagTitle.value = title
-  }
-  watch(route, (newValue) => {
-    pagTitle.value = newValue.meta.pagTitle
-  });
+const changePagTitle = (title) => {
+  pagTitle.value = title
+}
+watch(route, (newValue) => {
+  pagTitle.value = newValue.meta.pagTitle
+});
 
 
-  onMounted(() =>{
-    emitter.on('pagTitle', changePagTitle) 
-  })
+onMounted(() => {
+  emitter.on('pagTitle', changePagTitle)
+})
 </script>
 
 <template>
-  <section class="md:px-8 md:mx-28 pt-2 px-3 flex justify-between items-center bg-sky-600 header__container" style=" border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem;" >
-    <template v-if="['dashboardAdmin', 'financePage', 'usersAdmin' ].includes(route.name) ">
-      <div class="flex items-center" >
+  <section class="md:px-8 md:mx-28 pt-2 px-3 flex justify-between items-center bg-primary header__container"
+    style=" border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem;">
+    <template v-if="['dashboardAdmin', 'financePage', 'usersAdmin'].includes(route.name)">
+      <div class="flex items-center">
         <div class="userAvatar flex flex-center">
           {{ user.name.charAt(0) }}
         </div>
-        <div class="ml-3" >
+        <div class="ml-3">
           <div class="text-white" style="font-size: 1rem;">
             Hola {{ user.name }}
           </div>
@@ -43,16 +44,18 @@
         </div>
       </div>
       <div>
-        <q-btn  :icon="materialIcons.roundNotifications" unelevated color="white" flat size="1rem" round @click="showSidebar()" />
+        <q-btn :icon="materialIcons.roundNotifications" unelevated color="white" flat size="1rem" round
+          @click="showSidebar()" />
       </div>
     </template>
     <template v-else>
       <div class="flex items-center">
-        <div class="flex items-center" >
-          <q-btn  :icon="materialIcons.outlinedArrowBack" unelevated color="white" flat size="1rem" round @click="router.go(-1)" />
+        <div class="flex items-center">
+          <q-btn :icon="materialIcons.outlinedArrowBack" unelevated color="white" flat size="1rem" round
+            @click="router.go(-1)" />
         </div>
         <div class="text-h6 text-bold text-white ml-2">
-          {{pagTitle}}
+          {{ pagTitle }}
         </div>
       </div>
     </template>
@@ -60,10 +63,11 @@
 </template>
 
 <style lang="scss">
-.header__container{
+.header__container {
   box-shadow: 0px -0.1rem 1rem 0px rgb(0 0 0 / 38%);
 }
-.userAvatar{
+
+.userAvatar {
   width: 2.7rem;
   height: 2.7rem;
   font-size: 1rem;

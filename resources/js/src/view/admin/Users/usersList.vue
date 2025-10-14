@@ -27,7 +27,7 @@ const users = ref([])
 
 const getUsers = () => {
 
-  ready.value =  false;
+  ready.value = false;
 
   const data = {
     page: page.value,
@@ -35,15 +35,15 @@ const getUsers = () => {
     rol: tabActive.value == 'users' ? 1 : 2
   }
   userStore.getUsers(data)
-  .then((response) =>{
-    if(response.code !== 200) throw response
-    users.value = response.data;
-    setTimeout(() => {
-      ready.value =  true;
-    }, 1000);
-  })
-  .catch(() =>{
-  })
+    .then((response) => {
+      if (response.code !== 200) throw response
+      users.value = response.data;
+      setTimeout(() => {
+        ready.value = true;
+      }, 1000);
+    })
+    .catch(() => {
+    })
 }
 
 onMounted(() => {
@@ -52,16 +52,22 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="h-full"  style="overflow: auto;">
-    <div class="flex mt-5 justify-between  md:mx-auto items-center md:w-2/6 bg-primary mx-4 " style=" height: 2.8rem; overflow: hidden;border-radius: 0.7rem; ">
-      <div class="text-subtitle1 text-bold text-white text-center bg-primary tabItem leftItem" @click="changeTab('users')" :class="{'active':tabActive == 'users'}" style="width: calc(50% - 1px);" >Usuarios</div>
+  <div class="h-full" style="overflow: auto;">
+    <div class="flex mt-5 justify-between  md:mx-auto items-center md:w-2/6 bg-primary mx-4 "
+      style=" height: 2.8rem; overflow: hidden;border-radius: 0.7rem; ">
+      <div class="text-subtitle1 text-bold text-white text-center bg-primary tabItem leftItem"
+        @click="changeTab('users')" :class="{ 'active': tabActive == 'users' }" style="width: calc(50% - 1px);">Usuarios
+      </div>
       <div style="height: 100%; width: 2px; background: lightcyan; width: 2px;" />
-      <div class="text-subtitle1 text-bold text-white text-center bg-primary tabItem rightItem" @click="changeTab('admin')" :class="{'active':tabActive == 'admin'}" style="width: calc(50% - 1px);" >Administradores</div>
+      <div class="text-subtitle1 text-bold text-white text-center bg-primary tabItem rightItem"
+        @click="changeTab('admin')" :class="{ 'active': tabActive == 'admin' }" style="width: calc(50% - 1px);">
+        Administradores</div>
     </div>
     <div class="px-4 md:px-0 md:flex md:mx-auto md:justify-end md:w-5/6">
-      <q-btn color="primary" unelevated class="w-full mt-5 md:mx-5 createButton " style="border-radius: 0.5rem;" @click="goTo('/admin/users/form/add')">
-        <div class="flex items-center py-1" >
-          <q-icon name="eva-plus-outline"/>
+      <q-btn color="primary" unelevated class="w-full mt-5 md:mx-5 createButton " style="border-radius: 0.5rem;"
+        @click="goTo('/admin/users/form/add')">
+        <div class="flex items-center py-1">
+          <q-icon name="eva-plus-outline" />
           <div class="q-pt-xs text-bold pl-1">
             Crear nuevo usuario
           </div>
@@ -70,9 +76,12 @@ onMounted(() => {
     </div>
     <div class="mt-4 md:mt-8">
       <div class="px-4 md:mx-24 md:pr-12">
-        <div v-for="user in users" :key="user.id" class="md:py-4 py-3 mb-5 userListContainer flex items-center justify-between">
+        <div v-for="user in users" :key="user.id"
+          class="md:py-4 py-3 mb-5 userListContainer flex items-center justify-between">
           <div class="flex items-center pb-3 pl-2 md:pl-5 ">
-            <div style="height: 2.8rem; width: 2.8rem; background: #b5b5b5; border-radius: 0.5rem; font-size: 2rem; font-weight: bold;" class="flex flex-center text-white">
+            <div
+              style="height: 2.8rem; width: 2.8rem; background: #b5b5b5; border-radius: 0.5rem; font-size: 2rem; font-weight: bold;"
+              class="flex flex-center text-white">
               {{ user.name.charAt(0).toUpperCase() }}
             </div>
             <div class="ml-2">
@@ -80,7 +89,8 @@ onMounted(() => {
                 {{ user.name }}
               </div>
               <div class="flex items-center">
-                <div class="text-body2 text-grey-6 ">#{{  user.apartaments.length > 0 ?  user.apartaments[0].number : 'Apt. no asignado'}}</div>
+                <div class="text-body2 text-grey-6 ">#{{ user.apartaments.length > 0 ? user.apartaments[0].number :
+                  'Apt. no asignado' }}</div>
                 <div class="text-caption text-grey-6 ml-1">
                   ({{ user.rol.name }})
                 </div>
@@ -88,91 +98,72 @@ onMounted(() => {
             </div>
           </div>
           <div class="flex justify-end  items-center pb-3 pt-1 pr-2 md:pr-5 ">
-            <div v-if="user.apartaments.length  == 0">
-              <q-btn :icon="materialIcons.outlinedAddHomeWork" class="mx-1" flat color="yellow-9" round size="0.9rem" @click="goTo('/admin/users/assing-apartment/'+user.id)">
-                  
+            <div v-if="user.apartaments.length == 0">
+              <q-btn :icon="materialIcons.outlinedAddHomeWork" class="mx-1" flat color="yellow-9" round size="0.9rem"
+                @click="goTo('/admin/users/assing-apartment/' + user.id)">
+
               </q-btn>
             </div>
             <template v-if="user.status == 2">
 
               <div>
                 <div class="pt-1" v-html="iconsApp.cancelHouse" />
-                  <q-tooltip
-                  transition-show="flip-right"
-                  transition-hide="flip-left"
-                  class="bg-black text-body2 px-2"
-                >
-                 Moroso
-                </q-tooltip> 
+                <q-tooltip transition-show="flip-right" transition-hide="flip-left" class="bg-black text-body2 px-2">
+                  Moroso
+                </q-tooltip>
               </div>
 
             </template>
           </div>
-          <div class="flex justify-end px-1 w-full pt-3 px-2" style="border-top: 1px solid lightgrey;">
+          <div class="flex justify-end px-2 w-full pt-3 " style="border-top: 1px solid lightgrey;">
             <div>
-              <q-btn icon="eva-settings-outline" class="mx-1" color="primary" flat size="0.9rem" >
-                <q-tooltip
-                  transition-show="flip-right"
-                  transition-hide="flip-left"
-                  :class="'bg-black text-body2 px-2'"
-                >
+              <q-btn icon="eva-settings-outline" class="mx-1" color="primary" flat size="0.9rem">
+                <q-tooltip transition-show="flip-right" transition-hide="flip-left" :class="'bg-black text-body2 px-2'">
                   Editar usuario
 
-                </q-tooltip> 
+                </q-tooltip>
               </q-btn>
             </div>
             <div>
-              <q-btn :icon="materialIcons.outlinedEvent" class="mx-1" color="light-green-9" flat size="0.9rem" >
-                <q-tooltip
-                  transition-show="flip-right"
-                  transition-hide="flip-left"
-                  class="bg-black text-body2 px-2"
-                >
-                 Ver reservas
-                </q-tooltip> 
+              <q-btn :icon="materialIcons.outlinedEvent" class="mx-1" color="light-green-9" flat size="0.9rem">
+                <q-tooltip transition-show="flip-right" transition-hide="flip-left" class="bg-black text-body2 px-2">
+                  Ver reservas
+                </q-tooltip>
               </q-btn>
             </div>
             <div>
               <q-btn :icon="materialIcons.outlinedPaid" class="mx-1" color="amber-6" flat size="0.9rem">
-                <q-tooltip
-                  transition-show="flip-right"
-                  transition-hide="flip-left"
-                  class="bg-black text-body2 px-2"
-                >
-                 Ver pagos
-                </q-tooltip> 
+                <q-tooltip transition-show="flip-right" transition-hide="flip-left" class="bg-black text-body2 px-2">
+                  Ver pagos
+                </q-tooltip>
               </q-btn>
             </div>
             <div>
-              <q-btn icon="eva-trash-2-outline" class="mx-1" color="negative" flat size="0.9rem" >
-                <q-tooltip
-                  transition-show="flip-right"
-                  transition-hide="flip-left"
-                  class="bg-black text-body2 px-2"
-                >
+              <q-btn icon="eva-trash-2-outline" class="mx-1" color="negative" flat size="0.9rem">
+                <q-tooltip transition-show="flip-right" transition-hide="flip-left" class="bg-black text-body2 px-2">
                   Borrar usuario
-                </q-tooltip> 
+                </q-tooltip>
               </q-btn>
-                
+
             </div>
-            
+
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
 <style lang="scss">
-.userListContainer{
+.userListContainer {
   overflow: hidden;
   border-radius: .5rem;
   box-shadow: 0px 2px 6px 0px rgb(199, 199, 199);
 }
 
-.createButton{
+.createButton {
   width: auto;
 }
+
 .tabItem {
   opacity: 0.5;
   cursor: pointer;
@@ -181,27 +172,31 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   transition: all 0.2s ease-out;
-  &:hover{
-    background: #279edb!important;
+
+  &:hover {
+    background: #279edb !important;
   }
-  &.active{
+
+  &.active {
     opacity: 1;
   }
-  &.leftItem{
+
+  &.leftItem {
     border-top-left-radius: 0.7rem;
     border-bottom-left-radius: 0.7rem;
 
   }
-  &.rightItem{
+
+  &.rightItem {
     border-top-right-radius: 0.7rem;
     border-bottom-right-radius: 0.7rem;
 
   }
 }
+
 @media (max-width: 780px) {
-  .createButton{
+  .createButton {
     width: 100%;
   }
 }
-
 </style>

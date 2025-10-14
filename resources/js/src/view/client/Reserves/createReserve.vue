@@ -64,7 +64,7 @@ const nextStep = () => {
 
 }
 const cleanForm = () => {
-  formData.value ={
+  formData.value = {
     date: '',
     time_from: '',
     time_to: '',
@@ -76,34 +76,34 @@ const cleanForm = () => {
 const getComunsArea = () => {
   emitter.emit('pagTitle', 'Selecciona area común')
   comunAreaStore.getAllComunAreas()
-  .then((response) => {
-    if (response.code !== 200) throw response
-    comunAreas.value = response.data
-    setTimeout(() => {
-      ready.value = true
-    }, 100)
-  })
-  .catch((response) => {
-    showNotify('positive', 'Error al obtener areas comunes')
-  })
+    .then((response) => {
+      if (response.code !== 200) throw response
+      comunAreas.value = response.data
+      setTimeout(() => {
+        ready.value = true
+      }, 100)
+    })
+    .catch((response) => {
+      showNotify('positive', 'Error al obtener areas comunes')
+    })
 }
-const getAvaibleBookingByDay = () =>{
-  
+const getAvaibleBookingByDay = () => {
+
   const data = {
     idArea: selectedComunArea.value.id,
     date: formData.value.date
   }
 
   reserveStore.getAvailableReserveInDayByArea(data)
-  .then((response) => {
-    disabledTime.value = false
-    hourOptionsFrom.value = response.data.availableFrom
-    temporal.value = response.data.availableTo
+    .then((response) => {
+      disabledTime.value = false
+      hourOptionsFrom.value = response.data.availableFrom
+      temporal.value = response.data.availableTo
 
-  })
+    })
 }
 const optionsFn = (date) => {
-  return date >=  moment().format('YYYY/MM/DD')
+  return date >= moment().format('YYYY/MM/DD')
 }
 const limitToTime = () => {
 
@@ -111,7 +111,7 @@ const limitToTime = () => {
   let maxHour = []
 
   for (let index = 1; index <= selectedComunArea.value.max_time_reserve; index++) {
-    maxHour.push(fromHour+index)
+    maxHour.push(fromHour + index)
   }
   hourOptionsTo.value = temporal.value;
   hourOptionsTo.value = hourOptionsTo.value.filter((h) => maxHour.includes(h))
@@ -133,31 +133,31 @@ const createReserve = () => {
 
   loading.value = true
   reserveStore.createReserve(formData.value)
-  .then((response) => {
-    console.log(response)
-    setTimeout(() => {
-      loading.value = false
-      showNotify('positive', 'Reserva realizada con exito')
+    .then((response) => {
+      console.log(response)
+      setTimeout(() => {
+        loading.value = false
+        showNotify('positive', 'Reserva realizada con exito')
 
-      if(!response.data.toPay){
-        router.push('/client/reserves/confirm-reserve')
-        return
-      }
-  
-      router.push('/client/reserves/pay-reserve')
-      
-    }, 2000);
+        if (!response.data.toPay) {
+          router.push('/client/reserves/confirm-reserve/' + response.data.id)
+          return
+        }
 
-  })
-  .catch((response) => {
-    console.log(response)
-    setTimeout(() => {
-      loading.value = false
-      showNotify('negative', 'Error al realizar reserva')
+        router.push('/client/reserves/pay-reserve/' + response.data.id)
 
-    }, 2000);
+      }, 2000);
 
-  })
+    })
+    .catch((response) => {
+      console.log(response)
+      setTimeout(() => {
+        loading.value = false
+        showNotify('negative', 'Error al realizar reserva')
+
+      }, 2000);
+
+    })
 }
 
 onMounted(() => {
@@ -175,9 +175,9 @@ onMounted(() => {
               :key="comunArea.id" @click="selectArea(comunArea.id)">
               <div class="col-10">
                 <div class="text-subtitle1 text-black q-mt-xs" style="line-height: 1.2; font-weight: 500;">
-                  {{comunArea.name }}
+                  {{ comunArea.name }}
                 </div>
-                <div class="q-mt-xs text-body2" style="font-weight: 500;">
+                <div class="q-mt-xs text-body2 text-black" style="font-weight: 500;">
                   Costo: S/{{ comunArea.price }}
                   <i v-if="comunArea.warranty_price > 0">
                     + S/{{ comunArea.warranty_price }}
@@ -245,19 +245,14 @@ onMounted(() => {
                             <div class="text-subtitle2 text-black" style="font-weight: medium;">
                               Fecha de reserva:
                             </div>
-                            <q-input v-model="formData.date" :rules="[ val =>!(!val) || 'Fecha es requerida']" dense borderless clearable
-                              class="form__inputsReverse mt-1" color="primary">
+                            <q-input v-model="formData.date" :rules="[val => !(!val) || 'Fecha es requerida']" dense
+                              borderless clearable class="form__inputsReverse mt-1" color="primary">
                               <template v-slot:append>
                                 <q-icon name="eva-calendar-outline" class="cursor-pointer">
                                   <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                    <q-date 
-                                      mask="DD-MM-YYYY"
-                                      v-model="formData.date" 
-                                      :options="optionsFn" 
-                                      @update:model-value="getAvaibleBookingByDay" 
-                                      :navigation-min-year-month="moment().format('YYYY/MM')"
-                                      :locale="myLocale"
-                                    >
+                                    <q-date mask="DD-MM-YYYY" v-model="formData.date" :options="optionsFn"
+                                      @update:model-value="getAvaibleBookingByDay"
+                                      :navigation-min-year-month="moment().format('YYYY/MM')" :locale="myLocale">
                                       <div class="row items-center justify-end">
                                         <q-btn v-close-popup label="Aceptar" color="primary" flat />
                                       </div>
@@ -278,19 +273,16 @@ onMounted(() => {
                             <div class="text-subtitle2 text-black" style="font-weight: medium;">
                               Desde:
                             </div>
-                            <q-input v-model="formData.time_from" mask="time" :rules="['time']" dense borderless clearable
-                              class="form__inputsReverse mt-1 q-pb-sm" color="primary" :readonly="disabledTime" :disable="disabledTime">
+                            <q-input v-model="formData.time_from" mask="time" :rules="['time']" dense borderless
+                              clearable class="form__inputsReverse mt-1 q-pb-sm" color="primary"
+                              :readonly="disabledTime" :disable="disabledTime">
                               <template v-slot:append>
                                 <q-icon name="eva-clock-outline" class="cursor-pointer">
-                                  <q-popup-proxy cover transition-show="scale" transition-hide="scale"> 
-                                    <q-time 
-                                      v-model="formData.time_from" 
-                                      :hour-options="hourOptionsFrom" :minute-options="minOptionsFrom" 
-                                      @update:model-value="limitToTime" 
-                                      format24h
-                                    >
+                                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                    <q-time v-model="formData.time_from" :hour-options="hourOptionsFrom"
+                                      :minute-options="minOptionsFrom" @update:model-value="limitToTime" format24h>
                                       <!-- <q-time v-model="formData.time_from" mask="hh:ss A" :options="hourAvailable"> -->
-                                      
+
                                       <div class="row items-center justify-end">
                                         <q-btn v-close-popup label="Aceptar" color="primary" flat />
                                       </div>
@@ -299,18 +291,20 @@ onMounted(() => {
                                 </q-icon>
                               </template>
                             </q-input>
-  
+
                           </div>
                           <div class="col-6  pl-2 md:pl-4">
                             <div class="text-subtitle2 text-black" style="font-weight: medium;">
                               Hasta:
                             </div>
                             <q-input v-model="formData.time_to" mask="time" :rules="['time']" dense borderless clearable
-                              class="form__inputsReverse mt-1 q-pb-sm" color="primary" :readonly="disabledTime" :disable="disabledTime">
+                              class="form__inputsReverse mt-1 q-pb-sm" color="primary" :readonly="disabledTime"
+                              :disable="disabledTime">
                               <template v-slot:append>
                                 <q-icon name="eva-clock-outline" class="cursor-pointer">
                                   <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                    <q-time v-model="formData.time_to" format24h :hour-options="hourOptionsTo" :minute-options="minOptionsFrom">
+                                    <q-time v-model="formData.time_to" format24h :hour-options="hourOptionsTo"
+                                      :minute-options="minOptionsFrom">
                                       <div class="row items-center justify-end">
                                         <q-btn v-close-popup label="Aceptar" color="primary" flat />
                                       </div>
@@ -322,11 +316,7 @@ onMounted(() => {
                           </div>
                         </div>
                         <div class="col-12 row mt-0 px-3 md:px-2" v-if="selectedComunArea.type == 2">
-                          <q-checkbox
-                              v-model="formData.is_exclusive"
-                              color="primary"
-    
-                          >
+                          <q-checkbox v-model="formData.is_exclusive" color="primary">
                             <div class="text-grey-9 mt-1">
                               Reservar de forma exclusiva
                             </div>
@@ -334,15 +324,16 @@ onMounted(() => {
                         </div>
                       </div>
                     </div>
-                    <div class="col-12 col-md-6  md:px-5" >
+                    <div class="col-12 col-md-6  md:px-5">
                       <div class="w-full text-subtitle1 headerSection my-1 py-2 px-4">
                         Reglas
                       </div>
                       <div class="col-12 row mt-3 px-3 md:px-2">
-                        <div class="text-grey-9" style="font-size: 0.95rem; line-height: 1.7;" v-html="selectedComunArea.format_rules" />
+                        <div class="text-grey-9" style="font-size: 0.95rem; line-height: 1.7;"
+                          v-html="selectedComunArea.format_rules" />
                       </div>
                     </div>
-  
+
                   </template>
                   <template v-if="step == 3">
                     <div class="col-12 col-md-6 row md:px-5">
@@ -355,8 +346,7 @@ onMounted(() => {
                             Notas
                           </div>
                           <q-input dense borderless clearable type="textarea" v-model="formData.note"
-                            class="form__inputsReverse mt-1" color="primary"
-                          />
+                            class="form__inputsReverse mt-1" color="primary" />
                         </div>
                       </div>
                     </div>
@@ -366,10 +356,11 @@ onMounted(() => {
               <div style="height: 17%;" class="buttonSection">
                 <div class="row py-4 ">
                   <div class="col-12 pb-4 px-5">
-                    <div class="w-full flex justify-between text-black" >
+                    <div class="w-full flex justify-between text-black">
                       <div style="font-weight: 500; font-size: 1.1rem;">Total a pagar:</div>
-                      <div style="font-weight: 500; font-size: 1.1rem;">S/{{ selectedComunArea.price + selectedComunArea.warranty_price }}</div>
-                    </div>                
+                      <div style="font-weight: 500; font-size: 1.1rem;">S/{{ selectedComunArea.price +
+                        selectedComunArea.warranty_price }}</div>
+                    </div>
                   </div>
 
                   <div class="col-6 flex flex-center ">
@@ -381,10 +372,10 @@ onMounted(() => {
                     </q-btn>
                   </div>
                   <div class="col-6 flex flex-center">
-                    <q-btn color="primary" class="" style="width: 100%; border-radius: 0.5rem;" type="submit"
+                    <q-btn color="primary" class="" style="width: 90%; border-radius: 0.5rem;" type="submit"
                       :loading="loading">
                       <div class="py-1 md:py-2">
-                        {{ step ==3 ? 'Guardar reserva' :'Siguiente'}}
+                        {{ step == 3 ? 'Guardar reserva' : 'Siguiente' }}
                       </div>
                     </q-btn>
                   </div>
@@ -401,12 +392,27 @@ onMounted(() => {
   </div>
 </template>
 <style lang="scss">
-.buttonSection{
+.q-date__navigation,
+.q-time__clock-position {
+  color: black;
+}
+
+.q-time__clock-position--active {
+  color: white;
+}
+
+.q-date__calendar-item {
+  color: black;
+}
+
+.buttonSection {
   box-shadow: 0px -5px 10px 0px rgb(207 207 207)
 }
-.md\:order-3{
-  order:3
+
+.md\:order-3 {
+  order: 3
 }
+
 .text-body2x {
   font-size: 0.9rem;
 }

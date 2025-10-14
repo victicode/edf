@@ -25,12 +25,12 @@ class BookingController extends Controller
             'time_to' => $request->time_to,
             'amount' => $request->amount,
             'note' => $request->note,
-            'status' => $request->amount > 0 ? 1 : 2,
+            'status' => $request->amount > 0 ? 1 : 3,
             'is_exclusive'=> $request->exclusive
         ]);
         // Storage::disk('public')
         // ->put('vaucher/'.$request->vaucher->getClientOriginalName(), file_get_contents($request->vaucher));
-        return $this->returnSuccess(200, ['toPay' => $booking->amount > 0]);
+        return $this->returnSuccess(200, ['toPay' => $booking->amount > 0, 'id' => $booking->id]);
     }
 
     public function getBookingsByUser(Request $request) {

@@ -21,7 +21,7 @@ class Booking extends Model
         "status",
         "is_exclusive"
     ];
-    public $appends  =   ['booking_hour'];
+    public $appends  =   ["booking_hour", "status_label", "status_color"];
 
     public function comunArea(): BelongsTo {
         return $this->belongsTo(ComunArea::class, 'comun_area_id', 'id');
@@ -32,6 +32,23 @@ class Booking extends Model
     public function getBookingHourAttribute(){
         $hour = intval(substr($this->time_to, 0, 2)) - intval(substr($this->time_from, 0, 2));
         return  $hour;
-        
+    }
+    public function getStatusLabelAttribute(){
+        $status= [
+            "Cancelada",
+            "Pago pendiente",
+            "Pendiente de aprob.",
+            "Exitoso"
+        ];
+        return  $status[$this->status];
+    }
+    public function getStatusColorAttribute(){
+        $status= [
+            "negative",
+            "warning",
+            "warning",
+            "positive"
+        ];
+        return  $status[$this->status];
     }
 }

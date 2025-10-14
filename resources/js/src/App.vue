@@ -5,13 +5,13 @@ import { onMounted } from 'vue';
 const $q = useQuasar()
 
 onMounted(() => {
-  $q.addressbarColor.set('#0284c7');
+  $q.addressbarColor.set('#0e344c');
 })
 </script>
 <template>
-  <main  class="h-screen w-full" style="overflow: hidden;">
-  
-    <router-view  class="appMobile " v-slot="{ Component }">
+  <main class=" w-full" style="overflow: hidden; height: 100dvh;">
+
+    <router-view class="appMobile " v-slot="{ Component }">
       <transition name="horizontal">
         <component :is="Component" />
       </transition>
@@ -19,18 +19,18 @@ onMounted(() => {
   </main>
 </template>
 <style>
-.appMobile{
+.appMobile {
   width: 100%;
   overflow: hidden;
   margin: auto;
   height: 100%;
 }
+
 @media (max-width: 780px) {
-  .appMobile{
+  .appMobile {
     width: 100%;
     border-radius: 0px;
 
   }
 }
-
 </style>

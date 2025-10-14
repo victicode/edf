@@ -10,15 +10,15 @@ import { onMounted, ref } from 'vue';
 import logoutModal from '@/components/layout/logoutModal.vue';
 import storage from '@/services/storage'
 
-  const route = useRoute()
-  const ready = ref(false)
-  const { user } = storeToRefs(useAuthStore())
-  const showModal = ref('')
+const route = useRoute()
+const ready = ref(false)
+const { user } = storeToRefs(useAuthStore())
+const showModal = ref('')
 
-  onMounted(() => {
-    useAuthStore().currentUser()
+onMounted(() => {
+  useAuthStore().currentUser()
     .then((response) => {
-      if(user.value.rol_id){
+      if (user.value.rol_id) {
         ready.value = true
       }
     })
@@ -27,45 +27,54 @@ import storage from '@/services/storage'
       storage.deleteItem("access_token");
     })
 
-  })
+})
 
 </script>
 
 <template>
   <div class="h-full bg-stone-100 w-full" style="position: relative; overflow: hidden;">
     <template v-if="ready">
-      <headerLayout class="header__container" />
-      <section :class="{'page__container': ['dashboardAdmin', 'financePage', 'usersAdmin' ].includes(route.name), 'page_continerFull': !(['dashboardAdmin', 'financePage', 'usersAdmin' ].includes(route.name))}">
+      <headerLayout class="header__container" v-if="!(['reserveConfirm'].includes(route.name))" />
+      <section
+        :class="{ 'withoutNav': ['reserveConfirm'].includes(route.name), 'page__container': ['dashboardAdmin', 'financePage', 'usersAdmin'].includes(route.name), 'page_continerFull': !(['dashboardAdmin', 'financePage', 'usersAdmin'].includes(route.name)) }">
         <router-view v-slot="{ Component }">
           <transition name="horizontal">
             <component :is="Component" />
           </transition>
         </router-view>
       </section>
-      <navbarAdmin v-if="['dashboardAdmin', 'financePage', 'usersAdmin' ].includes(route.name) " @logoutModal="showModal='logout'" />
+      <navbarAdmin v-if="['dashboardAdmin', 'financePage', 'usersAdmin'].includes(route.name)"
+        @logoutModal="showModal = 'logout'" />
       <infoNewSideBar />
 
-      <logoutModal :dialog="(showModal == 'logout')" @closeModal="showModal = ''"/>
+      <logoutModal :dialog="(showModal == 'logout')" @closeModal="showModal = ''" />
     </template>
     <loaderPage v-else />
   </div>
 </template>
 
 <style lang="scss">
-.header__container{
+.header__container {
   height: 12%;
   overflow: hidden;
 }
-.page__container{
+
+.page__container {
   height: 78%;
   overflow: hidden;
   // overflow-x: hidden;
   // overflow-y: auto;
 }
-.page_continerFull{
+
+.page_continerFull {
   height: 88%;
   overflow: hidden;
   // overflow-x: hidden;
   // overflow-y: auto;
+}
+
+.withoutNav {
+  height: 100%;
+  overflow: hidden;
 }
 </style>

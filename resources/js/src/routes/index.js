@@ -229,7 +229,7 @@ const routes = [
         }
       },
       {
-        path: '/client/reserves/confirm-reserve', 
+        path: '/client/reserves/confirm-reserve/:id', 
         component: () => import('@/view/client/Reserves/confirmReserve.vue'),
         name:'reserveConfirm',
         beforeEnter: auth,
@@ -239,7 +239,7 @@ const routes = [
         }
       },
       {
-        path: '/client/reserves/pay-reserve', 
+        path: '/client/reserves/pay-reserve/:id', 
         component: () => import('@/view/client/Reserves/payReserve.vue'),
         name:'reservePay',
         beforeEnter: auth,
