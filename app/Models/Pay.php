@@ -12,14 +12,14 @@ class Pay extends Model
     use SoftDeletes;
     protected $fillable = [
         "user_id", 
-        "comun_area_id", 
-        "date", 
-        "time_from", 
-        "time_to", 
+        "booking_id", 
+        "quota_id", 
         "amount", 
-        "note", 
-        "status",
-        "is_exclusive"
+        "vaucher", 
+        "reference", 
+        "pay_id", 
+        "pay_method",
+        "status"
     ];
     public $appends  =   ["booking_hour", "status_label", "status_color"];
 

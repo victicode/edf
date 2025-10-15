@@ -25,6 +25,7 @@ const getBookingById = async (id) => {
     console.error('Error al obtener la reserva:', err)
     error.value = err || 'Error al cargar la reserva'
   } finally {
+
     loading.value = false
   }
 }
@@ -82,7 +83,8 @@ const reloadBooking = () => {
     <div class="relative z-10 pt-8 pb-20 px-6">
       <!-- Loading State -->
       <div v-if="loading" class="flex flex-col items-center justify-center py-20">
-        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-green-500 mb-4"></div>
+        <q-spinner-dots color="primary" size="4rem" />
+
         <p class="text-gray-600 font-medium">Cargando reserva...</p>
       </div>
 
@@ -129,6 +131,7 @@ const reloadBooking = () => {
 
             <!-- Monto pagado -->
             <div class="flex justify-between items-center pb-2"
+              v-if="booking.amount > 0"
               style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);">
               <span class="text-gray-600 font-medium">Monto pagado</span>
               <span class="text-gray-900 font-semibold">S/. {{ booking.amount }}</span>
@@ -143,6 +146,7 @@ const reloadBooking = () => {
 
             <!-- Método de pago -->
             <div class="flex justify-between items-center pb-2"
+              v-if="booking.amount > 0"
               style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);">
               <span class="text-gray-600 font-medium">Método de pago</span>
               <span class="text-gray-900 font-semibold">
@@ -154,7 +158,7 @@ const reloadBooking = () => {
             <div class="flex justify-between items-center pb-2"
               style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);">
               <span class="text-gray-600 font-medium">ID de reserva</span>
-              <span class="text-gray-900 font-semibold">#{{ booking.id }}</span>
+              <span class="text-gray-900 font-semibold">#{{ booking.booking_number }}</span>
             </div>
 
             <!-- Área común -->

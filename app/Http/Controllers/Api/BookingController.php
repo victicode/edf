@@ -20,6 +20,7 @@ class BookingController extends Controller
         $booking = Booking::create([
             'user_id' => $request->user()->id,
             'comun_area_id' => $request->comun_area,
+            'booking_number' => $request->user()->id.'00'.rand(1000, 9999),
             'date' => date('Y-m-d',strtotime($request->date)),
             'time_from' => $request->time_from,
             'time_to' => $request->time_to,

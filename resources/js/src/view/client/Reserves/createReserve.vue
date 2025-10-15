@@ -366,7 +366,7 @@ onMounted(() => {
                   <div class="col-6 flex flex-center ">
                     <q-btn color="grey-8" class="" style="width: 90%; border-radius: 0.5rem;" @click="backButton()"
                       v-if="step > 1">
-                      <div class="py-1 md:py-2">
+                      <div class="py-1 md:py-1">
                         Volver
                       </div>
                     </q-btn>
@@ -374,7 +374,7 @@ onMounted(() => {
                   <div class="col-6 flex flex-center">
                     <q-btn color="primary" class="" style="width: 90%; border-radius: 0.5rem;" type="submit"
                       :loading="loading">
-                      <div class="py-1 md:py-2">
+                      <div class="py-1 md:py-1">
                         {{ step == 3 ? 'Guardar reserva' : 'Siguiente' }}
                       </div>
                     </q-btn>

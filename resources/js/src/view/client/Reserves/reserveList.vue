@@ -43,12 +43,12 @@ const formatTime = (time) => {
 const getPaymentStatus = (booking) => {
   if (booking.amount > 0) {
     return !booking.pay  
-    ? 'Pagado vía Transferencia' 
+    ? 'No pagada' 
     : booking.pay_method == 2 
     ? 'Pagado vía Efectivo' 
     : 'Pagado';
   }
-  return '✅';
+  return 'Confirmado';
 }
 
 const getPaymentAmount = (booking) => {
@@ -66,7 +66,7 @@ onMounted(() => {
 <template>
   <div class="h-full">
 
-    <div class="" style="height: 90%;">
+    <div class="" style="height: 90%; overflow: auto;">
 
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-20">
@@ -80,7 +80,7 @@ onMounted(() => {
         <!-- Lista de reservas -->
         <div v-if="reserves.length > 0" class="space-y-3 md:px-5">
           <div v-for="reserve in reserves" :key="reserve.id"
-            class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" style="position: relative;">
+            class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden" style="position: relative;">
 
             <!-- Sección superior - Detalles de la reserva -->
             <div class="px-4 pb-4 pt-2 border-b border-dashed border-gray-300">
@@ -88,7 +88,7 @@ onMounted(() => {
               <div class="flex justify-between items-start mb-2">
                 <div class="flex-1">
                   <h3 class="text-lg font-bold text-gray-900 mb-2">
-                    {{ reserve.comun_area?.name || 'Área Común' }}
+                    {{ reserve.comun_area?.name || 'Área Común' }} [000{{ reserve.booking_number }}]
                   </h3>
                 </div>
                 <!-- Estado badge -->
@@ -144,7 +144,7 @@ onMounted(() => {
             <div class="p-4 bg-gray-50">
               <div class="flex justify-between items-center">
                 <div class="flex items-center">
-                  <svg v-if="reserve.amount > 0" class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor"
+                  <svg v-if="reserve.status == 3" class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                   </svg>
@@ -154,9 +154,17 @@ onMounted(() => {
                   </svg>
                   <span class="text-sm font-medium text-gray-700">{{ getPaymentStatus(reserve) }}</span>
                 </div>
-                <span class="text-sm font-bold text-gray-900">
-                  {{ getPaymentAmount(reserve) }}
-                </span>
+                <div class="flex items-center">
+                  <span class="text-sm font-bold text-gray-900">
+                    {{ getPaymentAmount(reserve) }}
+                  </span>
+                  <q-btn unelevated round color="warning" size="sm" class="ml-3" v-if="reserve.status == 1" >
+                    <q-tooltip class="bg-primary  text-white text-body2" :offset="[10, 10]">
+                      Proceder con el pago
+                    </q-tooltip>
+                    <div v-html="iconsApp.procedToPay"></div>
+                  </q-btn>
+                </div>
               </div>
             </div>
           </div>
