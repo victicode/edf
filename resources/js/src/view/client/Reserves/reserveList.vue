@@ -80,7 +80,7 @@ onMounted(() => {
         <!-- Lista de reservas -->
         <div v-if="reserves.length > 0" class="space-y-3 md:px-5">
           <div v-for="reserve in reserves" :key="reserve.id"
-            class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden" style="position: relative;">
+            class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden md:mb-5" style="position: relative;">
 
             <!-- Sección superior - Detalles de la reserva -->
             <div class="px-4 pb-4 pt-2 border-b border-dashed border-gray-300">
@@ -88,7 +88,7 @@ onMounted(() => {
               <div class="flex justify-between items-start mb-2">
                 <div class="flex-1">
                   <h3 class="text-lg font-bold text-gray-900 mb-2">
-                    {{ reserve.comun_area?.name || 'Área Común' }} [000{{ reserve.booking_number }}]
+                    {{ reserve.comun_area?.name || 'Área Común' }}
                   </h3>
                 </div>
                 <!-- Estado badge -->
@@ -127,6 +127,12 @@ onMounted(() => {
                       {{ formatTime(reserve.time_from) }} - {{ formatTime(reserve.time_to) }}
                     </span>
                   </div>
+                  <div class="flex items-center text-sm text-gray-700">
+                    <div v-html="iconsApp.moneyIcon" />
+                    <span class="font-medium">
+                      {{ getPaymentAmount(reserve) }}
+                    </span>
+                  </div>
 
                   <!-- Confirmado por -->
                   <!-- <div class="flex items-center text-sm text-gray-700">
@@ -155,15 +161,40 @@ onMounted(() => {
                   <span class="text-sm font-medium text-gray-700">{{ getPaymentStatus(reserve) }}</span>
                 </div>
                 <div class="flex items-center">
-                  <span class="text-sm font-bold text-gray-900">
-                    {{ getPaymentAmount(reserve) }}
-                  </span>
-                  <q-btn unelevated round color="warning" size="sm" class="ml-3" v-if="reserve.status == 1" >
+                  <q-btn unelevated rounded color="warning" size="sm" class="ml-3" v-if="reserve.status == 1"  
+                    @click="goTo('/client/reserves/pay-reserve/' + reserve.id)">
                     <q-tooltip class="bg-primary  text-white text-body2" :offset="[10, 10]">
                       Proceder con el pago
                     </q-tooltip>
                     <div v-html="iconsApp.procedToPay"></div>
                   </q-btn>
+                  <div flat rounded color="primary" size="sm" class="ml-3 cursor-pointer" >
+                    <q-tooltip class="bg-primary  text-white text-body2" :offset="[10, 10]">
+                      Información de reserva
+                    </q-tooltip>
+                    <div v-html="iconsApp.optionsBook"></div>
+                    <q-menu>
+                    <q-list style="min-width: 150px">
+                      <q-item clickable v-close-popup>
+                        <q-item-section>Ver detalles</q-item-section>
+                      </q-item>
+                      <q-item clickable v-close-popup>
+                        <q-item-section>Cancelar reserva</q-item-section>
+                      </q-item>
+                      <q-item clickable v-close-popup>
+                        <q-item-section>Editar reserva</q-item-section>
+                      </q-item>
+                      <q-separator />
+                      <q-item clickable v-close-popup v-if="reserve.status == 1" >
+                        <q-item-section>Pagar</q-item-section>
+                      </q-item>
+                      <q-item clickable v-close-popup v-if="reserve.status == 3">
+                        <q-item-section>Descarga pase</q-item-section>
+                      </q-item>
+                      <q-separator />
+                    </q-list>
+                  </q-menu>
+                  </div>
                 </div>
               </div>
             </div>

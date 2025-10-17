@@ -3,24 +3,25 @@ import { ref, inject, onMounted } from 'vue';
 import transfer from '@/assets/img/util/transfer.webp'
 import yape from '@/assets/img/util/yape.webp'
 import cash from '@/assets/img/util/cash.webp'
-import pp from '@/assets/img/util/pp.webp'
 import { useRoute, useRouter } from 'vue-router';
 import { useReserveStore } from '@/services/store/reserve.store'
+import iconsApp from '@/assets/icons/index'
 
 const route = useRoute()
 const router = useRouter()
 const reserveStore = useReserveStore()
 const ready = ref(false)
-const step = ref(2)
+const step = ref(3)
 const loading = ref(false)
 const disable =  ref(true)
 const materialIcons = inject('materialIcons')
 const reserve = ref({})
-const dataPayForm = ref({
+const payFormData = ref({
   pay_method:0,
   amount:'',
-  vaucher:'',
+  vaucher:null,
   reference:'',
+  date:'',
   booking_id: route.params.id || route.query.id,
   pay_id:''
 })
@@ -110,6 +111,14 @@ const activeClass = (event) => {
   disable.value = false
   event.target.closest('.payMethodItem').classList.add('active')
 }
+const onFileChange = (r) => {
+    // const file = document.getElementById('winner_photo').files[0]
+    // formInputs.value.photoWinner = file
+    console.log(r)
+    console.log(payFormData.value.vaucher)
+
+    return 
+  }
 onMounted(() => {
   getBookingById()
 })
@@ -146,30 +155,62 @@ onMounted(() => {
                   </div>
                 </div>
                 <div>
-                  <q-radio v-model="dataPayForm.pay_method" :val="key"  @click="activeClass($event)"   />
+                  <q-radio v-model="payFormData.pay_method" :val="key"  @click="activeClass($event)"   />
                 </div>
               </div>
             </div>
           </Transition>
           <Transition name="horizontal">
-            <div class="h-full " style="" v-if="step == 2">
-              <div v-if="dataPayForm.pay_method!==2">
-                <div class="dataPayCard pt-5 pb-3 px-3" style="transform: translateY(-0.4rem);">
-                  <div class="pb-7 text-h6 text-bold text-black"> 
+            <div class="h-full " style="overflow: auto;" v-if="step == 2">
+              <div v-if="payFormData.pay_method!==2">
+                <div class="dataPayCard pt-6 pb-3 px-3" style="transform: translateY(-0.4rem);">
+                  <div class="pb-5 text-h6 text-bold text-black"> 
                     Paga tu reserva
                     <div class=" text-grey-7 mt-1" style="font-size: 0.85rem;line-height: 1.3;">
                       Asegúrate de pagar correctamente, utiliza los datos que te aparcen aca
                     </div>
                   </div>
-                  <div v-for="(data, key) in payData[dataPayForm.pay_method]" :key="key" class=" mb-4" >
-                    <div class="text-body2 mb-1 text-grey-7">{{ data.title }}</div>
-                    <img :src="data.value" alt="" v-if="data.title == 'QR'" class="mx-auto">
-                    <div v-else style="font-size: 1.05rem;" class="text-black text-bold ">{{ data.value }}</div>
+                  <div v-for="(data, key) in payData[payFormData.pay_method]" :key="key" class=" mb-5 flex items-center justify-between" >
+                    <div :class="{'w-full':data.title == 'QR'}">
+                      <div class="text-body2 mb-1 text-grey-7">{{ data.title }}</div>
+                      <img style="width: 8rem;" :src="data.value" alt="" v-if="data.title == 'QR'" class="mx-auto">
+                      <div v-else style="font-size: 1.05rem;" class="text-black text-bold ">{{ data.value }}</div>
+                    </div>
+                    <div v-html="iconsApp.copyIcon"  v-if="data.title != 'QR'"/>
+                  </div>
+                  <div class="flex flex-center mt-6 cursor-pointer"> 
+                    <div v-html="iconsApp.copyIcon" />
+                    <div class="ml-1 text-primary " style="font-size: 1.02rem; font-weight: medium;">Copiar datos</div>
                   </div>
                 </div>
               </div>
               <div v-else>
-                
+                <div class="dataPayCard pt-6 pb-3 px-3" style="transform: translateY(-0.4rem);">
+                  <div class="pb-7 text-h6 text-bold text-black"> 
+                    Paga tu reserva
+                    <div class=" text-grey-7 mt-1" style="font-size: 0.85rem;line-height: 1.3;">
+                      Dirigete a nuestra oficina, para finalizar tu reserva
+                    </div>
+                  </div>
+                  <div class="text-center text-black text-moneyEfectivo" >
+                    Dirigete a la siguiente ubicación de nuestra oficina para realizar el abono en efectivo:
+                  </div>
+                  <div class="my-4 text-center text-grey-8 text-subtitle1 px-4 py-4 box-data" >
+                    Av. Alfredo Benavides 430, Miraflores 15074.
+                  </div>
+                  <div class="mt-7 mb-4 text-center">
+                    <div class="text-moneyEfectivo text-black">El codigo de tu reservación es:</div>
+                    <div class="flex flex-center">
+                      <div class="text-primary text-h5  mt-4 box-data pl-4 pr-3 py-3 flex items-center">
+                        #00{{ reserve.booking_number }}
+                        <div class="ml-2">
+                            <div v-html="iconsApp.copyIcon" />
+  
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </Transition>
@@ -178,15 +219,72 @@ onMounted(() => {
               <div>
                 <div class="dataPayCard pt-5 pb-3 px-3" style="transform: translateY(-0.4rem);">
                   <div class="pb-7 text-h6 text-bold text-black"> 
-                    Paga tu reserva
+                    Confirma tu pago
                     <div class=" text-grey-7 mt-1" style="font-size: 0.85rem;line-height: 1.3;">
-                      Asegúrate de pagar correctamente, utiliza los datos que te aparcen aca
+                      Completa el formulario
                     </div>
                   </div>
-                  <div v-for="(data, key) in payData[dataPayForm.pay_method]" :key="key" class=" mb-4" >
-                    <div class="text-body2 mb-1 text-grey-7">{{ data.title }}</div>
-                    <img :src="data.value" alt="" v-if="data.title == 'QR'" class="mx-auto">
-                    <div v-else style="font-size: 1.05rem;" class="text-black text-bold ">{{ data.value }}</div>
+                  <div class=" row mt-1 px-1 md:px-12">
+                    <div class="col-12 mt-0">
+                      <div class="text-subtitle2 text-black">
+                        Fecha de pago:
+                      </div>
+                      <div class="col-6  pr-2 md:pr-4">
+                        <q-input v-model="payFormData.date" :rules="[val => !(!val) || 'Fecha es requerida']" dense
+                            borderless clearable class="form__inputsPay mt-1" color="primary">
+                            <template v-slot:append>
+                              <q-icon name="eva-calendar-outline" class="cursor-pointer">
+                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                  <q-date mask="DD-MM-YYYY" v-model="payFormData.date" :options="optionsFn"
+                                    @update:model-value="getAvaibleBookingByDay"
+                                    :navigation-min-year-month="moment().format('YYYY/MM')" :locale="myLocale">
+                                    <div class="row items-center justify-end">
+                                      <q-btn v-close-popup label="Aceptar" color="primary" flat />
+                                    </div>
+                                  </q-date>
+                                </q-popup-proxy>
+                              </q-icon>
+                            </template>
+                          </q-input>
+
+                      </div>
+                    </div>
+                    <div class="col-12 mt-2">
+                      <div class="text-subtitle2 text-black ">
+                        Referencia de pago
+                      </div>
+                      <q-input
+                          dense
+                          borderless
+                          clearable
+                          v-model="payFormData.reference"
+                          class="form__inputsPay mt-1"
+                          color="primary"
+                          :rules="[ val => !(!val) ||  'La refrencia de pago es obligatoria']"
+                      />
+                    </div>                    
+                    <div class="col-12 mt-2">
+                      <div class="text-subtitle2 text-black ">
+                        Vaucher de pago
+                      </div>
+                      <q-file v-model="payFormData.vaucher"  dense
+                        borderless
+                        clearable
+                        class="form__inputsPay mt-1"
+                        color="primary"
+                      >
+                        <template v-slot:append>
+                          <q-icon name="eva-folder-add-outline" class="cursor-pointer">
+                          </q-icon>
+                        </template>
+                        <template v-slot:selected>
+                        <div class="row items-center q-gutter-x-sm">
+                          <q-icon name="eva-checkmark-circle-2-outline" color="positive" size="sm" />
+                          <div>Archivo subido</div>
+                        </div>
+                      </template>
+                      </q-file>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -222,6 +320,15 @@ onMounted(() => {
   </div>
 </template>
 <style lang="scss">
+.box-data{
+  background: #03518221;
+  border-radius: 1rem;
+  width: auto;
+  font-weight: 600;
+}
+.text-moneyEfectivo{
+  font-weight: bold; font-size: 1rem;
+}
 .dataPayCard{
     background: white;
     border-bottom-left-radius: 1rem;
@@ -249,4 +356,21 @@ onMounted(() => {
 
   }
 }
+.form__inputsPay{
+  & .q-field__inner {
+    box-shadow: 0px 3px 4px 0px #bfbfbf48;
+    border-radius: 0.5rem;
+    border: 1px solid rgb(223, 223, 223);
+    padding: 0px 1rem;
+  }
+}
+@media (max-width: 780px) {
+.form__inputsPay{
+  & .q-field__inner {
+
+    padding: 0.1rem 1rem;
+  }
+}
+}
+
 </style>
