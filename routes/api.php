@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\ComunAreaController;
 use App\Http\Controllers\Api\DepartamentController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\PayController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -43,7 +44,10 @@ Route::middleware('auth:sanctum')->group(function ()
         Route::post('/', [BookingController::class, 'storeBooking']);
         Route::get('/availableBooking/{id}', [BookingController::class, 'getAvaibleBookingByDay']);
         Route::get('/byId/{id}',  [BookingController::class, 'getBookingById']);
+    });
+    Route::prefix('pays')->name('pay.')->group(function (){
+        Route::post('/bookings/{id}', [PayController::class, 'payBooking']);
+        Route::get('/byId/{id}',  [PayController::class, 'getPayById']);
 
-    
     });
 });

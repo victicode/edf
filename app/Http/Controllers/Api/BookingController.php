@@ -36,7 +36,7 @@ class BookingController extends Controller
 
     public function getBookingsByUser(Request $request) {
         
-        $bookings = Booking::with('comunArea', 'user');
+        $bookings = Booking::with('comunArea', 'user', 'pay');
         if($request->user()->id != 1){
             $bookings->where('user_id', $request->user()->id);
         }

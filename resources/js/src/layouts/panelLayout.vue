@@ -34,9 +34,9 @@ onMounted(() => {
 <template>
   <div class="h-full bg-stone-100 w-full" style="position: relative; overflow: hidden;">
     <template v-if="ready">
-      <headerLayout class="header__container" v-if="!(['reserveConfirm', 'reservePay'].includes(route.name))" />
+      <headerLayout class="header__container" v-if="!(['reserveConfirm', 'reservePay', 'reservePayConfirm'].includes(route.name))" />
       <section
-        :class="{ 'withoutNav': ['reserveConfirm', 'reservePay'].includes(route.name), 'page__container': ['dashboardAdmin', 'financePage', 'usersAdmin'].includes(route.name), 'page_continerFull': !(['dashboardAdmin', 'financePage', 'usersAdmin'].includes(route.name)) }">
+        :class="{ 'withoutNav': ['reserveConfirm', 'reservePay', 'reservePayConfirm'].includes(route.name), 'page__container': ['dashboardAdmin', 'financePage', 'usersAdmin'].includes(route.name), 'page_continerFull': !(['dashboardAdmin', 'financePage', 'usersAdmin'].includes(route.name)) }">
         <router-view v-slot="{ Component }">
           <transition name="horizontal">
             <component :is="Component" />

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Booking extends Model
 {
@@ -29,6 +30,9 @@ class Booking extends Model
     }
     public function user(): BelongsTo {
         return $this->belongsTo(User::class);
+    }
+    public function pay(): HasOne {
+        return $this->hasOne(Pay::class);
     }
     public function getBookingHourAttribute(){
         $hour = intval(substr($this->time_to, 0, 2)) - intval(substr($this->time_from, 0, 2));

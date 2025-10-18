@@ -6,12 +6,25 @@ import cash from '@/assets/img/util/cash.webp'
 import { useRoute, useRouter } from 'vue-router';
 import { useReserveStore } from '@/services/store/reserve.store'
 import iconsApp from '@/assets/icons/index'
+import moment from 'moment';
+import { Notify } from 'quasar';
+
+const myLocale = {
+  /* starting with Sunday */
+  days: 'Domingo_Lunes_Martes_Miércoles_Jueves_Viernes_Sábado'.split('_'),
+  daysShort: 'Dom_Lun_Mar_Mié_Jue_Vie_Sáb'.split('_'),
+  months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split('_'),
+  monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
+  firstDayOfWeek: 1, // 0-6, 0 - Sunday, 1 Monday, ...
+  format24h: true,
+  pluralDay: 'dias'
+}
 
 const route = useRoute()
 const router = useRouter()
 const reserveStore = useReserveStore()
 const ready = ref(false)
-const step = ref(3)
+const step = ref(1)
 const loading = ref(false)
 const disable =  ref(true)
 const materialIcons = inject('materialIcons')
@@ -23,7 +36,6 @@ const payFormData = ref({
   reference:'',
   date:'',
   booking_id: route.params.id || route.query.id,
-  pay_id:''
 })
 
 const payMethods = [
@@ -42,6 +54,7 @@ const payMethods = [
 ]
 
 const payData = [
+  [],
   [
     {
       title:'N° de cuenta',
@@ -80,7 +93,17 @@ const payData = [
 ]
 
 const nextStep = () => {
+  if(step.value == 3 || (step.value == 2 && payFormData.value.pay_method == 3)){
+    createReservePay()
+    return
+  }
+
+  if(step.value == 2){
+    disable.value = true
+  }
   step.value++
+
+
 }
 const stepBack = () => {
   if(step.value ==1){
@@ -89,12 +112,12 @@ const stepBack = () => {
   } 
   step.value--
 }
+
 const getBookingById = () => {
   reserveStore.getReserveById(route.params.id || route.query.id)
   .then((response) => {
     reserve.value = response.data
     ready.value = true
-
   })
   .catch((response) => {
     console.log(response)
@@ -111,14 +134,48 @@ const activeClass = (event) => {
   disable.value = false
   event.target.closest('.payMethodItem').classList.add('active')
 }
-const onFileChange = (r) => {
-    // const file = document.getElementById('winner_photo').files[0]
-    // formInputs.value.photoWinner = file
-    console.log(r)
-    console.log(payFormData.value.vaucher)
+const onFileChange = () => {
+  if(payFormData.value.reference) disable.value = false
+}
+const copyData = (data) => {
 
-    return 
-  }
+}
+const longFormatData = () => {
+
+}
+const showNotify = (type, text) => {
+  Notify.create({
+    color: type,
+    message: text,
+    timeout: 2000
+  })
+}
+const createReservePay = () => {
+  const dataForm = new FormData
+  dataForm.append('amount', reserve.value.amount)
+  dataForm.append('vaucher', payFormData.value.vaucher)
+  dataForm.append('reference', payFormData.value.reference)
+  dataForm.append('pay_date', payFormData.value.date)
+  dataForm.append('pay_method', payFormData.value.pay_method)
+  loading.value = true
+  const postData = {
+    id: reserve.value.id,
+    dataForm
+  } 
+  reserveStore.createReservePay(postData)
+  .then((response) => {
+    showNotify('positive', 'Pago creado con exito')
+    setTimeout(() => {
+      loading.value = false
+      router.push('/client/reserves/pay/details/'+response.data.idPay)
+    }, 1000);
+  })
+  .catch((response) => {
+    loading.value = false
+    showNotify('positive', 'Error al crear el pago')
+
+  })
+}
 onMounted(() => {
   getBookingById()
 })
@@ -145,24 +202,24 @@ onMounted(() => {
               <div class="text-h6 text-bold text-black py-5">
                 ¿Cómo vas a pagar?
               </div>
-              <div v-for="(method, key) in payMethods" :key="key" class="payMethodItem mb-5 py-2 px-3 flex justify-between items-center">
-                <div class="flex items center">
-                  <div class="bg-white" style="border-radius: 0.5rem;">
-                    <img :src="method.img" alt="" class="" style="width: 2rem; border-radius: 0.5rem; ">
+              <div v-for="(method, key) in payMethods" :key="key"  class="payMethodItem mb-5 py-2 px-3 flex justify-between items-center">
+                  <div class="flex items center">
+                    <div class="bg-white" style="border-radius: 0.5rem;">
+                      <img :src="method.img" alt="" class="" style="width: 2rem; border-radius: 0.5rem; ">
+                    </div>
+                    <div class="text-subtitle1  ml-2">
+                      {{ method.title }}
+                    </div>
                   </div>
-                  <div class="text-subtitle1  ml-2">
-                    {{ method.title }}
+                  <div>
+                    <q-radio v-model="payFormData.pay_method" :val="(key+1)"  @click="activeClass($event)"   />
                   </div>
                 </div>
-                <div>
-                  <q-radio v-model="payFormData.pay_method" :val="key"  @click="activeClass($event)"   />
-                </div>
-              </div>
             </div>
           </Transition>
           <Transition name="horizontal">
             <div class="h-full " style="overflow: auto;" v-if="step == 2">
-              <div v-if="payFormData.pay_method!==2">
+              <div v-if="payFormData.pay_method!==3">
                 <div class="dataPayCard pt-6 pb-3 px-3" style="transform: translateY(-0.4rem);">
                   <div class="pb-5 text-h6 text-bold text-black"> 
                     Paga tu reserva
@@ -205,7 +262,6 @@ onMounted(() => {
                         #00{{ reserve.booking_number }}
                         <div class="ml-2">
                             <div v-html="iconsApp.copyIcon" />
-  
                         </div>
                       </div>
                     </div>
@@ -231,7 +287,7 @@ onMounted(() => {
                       </div>
                       <div class="col-6  pr-2 md:pr-4">
                         <q-input v-model="payFormData.date" :rules="[val => !(!val) || 'Fecha es requerida']" dense
-                            borderless clearable class="form__inputsPay mt-1" color="primary">
+                            borderless clearable class="form__inputsPay mt-1" color="primary" accept=".jpg, image/*">
                             <template v-slot:append>
                               <q-icon name="eva-calendar-outline" class="cursor-pointer">
                                 <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -259,6 +315,7 @@ onMounted(() => {
                           clearable
                           v-model="payFormData.reference"
                           class="form__inputsPay mt-1"
+                          :maxlength="12"
                           color="primary"
                           :rules="[ val => !(!val) ||  'La refrencia de pago es obligatoria']"
                       />
@@ -272,6 +329,7 @@ onMounted(() => {
                         clearable
                         class="form__inputsPay mt-1"
                         color="primary"
+                        @update:model-value="onFileChange"
                       >
                         <template v-slot:append>
                           <q-icon name="eva-folder-add-outline" class="cursor-pointer">
@@ -306,7 +364,14 @@ onMounted(() => {
             <q-btn color="primary" class="" style="width: 90%; border-radius: 0.5rem;" type="submit"
               :loading="loading" :disable="disable">
               <div class="py-1 md:py-2">
-                {{ step == 3 ? 'Guardar reserva' : 'Siguiente' }}
+                {{ 
+                  step == 3 
+                  ? 'Pagar reserva' 
+                  : step == 2 && payFormData.pay_method == 3 
+                  ? 'Confirmar pago'
+                  : step == 2
+                  ? 'Ya hice el pago' 
+                  : 'Siguiente' }}
               </div>
             </q-btn>
           </div>
@@ -320,6 +385,10 @@ onMounted(() => {
   </div>
 </template>
 <style lang="scss">
+.q-date__today{
+  background: #0351824d;
+  color: $primary
+}
 .box-data{
   background: #03518221;
   border-radius: 1rem;

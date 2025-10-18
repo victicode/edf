@@ -1,15 +1,15 @@
 import { defineStore } from 'pinia'
 import ApiService from '@/services/axios'
 
-export const useReserveStore = defineStore('Reserve', {
+export const usePayStore = defineStore('Pay', {
   actions: {
-    async getReservesByUser() {
+    async getPaysByUser() {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.get('/api/bookings')
+        ApiService.get('/api/pays')
         .then(({data}) => {
           if(data.code !=200) throw data;
           
@@ -21,75 +21,13 @@ export const useReserveStore = defineStore('Reserve', {
         
       })
     },
-    async createReserve(data) {
+    async createPay(data) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.post('/api/bookings', data)
-        .then(({data}) => {
-          if(data.code !=200) throw data;
-          
-          resolve(data);
-        }).catch(( {response}) => {
-          console.log(response)
-          if(response.data.code == 403){
-            reject(response.data);
-          }
-          reject(response.data.error);
-        });
-        
-      })
-
-    },
-    async createReservePay(postData){
-      return await new Promise((resolve, reject) => {
-        if (!ApiService.getToken()) {
-          throw '';
-        }
-        ApiService.setHeader();
-        ApiService.post('/api/pays/bookings/'+postData.id, postData.dataForm)
-        .then(({data}) => {
-          if(data.code !=200) throw data;
-  
-          resolve(data);
-        }).catch(( {response}) => {
-          console.log(response)
-          reject(response.data.error);
-        });
-        
-      })
-
-    },
-     
-    async getReserveById(id) {
-      return await new Promise((resolve, reject) => {
-        if (!ApiService.getToken()) {
-          throw '';
-        }
-        ApiService.setHeader();
-        ApiService.get('/api/bookings/byId/'+id)
-        .then(({data}) => {
-          if(data.code !=200) throw data;
-  
-          resolve(data);
-        }).catch(( {response}) => {
-          console.log(response)
-          reject(response.data.error);
-        });
-        
-      })
-
-    },
-     
-    async updateReserve(data) {
-      return await new Promise((resolve, reject) => {
-        if (!ApiService.getToken()) {
-          throw '';
-        }
-        ApiService.setHeader();
-        ApiService.put('/api/bookings/'+data.id, data)
+        ApiService.post('/api/pays', data)
         .then(({data}) => {
           if(data.code !=200) throw data;
           
@@ -105,13 +43,56 @@ export const useReserveStore = defineStore('Reserve', {
       })
 
     },
-    async getAvailableReserveInDayByArea(data){
+     
+    async getPayById(id) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.get('/api/bookings/availableBooking/'+data.idArea+'?date='+data.date+'&')
+        ApiService.get('/api/pays/byId/'+id)
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+  
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+        
+      })
+
+    },
+     
+    async updatePay(data) {
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.put('/api/pays/'+data.id, data)
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+          
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          if(response.data.code == 403){
+            reject(response.data);
+          }
+          reject(response.data.error);
+        });
+        
+      })
+
+    },
+    async getAvailablePayInDayByArea(data){
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.get('/api/pays/availableBooking/'+data.idArea+'?date='+data.date+'&')
         .then(({data}) => {
           if(data.code !=200) throw data;
           
@@ -123,13 +104,13 @@ export const useReserveStore = defineStore('Reserve', {
       })
 
     },
-    async deleteReserve(id) {
+    async deletePay(id) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.delete('/api/bookings/'+id)
+        ApiService.delete('/api/pays/'+id)
         .then(({data}) => {
           if(data.code !=200) throw data;
           

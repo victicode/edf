@@ -44,8 +44,8 @@ const getPaymentStatus = (booking) => {
   if (booking.amount > 0) {
     return !booking.pay  
     ? 'No pagada' 
-    : booking.pay_method == 2 
-    ? 'Pagado vía Efectivo' 
+    : booking.pay.status == 1 
+    ? 'Pendiente de aprobación' 
     : 'Pagado';
   }
   return 'Confirmado';

@@ -17,21 +17,18 @@ class Pay extends Model
         "amount", 
         "vaucher", 
         "reference", 
+        "pay_date",
         "pay_id", 
         "pay_method",
         "status"
     ];
-    public $appends  =   ["booking_hour", "status_label", "status_color"];
+    public $appends  =   ["status_label", "status_color", "pay_method_label"];
 
-    public function comunArea(): BelongsTo {
-        return $this->belongsTo(ComunArea::class, 'comun_area_id', 'id');
+    public function booking(): BelongsTo {
+        return $this->belongsTo(Booking::class, 'booking_id', 'id');
     }
     public function user(): BelongsTo {
         return $this->belongsTo(User::class);
-    }
-    public function getBookingHourAttribute(){
-        $hour = intval(substr($this->time_to, 0, 2)) - intval(substr($this->time_from, 0, 2));
-        return  $hour;
     }
     public function getStatusLabelAttribute(){
         $status= [
@@ -43,6 +40,7 @@ class Pay extends Model
     }
     public function getPayMethodLabelAttribute(){
         $status= [
+            '',
             "Transferencia bancarias",
             "Paypal",
             "Yape",

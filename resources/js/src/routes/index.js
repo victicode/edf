@@ -247,6 +247,16 @@ const routes = [
           title: 'Bienvenido',
           pagTitle: 'Realiza el pago'
         }
+      },
+      {
+        path: '/client/reserves/pay/details/:id', 
+        component: () => import('@/view/client/Reserves/payConfirmReserve.vue'),
+        name:'reservePayConfirm',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Pago realizado!'
+        }
       }
       
     ]
