@@ -39,14 +39,13 @@ class Pay extends Model
         return  $status[$this->status];
     }
     public function getPayMethodLabelAttribute(){
-        $status= [
+        $payMethod= [
             '',
-            "Transferencia bancarias",
-            "Paypal",
+            "Transferencia bancaria",
             "Yape",
             "Pago en efectivo"
         ];
-        return  $status[$this->status];
+        return  $payMethod[$this->pay_method];
     }
     public function getStatusColorAttribute(){
         $status= [

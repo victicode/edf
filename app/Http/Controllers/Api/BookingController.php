@@ -42,9 +42,21 @@ class BookingController extends Controller
         }
         return $this->returnSuccess(200, $bookings->get());
     }
+
     public function getBookingById($id) {
-        $booking = Booking::with('comunArea', 'user')->find($id);
+        $booking = Booking::with('comunArea', 'user', 'pay')->find($id);
         return $this->returnSuccess(200, $booking);
+    }
+    public function getBookingByAreaId(Request $request, $areaId){
+
+        $bookings = Booking::with('pay', 'user')->where('comun_area_id',$areaId);
+        // $bookings = $this->applyFilter($bookings, $request);
+
+
+        return $this->returnSuccess(200, $bookings->get());
+    }
+    public function applyFilter($bookings, $filters){
+
     }
     public function updateBooking(Request $request, $id) {
         $validated = $this->validateFieldsFromInput($request->all());

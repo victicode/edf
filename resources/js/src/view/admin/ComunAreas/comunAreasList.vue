@@ -46,8 +46,6 @@ const getComunArea = () => {
 }
 const selectArea = (id) => {
   selectedArea.value = comunAreas.value.find((area) => area.id == id)
-  console.log(Object.values(selectedArea.value).length)
-  console.log(selectedArea.value)
   setTimeout(() => {
     dialog.value = true
   }, 500);
@@ -101,11 +99,11 @@ onMounted(() => {
             </div>
             <div class="flex w-full justify-end py-1" style="border-top: 1px solid lightgrey;">
               <div>
-                <q-btn :icon="materialIcons.outlinedFactCheck" class="mx-1" flat color="yellow-9" round size="0.85rem">
+                <q-btn :icon="materialIcons.outlinedFactCheck" class="mx-1" flat color="yellow-9" round size="0.85rem"
+                  @click="goTo('/admin/comun-area/bookings/'+comunArea.id+'/list')">
                   <q-tooltip transition-show="flip-right" transition-hide="flip-left"
                     :class="'bg-black text-body2 px-2'">
                     Historial de reservas
-
                   </q-tooltip>
                 </q-btn>
               </div>

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 class PayController extends Controller
 {
     public function getPayById($id){
-        $pay = Pay::with(['booking', 'user'])->find($id);
+        $pay = Pay::with(['booking.comunArea', 'user'])->find($id);
 
         return $this->returnSuccess(200, $pay);
     }
@@ -27,7 +27,7 @@ class PayController extends Controller
             "amount"        => $request->amount,
             "reference"     => $request->reference ?? "000000",
             "pay_id"        => $prefixPayId[$request->pay_method].$id.'-'.rand(1000,9999),
-            "pay_date"      => $request->pay_date ?? date("Y-m-d"),
+            "pay_date"      => $request->pay_date ? date("Y-m-d", strtotime($request->pay_date)) :date("Y-m-d"),
             "pay_method"    => $request->pay_method,
             "status"        => 1
         ]);
@@ -37,6 +37,44 @@ class PayController extends Controller
         $this->uploadVaucher($pay, $request);
         return $this->returnSuccess(200, ["idPay"=> $pay->id]);
     }
+    public function updateStatus(Request $request, $payId){
+        $pay = Pay::find($payId);
+
+        if(!$payId) return $this->returnFail(404, "Pago no encontrado");
+        
+        $pay->update([
+            "status" => $request->status,
+        ]);
+
+        $pay->booking_id 
+        ? $this->bookingActionByStatus($pay->booking_id, $request->status)
+        : '';
+        
+        return $this->returnSuccess(200, 'bien');
+    }
+    private function bookingActionByStatus($booking, $status){
+        if($status == 0){
+            $this->cancelBooking($booking);
+            return;
+        }
+        $this->approveBooking($booking);
+    }
+
+    private function cancelBooking($booking){
+        $CANCEL_VALUE = 0; 
+        $booking = Booking::find($booking);
+        $booking->update([
+            "status" => $CANCEL_VALUE 
+        ]);
+    } 
+    private function approveBooking($booking){
+        $APPROVE_VALUE = 3; 
+        $booking = Booking::find($booking);
+        $booking->update([
+            "status" => $APPROVE_VALUE 
+        ]);
+
+    } 
     private function validateFieldsFromInput($inputs){
         
         $rules =  $inputs['pay_method'] !=3 
@@ -76,7 +114,7 @@ class PayController extends Controller
 
         if ($vaucher->file("vaucher")) {
             $path = "/public/images/vaucher/".rand(1000000, 9999999)."_". trim(str_replace(" ", "_", $pay->id )) .".". $vaucher->file("vaucher")->extension();
-            $vaucher->file("vaucher")->move(public_path() . "/images/vaucher/", $vaucher);
+            $vaucher->file("vaucher")->move(public_path() . "/images/vaucher/", $path);
         }  
         $pay->vaucher = $path;
         $pay->save();

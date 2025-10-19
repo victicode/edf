@@ -1,20 +1,20 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import checkIcon from '@/assets/img/util/check.webp'
+import iconsApp from '@/assets/icons/index'
 import { usePayStore } from '@/services/store/pay.store'
+import voucherModal from '@/components/pay/voucherModal.vue'
+
 const route = useRoute()
 const router = useRouter()
 const payStore = usePayStore()
+const dialog = ref('')
 
 // Estados reactivos
 const pay = ref(null)
 const loading = ref(false)
 const error = ref(null)
-const iconByStatus = [
-  
-]
-// Función para obtener pay por ID
+
 const getPayById = async (id) => {
   try {
     loading.value = true
@@ -30,18 +30,6 @@ const getPayById = async (id) => {
 
     loading.value = false
   }
-}
-
-// Función para descargar recibo
-const downloadReceipt = () => {
-  // Aquí puedes implementar la lógica para descargar el recibo
-  console.log('Descargando recibo para la reserva:', pay.value?.id)
-  // Por ejemplo, generar un PDF o abrir una nueva ventana con el recibo
-}
-
-// Función para ir al inicio
-const goToHome = () => {
-  router.push('/client/reserves/list')
 }
 
 // Obtener el ID del pay desde la URL o props
@@ -62,27 +50,25 @@ const reloadBooking = () => {
     getPayById(payId)
   }
 }
+const updateStatus = (status) => {
+  const data = {
+    status: status
+  }
+  payStore.updateStatus({data:data, id:pay.value.id})
+  .then((response)  => {
+    console.log(response)
+  })
+}
+
+const showModal = (modal) => {
+  dialog.value = modal
+}
 </script>
 
 <template>
-  <div class="h-full bg-white relative overflow-auto">
-    <!-- Fondo decorativo urbano -->
-    <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-100 to-transparent opacity-30">
-      <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-200 to-transparent">
-        <!-- Siluetas de edificios -->
-        <div class="flex items-end justify-between px-8 ">
-          <div class="w-8 h-12 bg-gray-300 rounded-t"></div>
-          <div class="w-6 h-8 bg-gray-300 rounded-t"></div>
-          <div class="w-10 h-16 bg-gray-300 rounded-t"></div>
-          <div class="w-7 h-10 bg-gray-300 rounded-t"></div>
-          <div class="w-5 h-14 bg-gray-300 rounded-t"></div>
-          <div class="w-9 h-12 bg-gray-300 rounded-t"></div>
-          <div class="w-6 h-9 bg-gray-300 rounded-t"></div>
-        </div>
-      </div>
-    </div>
+  <div class="h-full  relative overflow-auto">
 
-    <div class="relative z-10 pt-5 pb-2 px-6">
+    <div class="relative z-10 pt-5 pb-2 px-6 h-full">
       <!-- Loading State -->
       <div v-if="loading" class="flex flex-col items-center justify-center py-20">
         <q-spinner-dots color="primary" size="4rem" />
@@ -106,37 +92,35 @@ const reloadBooking = () => {
       </div>
 
       <!-- Success State -->
-      <div v-else-if="pay" class="flex flex-col items-center" >
-        <!-- Icono de éxito -->
-        <!-- <div class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mb-6 shadow-lg">
-          <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-          </svg>
-        </div> -->
-        <div class="mb-4">
-          <img :src="checkIcon" alt="" style="width: 6rem;">
-        </div>
-
-        <!-- Título de éxito -->
-        <h1 class="text-2xl font-bold text-gray-900 mb-2">Pago realizado!</h1>
-        <p class="text-gray-600 mb-1 text-center">Tu pago ha sido creado exitosamente</p>
-        <p class="text-gray-600 mb-7 text-center">El equipo de administración lo validara y se te noficará cuando sea confirmado</p>
-
+      <div v-else-if="pay" class="flex flex-col items-center h-full" >
 
         <!-- Tarjeta de detalles -->
-        <div class="bg-white rounded-xl shadow-lg border border-gray-100 w-full max-w-sm p-6 mb-8">
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 w-full max-w-sm p-6 pb-4 mb-8">
           <div class="space-y-4">
             <!-- Estado del pago -->
             <div class="flex justify-between items-center pb-2"
               style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);">
-              <span class="text-gray-600 font-medium">Estado de pago</span>
-              <span class="font-semibold" :class="'text-' + pay.status_color">{{ pay.status_label }}</span>
+              <span class="text-gray-600 font-medium">Area</span>
+              <span class="text-gray-900 font-semibold"  >{{ pay.booking.comun_area.name}}</span>
+            </div>
+            <!-- ID de transacción -->
+            <div class="flex justify-between items-center pb-2"
+              style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);">
+              <span class="text-gray-600 font-medium">ID de pago</span>
+              <span class="text-gray-900 font-semibold">#{{ pay.pay_id }}</span>
+            </div>
+
+            <!-- Área común -->
+            <div class="flex justify-between items-center pb-2" v-if="pay.booking"
+              style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);">
+              <span class="text-gray-600 font-medium">Reserva</span>
+              <span class="text-gray-900 font-semibold">#{{ pay.booking?.booking_number  || 'Área Común' }}</span>
             </div>
             <!-- Horarios -->
             <div class="flex justify-between items-center pb-2" v-if="pay.pay_method !=3"
               style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);">
               <span class="text-gray-600 font-medium">Refencia de pago</span>
-              <span class="text-gray-900 font-semibold">{{ pay.reference }}</span>
+              <span class="text-gray-900 font-semibold">#{{ pay.reference }}</span>
             </div>
             <!-- Monto pagado -->
             <div class="flex justify-between items-center pb-2"
@@ -160,43 +144,35 @@ const reloadBooking = () => {
                 {{ pay.pay_method_label }}
               </span>
             </div>
-
-            <!-- ID de transacción -->
-            <div class="flex justify-between items-center pb-2"
+            <!-- User -->
+            <div class="flex justify-between items-center pb-2" v-if="pay.booking"
               style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);">
-              <span class="text-gray-600 font-medium">ID de pago</span>
-              <span class="text-gray-900 font-semibold">#{{ pay.pay_id }}</span>
+              <span class="text-gray-600 font-medium">A nombre de</span>
+              <span class="text-gray-900 font-semibold">
+                {{ pay.user.name }}
+              </span>
             </div>
-
-            <!-- Área común -->
-            <div class="flex justify-between items-center pb-2"
-              style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);">
-              <span class="text-gray-600 font-medium">Reserva</span>
-              <span class="text-gray-900 font-semibold">#{{ pay.booking?.booking_number  || 'Área Común' }}</span>
+            
+          </div>
+          <div class="flex flex-center mt-4" @click="showModal('voucher')" v-if="pay.pay_method !=3">
+            <div class="text-center text-subtitle1 text-primary text-bold font-medium cursor-pointer text__vaucher" style="text-decoration:dotted">
+              Vaucher de pago 
             </div>
+            <span class="ml-2" v-html="iconsApp.voucher"></span>
           </div>
         </div>
+        <div>
+          <div class="flex justify-evenly mt-5">
+            <q-btn label="Cancelar" unelevated class="q-mx-sm " color="negative" outline
+              style="border-radius: 0.8rem; padding:0px  2rem!important; font-size: 1rem;  " 
+              @click="updateStatus(0)" />
 
-        <!-- Botones de acción -->
-        <div class="w-full max-w-sm space-y-4">
-          <!-- Botón de descargar recibo -->
-          <!-- <button @click="downloadReceipt"
-            class="w-full py-4 border border-gray-300 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-              </path>
-            </svg>
-            <span>Descargar Recibo</span>
-          </button> -->
-
-          <!-- Enlace de volver al inicio -->
-          <div class="text-center pb-2">
-            <button @click="goToHome" class="text-gray-600 font-medium underline hover:text-gray-800 transition-colors">
-              Volver al inicio
-            </button>
+            <q-btn label="Aprobar" unelevated class="q-mx-sm " color="primary" outline
+              style="border-radius: 0.8rem; padding:0px  2rem!important; font-size: 1rem;  " :loading="loading"
+              @click="updateStatus(2)" />
           </div>
         </div>
+        <voucherModal :vaucher="pay.vaucher"  :dialog="(dialog == 'voucher')"  @closeModal="dialog = ''"/>
       </div>
 
       <!-- No Booking Found -->
@@ -218,3 +194,13 @@ const reloadBooking = () => {
     </div>
   </div>
 </template>
+
+<style lang="scss">
+.text__vaucher{
+  transition: all 0.5s ease;
+  &:hover{
+    text-decoration: underline;
+  }
+}
+
+</style>

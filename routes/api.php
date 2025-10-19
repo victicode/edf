@@ -44,10 +44,12 @@ Route::middleware('auth:sanctum')->group(function ()
         Route::post('/', [BookingController::class, 'storeBooking']);
         Route::get('/availableBooking/{id}', [BookingController::class, 'getAvaibleBookingByDay']);
         Route::get('/byId/{id}',  [BookingController::class, 'getBookingById']);
+        Route::get('/byArea/{id}', [BookingController::class, 'getBookingByAreaId']);
     });
     Route::prefix('pays')->name('pay.')->group(function (){
         Route::post('/bookings/{id}', [PayController::class, 'payBooking']);
         Route::get('/byId/{id}',  [PayController::class, 'getPayById']);
+        Route::post('/updateStatus/{id}', [PayController::class, 'updateStatus']);
 
     });
 });

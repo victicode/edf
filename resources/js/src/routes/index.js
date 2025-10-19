@@ -207,6 +207,29 @@ const routes = [
           pagTitle: 'Editar area común'
         }
       },
+      {
+        path: '/admin/comun-area/bookings/:id/list', 
+        component: () => import('@/view/admin/ComunAreas/bookingsList.vue'),
+        name:'comunAreaBookingsList',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Lista de reservaciones'
+        }
+      },
+      {
+        path: '/admin/pay/validate/:id', 
+        component: () => import('@/view/admin/Pays/validatePay.vue'),
+        name:'PayValidate',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Validar pago'
+        }
+      },
+      
+
+      // ---- client Routes -----
 
       {
         path: '/client/reserves/list', 

@@ -80,9 +80,26 @@ export const useReserveStore = defineStore('Reserve', {
         });
         
       })
-
     },
-     
+    async getReservesByArea(area){
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.get('/api/bookings/byArea/'+area)
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+  
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+        
+      })
+    },
+    
     async updateReserve(data) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {

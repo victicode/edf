@@ -120,7 +120,30 @@ export const usePayStore = defineStore('Pay', {
           reject(response.data.error);
         });
       })
-    }
+    },
+    async updateStatus(data) {      
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.post('/api/pays/updateStatus/'+data.id, data.data)
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+          
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          if(response.data.code == 403){
+            reject(response.data);
+          }
+          reject(response.data.error);
+        });
+        
+      })
+
+    },
+
     
   },
 })

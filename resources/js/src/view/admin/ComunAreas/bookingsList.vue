@@ -1,29 +1,28 @@
 <script setup>
-import { ref, onMounted } from 'vue';
 import { useReserveStore } from '@/services/store/reserve.store';
-import { useRouter } from 'vue-router';
+import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import iconsApp from '@/assets/icons/index'
 
-const reserves = ref([]);
-const loading = ref(false);
-const reserveStore = useReserveStore();
-const router = useRouter();
+const reserveStore = useReserveStore() 
+const reserves = ref([])
+const readyPage = ref(false)
+const router = useRouter()
+const route = useRoute()
 
-const getReserves = () => {
-  loading.value = true;
-  reserveStore.getReservesByUser()
-    .then((response) => {
-      if (response.code !== 200) throw response;
-      reserves.value = response.data;
-    })
-    .catch((response) => {
-      console.log(response);
-    })
-    .finally(() => {
-      loading.value = false;
-    });
-}
-
+const getReservesByArea = () => {
+  reserveStore.getReservesByArea(route.params.id)
+  .then((response) => {
+    console.log(response)
+    reserves.value = response.data
+    setTimeout(() => {
+      readyPage.value = true
+    }, 100);
+  })
+  .catch((response) => {
+    console.log(response)
+  })
+} 
 const goTo = (url) => {
   router.push(url);
 }
@@ -57,19 +56,18 @@ const getPaymentAmount = (booking) => {
   }
   return 'Gratis';
 }
-
 onMounted(() => {
-  getReserves();
-});
-</script>
+  getReservesByArea()
+})
 
+</script>
 <template>
   <div class="h-full">
 
     <div class="" style="height: 90%; overflow: auto;">
 
       <!-- Loading State -->
-      <div v-if="loading" class="flex justify-center items-center py-20">
+      <div v-if="!readyPage" class="flex justify-center items-center py-20">
         <!-- <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div> -->
         <q-spinner-dots color="primary" size="7rem" />
 
@@ -86,11 +84,6 @@ onMounted(() => {
             <div class="px-4 pb-4 pt-2 border-b border-dashed border-gray-300">
               <!-- Header con nombre y estado -->
               <div class="flex justify-between items-start mb-2">
-                <div class="flex-1">
-                  <h3 class="text-lg font-bold text-gray-900 mb-2">
-                    {{ reserve.comun_area?.name || 'Área Común' }}
-                  </h3>
-                </div>
                 <!-- Estado badge -->
                 <span :class="'bg-'+reserve.status_color"
                   class="inline-block px-3 py-2 text-xs font-bold text-white badgeReserve">
@@ -101,9 +94,9 @@ onMounted(() => {
               <!-- Contenido principal con imagen y detalles -->
               <div class="flex items-center space-x-4">
                 <!-- Imagen del área -->
-                <div class="w-16 h-16 bg-gray-200 rounded-xl flex items-center justify-center flex-shrink-0">
+                <!-- <div class="w-16 h-16 bg-gray-200 rounded-xl flex items-center justify-center flex-shrink-0">
                   <div v-html="iconsApp[reserve.comun_area.icon]" />
-                </div>
+                </div> -->
 
                 <!-- Detalles de la reserva -->
                 <div class="flex-1 space-y-2">
@@ -130,9 +123,13 @@ onMounted(() => {
                   <div class="flex items-center text-sm text-gray-700">
                     <div v-html="iconsApp.moneyIcon" />
                     <span class="font-medium">
-                      {{ getPaymentAmount(reserve) }}
+                      {{ getPaymentAmount(reserve) }} - 
+                      <span class="font-medium">
+                        {{ reserve.pay?.pay_method_label ?? 'Confirmada' }}
+                      </span>
                     </span>
                   </div>
+
                 </div>
               </div>
             </div>
@@ -141,23 +138,15 @@ onMounted(() => {
             <div class="p-4 bg-gray-50">
               <div class="flex justify-between items-center">
                 <div class="flex items-center">
-                  <svg v-if="reserve.status == 3" class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <svg v-else class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                    </path>
-                  </svg>
-                  <span class="text-sm font-medium text-gray-700">{{ getPaymentStatus(reserve) }}</span>
+                  <span class="text-sm font-medium text-gray-700">{{ reserve.user.name}}</span>
                 </div>
                 <div class="flex items-center">
-                  <q-btn unelevated rounded color="warning" size="sm" class="ml-3" v-if="reserve.status == 1"  
-                    @click="goTo('/client/reserves/pay-reserve/' + reserve.id)">
+                  <q-btn unelevated rounded color="warning" size="sm" class="ml-3" v-if="reserve.status == 2"  
+                    @click="goTo('/admin/pay/validate/' + reserve.pay.id)">
                     <q-tooltip class="bg-primary  text-white text-body2" :offset="[10, 10]">
-                      Proceder con el pago
+                      Validar pago
                     </q-tooltip>
-                    <div v-html="iconsApp.procedToPay"></div>
+                    <div v-html="iconsApp.processPay"></div>
                   </q-btn>
                   <div flat rounded color="primary" size="sm" class="ml-3 cursor-pointer" >
                     <q-tooltip class="bg-primary  text-white text-body2" :offset="[10, 10]">
@@ -169,18 +158,8 @@ onMounted(() => {
                       <q-item clickable v-close-popup>
                         <q-item-section>Ver detalles</q-item-section>
                       </q-item>
-                      <q-item clickable v-close-popup>
-                        <q-item-section>Cancelar reserva</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup>
-                        <q-item-section>Editar reserva</q-item-section>
-                      </q-item>
-                      <q-separator />
-                      <q-item clickable v-close-popup v-if="reserve.status == 1" >
-                        <q-item-section>Pagar</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup v-if="reserve.status == 3">
-                        <q-item-section>Descarga pase</q-item-section>
+                      <q-item clickable v-close-popup v-if="reserve.status == 2" @click="goTo('/admin/pay/validate/' + reserve.pay.id)" >
+                        <q-item-section>Validar Pago</q-item-section>
                       </q-item>
                       <q-separator />
                     </q-list>
@@ -203,10 +182,6 @@ onMounted(() => {
           </div>
           <h3 class="text-lg font-semibold text-gray-900 mb-2">No tienes reservas</h3>
           <p class="text-gray-600 text-center mb-6">Aún no has realizado ninguna reserva de áreas comunes.</p>
-          <button @click="goTo('/client/reserves/form/add')"
-            class="px-6 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors">
-            Crear primera reserva
-          </button>
         </div>
       </div>
     </div>
@@ -225,7 +200,6 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
 <style scoped>
 /* Estilos adicionales si es necesario */
 .badgeReserve {

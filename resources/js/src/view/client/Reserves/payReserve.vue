@@ -291,7 +291,7 @@ onMounted(() => {
                             <template v-slot:append>
                               <q-icon name="eva-calendar-outline" class="cursor-pointer">
                                 <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                  <q-date mask="DD-MM-YYYY" v-model="payFormData.date" :options="optionsFn"
+                                  <q-date mask="DD-MM-YYYY" v-model="payFormData.date"
                                     @update:model-value="getAvaibleBookingByDay"
                                     :navigation-min-year-month="moment().format('YYYY/MM')" :locale="myLocale">
                                     <div class="row items-center justify-end">
@@ -320,7 +320,7 @@ onMounted(() => {
                           :rules="[ val => !(!val) ||  'La refrencia de pago es obligatoria']"
                       />
                     </div>                    
-                    <div class="col-12 mt-2">
+                    <div class="col-12 mt-2 mb-4">
                       <div class="text-subtitle2 text-black ">
                         Vaucher de pago
                       </div>
@@ -400,8 +400,8 @@ onMounted(() => {
 }
 .dataPayCard{
     background: white;
-    border-bottom-left-radius: 1rem;
-    border-bottom-right-radius: 1rem;
+    border-bottom-left-radius: 1.2rem;
+    border-bottom-right-radius: 1.2rem;
 }
 .payMethodItem{
   border-radius: 0.6rem;
