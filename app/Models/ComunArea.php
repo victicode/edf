@@ -31,6 +31,13 @@ class ComunArea extends Model
     public function getFormatRulesAttribute(){
         return nl2br(htmlspecialchars($this->rules));
     }
+    public function bookings(){
+        return $this->hasMany(Booking::class, "comun_area_id");
+    }
+    public function bookingsToValidate(){
+
+        return $this->hasMany(Booking::class, "comun_area_id")->where('status', 2);
+    }
     
 
 

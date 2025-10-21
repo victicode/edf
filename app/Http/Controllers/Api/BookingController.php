@@ -49,7 +49,7 @@ class BookingController extends Controller
     }
     public function getBookingByAreaId(Request $request, $areaId){
 
-        $bookings = Booking::with('pay', 'user')->where('comun_area_id',$areaId);
+        $bookings = Booking::with('pay', 'user')->where('comun_area_id',$areaId)->orderBy("created_at", "desc");
         // $bookings = $this->applyFilter($bookings, $request);
 
 
