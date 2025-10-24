@@ -1,5 +1,4 @@
 <script setup>
-import { Notify } from 'quasar'
 import { ref, watch } from 'vue';
 import { useAuthStore } from '@/services/store/auth.services';
 import { useRouter } from 'vue-router';

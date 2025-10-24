@@ -98,7 +98,7 @@ onMounted(() => {
               </div>
             </div>
             <div class="flex w-full justify-end py-1" style="border-top: 1px solid lightgrey;">
-              <div>
+              <div class="position-relative relative" >
                 <q-btn :icon="materialIcons.outlinedFactCheck" class="mx-1" flat color="yellow-9" round size="0.85rem"
                   @click="goTo('/admin/comun-area/bookings/'+comunArea.id+'/list')">
                   <q-tooltip transition-show="flip-right" transition-hide="flip-left"
@@ -106,6 +106,9 @@ onMounted(() => {
                     Historial de reservas
                   </q-tooltip>
                 </q-btn>
+                <div style="" class="flex flex-center  countReserve-badge" v-if="comunArea.bookings_to_validate_count > 0 ">
+                    {{ comunArea.bookings_to_validate_count }}
+                </div>
               </div>
               <div>
                 <q-btn icon="eva-settings-outline" class="mx-1" flat color="primary" round size="0.85rem"
@@ -162,6 +165,14 @@ onMounted(() => {
   </div>
 </template>
 <style lang="scss">
+.countReserve-badge{
+  background: red; 
+  color: white; 
+  height: 1.2rem; width: 1.2rem; 
+  border-radius: 2rem; 
+  position: absolute; top: 0; right: 5px;
+  font-size: 0.7rem;
+}
 .itemBadge {
   color: white;
   font-size: 0.9rem;

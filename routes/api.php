@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function ()
         Route::get('/availableBooking/{id}', [BookingController::class, 'getAvaibleBookingByDay']);
         Route::get('/byId/{id}',  [BookingController::class, 'getBookingById']);
         Route::get('/byArea/{id}', [BookingController::class, 'getBookingByAreaId']);
+        Route::post('/cancel/{id}', [BookingController::class, 'cancelBooking']);
     });
     Route::prefix('pays')->name('pay.')->group(function (){
         Route::post('/bookings/{id}', [PayController::class, 'payBooking']);

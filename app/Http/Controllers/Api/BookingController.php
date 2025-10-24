@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ComunArea;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class BookingController extends Controller
 {
@@ -36,7 +37,7 @@ class BookingController extends Controller
 
     public function getBookingsByUser(Request $request) {
         
-        $bookings = Booking::with('comunArea', 'user', 'pay');
+        $bookings = Booking::with('comunArea', 'user', 'pay')->orderBy("created_at", "desc");
         if($request->user()->id != 1){
             $bookings->where('user_id', $request->user()->id);
         }
@@ -49,10 +50,7 @@ class BookingController extends Controller
     }
     public function getBookingByAreaId(Request $request, $areaId){
 
-        $bookings = Booking::with('pay', 'user')->where('comun_area_id',$areaId);
-        // $bookings = $this->applyFilter($bookings, $request);
-
-
+        $bookings = Booking::with('pay', 'user')->where('comun_area_id',$areaId)->orderBy("created_at", "desc");
         return $this->returnSuccess(200, $bookings->get());
     }
     public function applyFilter($bookings, $filters){
@@ -67,10 +65,22 @@ class BookingController extends Controller
         $booking->update($request->all());
         return $this->returnSuccess(200, 'ok');
     }
+
     public function deleteBooking($id) {
         $booking = Booking::find($id);
         if(!$booking) return $this->returnFail(400, 'Reserva no encontrada');
         $booking->delete();
+        return $this->returnSuccess(200, 'ok');
+    }
+
+    public function cancelBooking($id){
+
+        $booking = Booking::find($id);
+        if(!$booking) return $this->returnFail(400, "Reserva no encontrada");
+        $booking->update([
+            "status" => 0
+        ]);
+
         return $this->returnSuccess(200, 'ok');
     }
     public function getAvaibleBookingByDay(Request $request, $idArea){
@@ -78,38 +88,16 @@ class BookingController extends Controller
         $area = ComunArea::find($idArea); // Find comun area
         $date = date('Y-m-d',strtotime($request->date)); // get formatDate
         $bookingInDay = Booking::where('comun_area_id', $idArea)->where('date', $date)->get(); 
-        $availableFrom  = range(intval(substr($area->timeFrom, 0, 2)), intval(substr($area->timeTo, 0, 2))); // set default available hours
+        $availableFrom  = $this->setRangeAvailableBooking($date, $area);
         $availableTo    = range(intval(substr($area->timeFrom, 0, 2)), intval(substr($area->timeTo, 0, 2))); // set default available hours
-        $notAvailableFrom = []; 
-        $notAvailableTo = []; 
         
-        if($date == date('Y-m-d')){
-            $hour = date('H'); // get formatDate
-            $availableFrom  = range(intval($hour+1), intval(substr($area->timeTo, 0, 2))); // set default available hours
-        }
+        $notAvailable = $this->filterAvailableTimeBooking($bookingInDay, $area);
+        $availableFrom = $this->formattedResult($availableFrom, $notAvailable["From"]);
+        $availableTo = $this->formattedResult($availableTo, $notAvailable["To"]);
 
-
-        foreach ($bookingInDay as $booking) {
-            array_push($notAvailableFrom, intval(substr($booking->time_from, 0, 2))); //add init hour of booking
-
-            array_push($notAvailableTo, intval(substr($booking->time_to, 0, 2))); //add more hours of booking
-
-            if($booking->booking_hour > 1) {
-                for ($i=1; $i < $booking->booking_hour; $i++) { 
-                    array_push($notAvailableFrom, intval(substr($booking->time_from, 0, 2)) + $i); //add more hours of booking
-                    array_push($notAvailableTo, intval(substr($booking->time_from, 0, 2)) + $i); //add more hours of booking
-
-                }
-            }
-        }
-
-        $result = array_diff($availableFrom, $notAvailableFrom); // diff between available and not available
-        $availableFrom = array_values($result); // format simple array
-
-        $result = array_diff($availableTo, $notAvailableTo); // diff between available and not available
-        $availableTo = array_values($result); // format simple array
-        return $this->returnSuccess(200, [ 'bookings' => $bookingInDay, 'availableFrom' => $availableFrom, 'availableTo' => $availableTo,]);
+        return $this->returnSuccess(200, ['bookings' => $bookingInDay, 'availableFrom' => $availableFrom, 'availableTo' => $availableTo]);
     }
+
     private function validateFieldsFromInput($inputs){
         $rules =[
             'comun_area' => ['required', 'numeric'],
@@ -134,5 +122,70 @@ class BookingController extends Controller
         $validator = Validator::make($inputs, $rules, $messages)->errors();
 
         return $validator->all() ;
+    }
+    private function setRangeAvailableBooking($date, $area){
+
+        if($date == date('Y-m-d')){
+            $hour = date('H'); // get formatDate
+            return range(intval($hour+1), intval(substr($area->timeTo, 0, 2))); // set default available hours
+        }
+        return range(intval(substr($area->timeFrom, 0, 2)), intval(substr($area->timeTo, 0, 2)));
+    }
+    private function filterAvailableTimeBooking($bookingInDay, $area){
+        if($area->type == 2){
+            return $this->filterIsExclusiveArea($bookingInDay);
+        }
+        return $this->filterNoExclusiveArea($bookingInDay, $area);
+    }
+    private function filterIsExclusiveArea($bookingInDay){
+        $notAvailableFrom = []; 
+        $notAvailableTo = []; 
+        foreach ($bookingInDay as $booking) {
+            array_push($notAvailableFrom, intval(substr($booking->time_from, 0, 2))); //add init hour of booking
+
+            array_push($notAvailableTo, intval(substr($booking->time_to, 0, 2))); //add more hours of booking
+
+            if($booking->booking_hour > 1) {
+                for ($i=1; $i < $booking->booking_hour; $i++) { 
+                    array_push($notAvailableFrom, intval(substr($booking->time_from, 0, 2)) + $i); //add more hours of booking
+                    array_push($notAvailableTo, intval(substr($booking->time_from, 0, 2)) + $i); //add more hours of booking
+                }
+            }
+        }
+        return [
+            "From" => $notAvailableFrom,
+            "To" => $notAvailableTo,
+        ];
+    }
+    private function filterNoExclusiveArea($booking, $area){
+        $bookingInDay = $booking->groupBy(function($item,$key) {
+            return substr($item->time_from, 0, 2);
+        });
+
+        $notAvailableFrom = []; 
+        $notAvailableTo = []; 
+
+        foreach ($bookingInDay as $booking) {
+            if($area->capacity == count($booking)){
+
+                array_push($notAvailableFrom, intval(substr($booking[0]->time_from, 0, 2))); //add init hour of booking
+                array_push($notAvailableTo, intval(substr($booking[0]->time_to, 0, 2))); //add more hours of booking
+                if($booking[0]->booking_hour > 1) {
+                    for ($i=1; $i < $booking[0]->booking_hour; $i++) { 
+                        array_push($notAvailableFrom, intval(substr($booking[0]->time_from, 0, 2)) + $i); //add more hours of booking
+                        array_push($notAvailableTo, intval(substr($booking[0]->time_from, 0, 2)) + $i); //add more hours of booking
+                    }
+                }
+            }
+        }
+        return [
+            "From" => $notAvailableFrom,
+            "To" => $notAvailableTo,
+        ];
+    
+    }
+    private function formattedResult($availableFrom, $notAvailable) {
+        $format = array_diff($availableFrom, $notAvailable); // diff between available and not available
+        return array_values($format); // format simple array
     }
 }

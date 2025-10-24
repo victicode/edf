@@ -280,6 +280,16 @@ const routes = [
           title: 'Bienvenido',
           pagTitle: 'Pago realizado!'
         }
+      },
+      {
+        path: '/client/reserves/view/:id', 
+        component: () => import('@/view/client/Reserves/viewReserve.vue'),
+        name:'viewReserve',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Detalles de reserva'
+        }
       }
       
     ]

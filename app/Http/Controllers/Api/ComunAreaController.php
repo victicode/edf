@@ -12,7 +12,7 @@ class ComunAreaController extends Controller
     //
     public function paginationAreas(Request $request)
     {
-        $comunAreas = ComunArea::paginate(40);
+        $comunAreas = ComunArea::withCount(["bookings", "bookingsToValidate"])->paginate(40);
         return $this->returnSuccess(200, $comunAreas);
     }
     public function getAll(){

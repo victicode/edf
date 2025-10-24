@@ -6,46 +6,37 @@ import checkIcon from '@/assets/img/util/check.webp'
 const route = useRoute()
 const router = useRouter()
 const reserveStore = useReserveStore()
-
-// Estados reactivos
 const booking = ref(null)
 const loading = ref(false)
 const error = ref(null)
 
-// Función para obtener booking por ID
 const getBookingById = async (id) => {
   try {
-    loading.value = true
-    error.value = null
-
+    initVisualLoader()
     const response = await reserveStore.getReserveById(id)
     booking.value = response.data
-
   } catch (err) {
     console.error('Error al obtener la reserva:', err)
     error.value = err || 'Error al cargar la reserva'
   } finally {
-
     loading.value = false
   }
+
+}
+const initVisualLoader = () =>  {
+  loading.value = true
+  error.value = null
 }
 
-// Función para descargar recibo
 const downloadReceipt = () => {
-  // Aquí puedes implementar la lógica para descargar el recibo
   console.log('Descargando recibo para la reserva:', booking.value?.id)
-  // Por ejemplo, generar un PDF o abrir una nueva ventana con el recibo
 }
 
-// Función para ir al inicio
-const goToHome = () => {
-  router.push('/')
+const goToReserveList = () => {
+  router.go(-2)
 }
 
-// Obtener el ID del booking desde la URL o props
 const bookingId = route.params.id || route.query.id
-
-// Cargar el booking al montar el componente
 onMounted(() => {
   if (bookingId) {
     getBookingById(bookingId)
@@ -54,8 +45,8 @@ onMounted(() => {
   }
 })
 
-// Función para recargar el booking
-const reloadBooking = () => {
+
+const reloadGetBooking = () => {
   if (bookingId) {
     getBookingById(bookingId)
   }
@@ -97,7 +88,7 @@ const reloadBooking = () => {
         </div>
         <h2 class="text-xl font-bold text-gray-900 mb-2">¡Ups! Algo salió mal</h2>
         <p class="text-gray-600 text-center mb-6">{{ error }}</p>
-        <button @click="reloadBooking"
+        <button @click="reloadGetBooking"
           class="px-6 py-3 bg-red-500 text-white rounded-full font-medium hover:bg-red-600 transition-colors">
           Reintentar
         </button>
@@ -180,7 +171,7 @@ const reloadBooking = () => {
         <!-- Botones de acción -->
         <div class="w-full max-w-sm space-y-4">
           <!-- Botón de descargar recibo -->
-          <button @click="downloadReceipt"
+          <!-- <button @click="downloadReceipt"
             class="w-full py-4 border border-gray-300 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -188,11 +179,11 @@ const reloadBooking = () => {
               </path>
             </svg>
             <span>Descargar Recibo</span>
-          </button>
+          </button> -->
 
           <!-- Enlace de volver al inicio -->
           <div class="text-center">
-            <button @click="goToHome" class="text-gray-600 font-medium underline hover:text-gray-800 transition-colors">
+            <button @click="goToReserveList" class="text-gray-600 font-medium underline hover:text-gray-800 transition-colors">
               Volver al inicio
             </button>
           </div>
@@ -210,7 +201,7 @@ const reloadBooking = () => {
         </div>
         <h2 class="text-xl font-bold text-gray-900 mb-2">Reserva no encontrada</h2>
         <p class="text-gray-600 text-center mb-6">La reserva solicitada no existe o no tienes permisos para verla.</p>
-        <button @click="goToHome"
+        <button @click="goToReserveList"
           class="px-6 py-3 bg-gray-500 text-white rounded-full font-medium hover:bg-gray-600 transition-colors">
           Volver al inicio
         </button>
