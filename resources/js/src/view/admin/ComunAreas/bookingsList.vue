@@ -3,6 +3,13 @@ import { useReserveStore } from '@/services/store/reserve.store';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import iconsApp from '@/assets/icons/index'
+import moment from 'moment';
+moment.locale('es', {
+  monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
+  months: 'enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre'.split(
+            '_'
+        ),
+})
 
 const reserveStore = useReserveStore() 
 const reserves = ref([])
@@ -27,13 +34,6 @@ const goTo = (url) => {
   router.push(url);
 }
 
-const formatDate = (date) => {
-  return new Date(date).toLocaleDateString('es-ES', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  });
-}
 
 const formatTime = (time) => {
   return time;
@@ -107,7 +107,7 @@ onMounted(() => {
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                       </path>
                     </svg>
-                    <span class="font-medium">{{ formatDate(reserve.date) }}</span>
+                    <span class="font-medium">{{ moment(reserve.date).format('DD MMM YYYY') }}</span>
                   </div>
 
                   <!-- Horario -->

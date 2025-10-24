@@ -6,6 +6,7 @@ use App\Models\Pay;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -40,24 +41,31 @@ class PayController extends Controller
     public function updateStatus(Request $request, $payId){
         $pay = Pay::find($payId);
 
-        if(!$payId) return $this->returnFail(404, "Pago no encontrado");
-        
-        $pay->update([
-            "status" => $request->status,
-        ]);
+        if(!$payId) return $this->returnFail(404, ['messageType'=>'negative', 'message' =>'Pago no encontrado']);
+        try {
+            $pay->update([
+                "status" => $request->status,
+            ]);
+    
+            $return =  $pay->booking_id 
+            ? $this->bookingActionByStatus($pay->booking_id, $request->status)
+            : '';
 
-        $pay->booking_id 
-        ? $this->bookingActionByStatus($pay->booking_id, $request->status)
-        : '';
+        } catch (Exception $th) {
+            //throw $th;
+            return $this->returnFail(500, ['messageType'=> 'negative', 'message' => 'Error al cambiar estado de pago']);
+        }
         
-        return $this->returnSuccess(200, 'bien');
+        
+        return $this->returnSuccess(200, $return);
     }
     private function bookingActionByStatus($booking, $status){
         if($status == 0){
             $this->cancelBooking($booking);
-            return;
+            return  ['messageType'=> 'negative', 'message' => 'Pago cancelado con exito'];
         }
         $this->approveBooking($booking);
+        return  ['messageType'=> 'positive', 'message' => 'Pago aprobado con exito'];
     }
 
     private function cancelBooking($booking){

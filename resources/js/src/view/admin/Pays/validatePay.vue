@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import iconsApp from '@/assets/icons/index'
 import { usePayStore } from '@/services/store/pay.store'
 import voucherModal from '@/components/pay/voucherModal.vue'
+import { Notify } from 'quasar'
 
 const route = useRoute()
 const router = useRouter()
@@ -13,22 +14,19 @@ const dialog = ref('')
 // Estados reactivos
 const pay = ref(null)
 const loading = ref(false)
+const ready = ref(false)
+
 const error = ref(null)
 
 const getPayById = async (id) => {
   try {
-    loading.value = true
     error.value = null
-
     const response = await payStore.getPayById(id)
     pay.value = response.data
 
   } catch (err) {
     console.error('Error al obtener la reserva:', err)
     error.value = err || 'Error al cargar la reserva'
-  } finally {
-
-    loading.value = false
   }
 }
 
@@ -51,15 +49,32 @@ const reloadBooking = () => {
   }
 }
 const updateStatus = (status) => {
+  loading.value = true
+
   const data = {
     status: status
   }
   payStore.updateStatus({data:data, id:pay.value.id})
   .then((response)  => {
-    console.log(response)
+    loading.value = false
+    showNotify(response.data.messageType, response.data.message)
+    setTimeout(() => {
+      router.go(-1)
+    }, 1000);
+  })
+  .catch((response) => {
+    loading.value = false
+    showNotify(response.messageType, response.message)
   })
 }
 
+ const showNotify = (type,text) => {
+  Notify.create({
+    color:type,
+    message: text,
+    timeout:2000
+  })
+}
 const showModal = (modal) => {
   dialog.value = modal
 }
@@ -70,7 +85,7 @@ const showModal = (modal) => {
 
     <div class="relative z-10 pt-5 pb-2 px-6 h-full">
       <!-- Loading State -->
-      <div v-if="loading" class="flex flex-col items-center justify-center py-20">
+      <div v-if="ready" class="flex flex-col items-center justify-center py-20">
         <q-spinner-dots color="primary" size="4rem" />
 
         <p class="text-gray-600 font-medium">Cargando reserva...</p>

@@ -156,6 +156,23 @@ export const useReserveStore = defineStore('Reserve', {
           reject(response.data.error);
         });
       })
+    },
+    async cancelReserve(id) {
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.post('/api/bookings/cancel/'+id)
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+          
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+      })
     }
     
   },

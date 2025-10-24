@@ -3,12 +3,22 @@ import { ref, onMounted } from 'vue';
 import { useReserveStore } from '@/services/store/reserve.store';
 import { useRouter } from 'vue-router';
 import iconsApp from '@/assets/icons/index'
+import moment from 'moment';
+import cancelReserveModal from '@/components/reserves/cancelReserveModal.vue';
+
+moment.locale('es', {
+  monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
+  months: 'enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre'.split(
+      '_'
+  ),
+})
 
 const reserves = ref([]);
 const loading = ref(false);
 const reserveStore = useReserveStore();
 const router = useRouter();
-
+const dialog = ref('');
+const selectedReserve = ref({})
 const getReserves = () => {
   loading.value = true;
   reserveStore.getReservesByUser()
@@ -28,18 +38,20 @@ const goTo = (url) => {
   router.push(url);
 }
 
-const formatDate = (date) => {
-  return new Date(date).toLocaleDateString('es-ES', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  });
+const showDialog = (e) => {
+  const dialogData = getDialogData(e)
+  selectReserve(dialogData.reserve)
+  setTimeout(() => {
+    dialog.value = dialogData.dialog;
+  }, 500);
 }
 
-const formatTime = (time) => {
-  return time;
+const selectReserve = (id) => {
+  selectedReserve.value = reserves.value.find(reserve => reserve.id == id)
 }
-
+const getDialogData = (e) => {
+  return e.target.closest('.q-item').dataset
+}
 const getPaymentStatus = (booking) => {
   if (booking.amount > 0) {
     return !booking.pay  
@@ -48,7 +60,7 @@ const getPaymentStatus = (booking) => {
     ? 'Pendiente de aprobación' 
     : 'Pagado';
   }
-  return 'Confirmado';
+  return booking.status == 3 ? 'Confirmado' : 'Cancelado' ;
 }
 
 const getPaymentAmount = (booking) => {
@@ -64,10 +76,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="h-full">
-
+  <div class="h-full" style="overflow: hidden;">
     <div class="" style="height: 90%; overflow: auto;">
-
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-20">
         <!-- <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div> -->
@@ -114,7 +124,7 @@ onMounted(() => {
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                       </path>
                     </svg>
-                    <span class="font-medium">{{ formatDate(reserve.date) }}</span>
+                    <span class="font-medium">{{ moment(reserve.date).format('DD MMM YYYY') }}</span>
                   </div>
 
                   <!-- Horario -->
@@ -124,7 +134,7 @@ onMounted(() => {
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     <span class="font-medium">
-                      {{ formatTime(reserve.time_from) }} - {{ formatTime(reserve.time_to) }}
+                      {{ reserve.time_from}} - {{ reserve.time_to }}
                     </span>
                   </div>
                   <div class="flex items-center text-sm text-gray-700">
@@ -160,20 +170,14 @@ onMounted(() => {
                     <div v-html="iconsApp.procedToPay"></div>
                   </q-btn>
                   <div flat rounded color="primary" size="sm" class="ml-3 cursor-pointer" >
-                    <q-tooltip class="bg-primary  text-white text-body2" :offset="[10, 10]">
-                      Información de reserva
-                    </q-tooltip>
                     <div v-html="iconsApp.optionsBook"></div>
                     <q-menu>
                     <q-list style="min-width: 150px">
-                      <q-item clickable v-close-popup>
+                      <q-item clickable v-close-popup @click="goTo('/client/reserves/view/'+reserve.id)">
                         <q-item-section>Ver detalles</q-item-section>
                       </q-item>
-                      <q-item clickable v-close-popup>
+                      <q-item clickable v-close-popup @click="showDialog($event)" data-dialog="cancel" :data-reserve="reserve.id" v-if="reserve.status != 0">
                         <q-item-section>Cancelar reserva</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup>
-                        <q-item-section>Editar reserva</q-item-section>
                       </q-item>
                       <q-separator />
                       <q-item clickable v-close-popup v-if="reserve.status == 1" >
@@ -210,7 +214,6 @@ onMounted(() => {
         </div>
       </div>
     </div>
-
     <!-- Botón flotante para crear reserva -->
     <div class="px-4  md:px-0 md:flex  md:justify-center items-center md:w-full md:px-12" style="height: 10%;">
       <q-btn color="primary" unelevated class="w-full mt-0 md:mx-24 createBookingButton md:w-full"
@@ -223,8 +226,16 @@ onMounted(() => {
         </div>
       </q-btn>
     </div>
+    <template v-if="Object.values(selectedReserve).length > 0">
+      <cancelReserveModal 
+        :dialog="(dialog == 'cancel' )" 
+        :reserve="selectedReserve" 
+        @closeModal="dialog = ''"
+        @updateList="getReserves()"
+      />
+    </template>
   </div>
-</template>
+</template> 
 
 <style scoped>
 /* Estilos adicionales si es necesario */
