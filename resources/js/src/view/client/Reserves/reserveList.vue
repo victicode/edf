@@ -42,11 +42,11 @@ const formatTime = (time) => {
 
 const getPaymentStatus = (booking) => {
   if (booking.amount > 0) {
-    return !booking.pay  
-    ? 'No pagada' 
-    : booking.pay.status == 1 
-    ? 'Pendiente de aprobación' 
-    : 'Pagado';
+    return !booking.pay
+      ? 'No pagada'
+      : booking.pay.status == 1
+        ? 'Pendiente de aprobación'
+        : 'Pagado';
   }
   return 'Confirmado';
 }
@@ -80,7 +80,8 @@ onMounted(() => {
         <!-- Lista de reservas -->
         <div v-if="reserves.length > 0" class="space-y-3 md:px-5">
           <div v-for="reserve in reserves" :key="reserve.id"
-            class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden md:mb-5" style="position: relative;">
+            class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden md:mb-5"
+            style="position: relative;">
 
             <!-- Sección superior - Detalles de la reserva -->
             <div class="px-4 pb-4 pt-2 border-b border-dashed border-gray-300">
@@ -92,7 +93,7 @@ onMounted(() => {
                   </h3>
                 </div>
                 <!-- Estado badge -->
-                <span :class="'bg-'+reserve.status_color"
+                <span :class="'bg-' + reserve.status_color"
                   class="inline-block px-3 py-2 text-xs font-bold text-white badgeReserve">
                   {{ reserve.status_label }}
                 </span>
@@ -152,39 +153,39 @@ onMounted(() => {
                   <span class="text-sm font-medium text-gray-700">{{ getPaymentStatus(reserve) }}</span>
                 </div>
                 <div class="flex items-center">
-                  <q-btn unelevated rounded color="warning" size="sm" class="ml-3" v-if="reserve.status == 1"  
+                  <q-btn unelevated rounded color="warning" size="sm" class="ml-3" v-if="reserve.status == 1"
                     @click="goTo('/client/reserves/pay-reserve/' + reserve.id)">
                     <q-tooltip class="bg-primary  text-white text-body2" :offset="[10, 10]">
                       Proceder con el pago
                     </q-tooltip>
                     <div v-html="iconsApp.procedToPay"></div>
                   </q-btn>
-                  <div flat rounded color="primary" size="sm" class="ml-3 cursor-pointer" >
+                  <div flat rounded color="primary" size="sm" class="ml-3 cursor-pointer">
                     <q-tooltip class="bg-primary  text-white text-body2" :offset="[10, 10]">
                       Información de reserva
                     </q-tooltip>
                     <div v-html="iconsApp.optionsBook"></div>
                     <q-menu>
-                    <q-list style="min-width: 150px">
-                      <q-item clickable v-close-popup>
-                        <q-item-section>Ver detalles</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup>
-                        <q-item-section>Cancelar reserva</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup>
-                        <q-item-section>Editar reserva</q-item-section>
-                      </q-item>
-                      <q-separator />
-                      <q-item clickable v-close-popup v-if="reserve.status == 1" >
-                        <q-item-section>Pagar</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup v-if="reserve.status == 3">
-                        <q-item-section>Descarga pase</q-item-section>
-                      </q-item>
-                      <q-separator />
-                    </q-list>
-                  </q-menu>
+                      <q-list style="min-width: 150px">
+                        <q-item clickable v-close-popup>
+                          <q-item-section>Ver detalles</q-item-section>
+                        </q-item>
+                        <q-item clickable v-close-popup>
+                          <q-item-section>Cancelar reserva</q-item-section>
+                        </q-item>
+                        <q-item clickable v-close-popup>
+                          <q-item-section>Editar reserva</q-item-section>
+                        </q-item>
+                        <q-separator />
+                        <q-item clickable v-close-popup v-if="reserve.status == 1">
+                          <q-item-section>Pagar</q-item-section>
+                        </q-item>
+                        <q-item clickable v-close-popup v-if="reserve.status == 3">
+                          <q-item-section>Descarga pase</q-item-section>
+                        </q-item>
+                        <q-separator />
+                      </q-list>
+                    </q-menu>
                   </div>
                 </div>
               </div>
@@ -212,7 +213,7 @@ onMounted(() => {
     </div>
 
     <!-- Botón flotante para crear reserva -->
-    <div class="px-4  md:px-0 md:flex  md:justify-center items-center md:w-full md:px-12" style="height: 10%;">
+    <div class="px-4 md:flex  md:justify-center items-center md:w-full md:px-12" style="height: 10%;">
       <q-btn color="primary" unelevated class="w-full mt-0 md:mx-24 createBookingButton md:w-full"
         style="border-radius: 0.5rem; width: 100%;" @click="goTo('/client/reserves/form/add')">
         <div class="flex items-center py-2">
