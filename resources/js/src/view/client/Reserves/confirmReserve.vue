@@ -43,6 +43,7 @@ onMounted(() => {
   } else {
     error.value = 'ID de reserva no proporcionado'
   }
+  
 })
 
 

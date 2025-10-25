@@ -173,6 +173,23 @@ export const useReserveStore = defineStore('Reserve', {
           reject(response.data.error);
         });
       })
+    },
+    async getPendingReserve(){
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.get('/api/bookings/pendings')
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+          
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+      })
     }
     
   },

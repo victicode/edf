@@ -97,7 +97,12 @@ class BookingController extends Controller
 
         return $this->returnSuccess(200, ['bookings' => $bookingInDay, 'availableFrom' => $availableFrom, 'availableTo' => $availableTo]);
     }
+    public function getPendings(){
+        $waitStatus = 2;
+        $pendings = Booking::where('status', $waitStatus)->get();
 
+        return $this->returnSuccess(200, $pendings);
+    }
     private function validateFieldsFromInput($inputs){
         $rules =[
             'comun_area' => ['required', 'numeric'],

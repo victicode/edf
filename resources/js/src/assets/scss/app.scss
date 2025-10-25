@@ -53,7 +53,8 @@
 
 .boxItem {
   border-radius: 0.5rem;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
   // border: 2px solid rgb(3, 156, 195) ;
   height: 9rem;
   width: 100%;

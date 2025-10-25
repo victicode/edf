@@ -26,18 +26,6 @@ const menu = [
     subtitle: 'Lista de visitas',
     link: '/users',
   },
-  {
-    title: 'Servicios',
-    icon: iconsApp.services,
-    subtitle: 'Gestión de servicios',
-    link: '/services',
-  },
-  {
-    title: 'Reservas',
-    icon: iconsApp.reserve,
-    subtitle: 'Informacion de reservas',
-    link: '/reserves',
-  },
 
 ];
 

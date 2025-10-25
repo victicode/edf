@@ -1,11 +1,22 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/services/store/auth.services';
-import bg from '@/assets/img/util/bg3.webp'
 import iconsApp from '@/assets/icons/index'
 import { useRouter } from 'vue-router';
+import { useReserveStore } from '@/services/store/reserve.store';
+import { onMounted, ref} from 'vue';
 
 const { user } = storeToRefs(useAuthStore())
+const pendindgReserveCount = ref(0);
+const getPendingReserve = () => {
+  useReserveStore().getPendingReserve()
+  .then((response) => {
+    pendindgReserveCount.value = response.data.length
+  })
+  .catch((error) => {
+    console.log(error)
+  })
+}
 const router = useRouter()
 const menu = [
 
@@ -27,12 +38,27 @@ const menu = [
     subtitle: 'Configura la app',
     link: '/config',
   },
-
+  {
+    title: 'Servicios',
+    icon: iconsApp.services,
+    subtitle: 'Gestión de servicios',
+    link: '/services',
+  },
+  {
+    title: 'Reservas',
+    icon: iconsApp.reserve,
+    subtitle: 'Informacion de reservas',
+    link: '/reserves',
+  },
 ];
 
 const goTo = (url) => {
   router.push(url)
 }
+
+onMounted(() => {
+  getPendingReserve()
+})
 </script>
 <template>
   <div class="h-full w-full px-2">
@@ -45,10 +71,15 @@ const goTo = (url) => {
             <div class="text-primary text-start px-2 text-bold ellipsis boxTitle" style="width: 100%;">
               {{ items.title }}
               <div class="text-stone-400 boxText md:mt-1">
-                {{ items.subtitle }}
+                {{ items.subtitle }} 
               </div>
             </div>
             <div v-html="items.icon" class="flex justify-end mt-2 md:mt-0" />
+            <template v-if="items.title=='Reservas'">
+              <div class="badgeCountReserve flex flex-center" v-if="pendindgReserveCount > 0">
+                {{ pendindgReserveCount }}
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -57,4 +88,18 @@ const goTo = (url) => {
   </div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.badgeCountReserve{
+  height: 1.5rem;
+  width: 1.5rem;
+  border-radius: 0.4rem;
+  background: red;
+  position: absolute;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  top: -10px;
+  right: -5px;
+
+}
+</style>
