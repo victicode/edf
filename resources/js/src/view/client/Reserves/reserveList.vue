@@ -9,7 +9,7 @@ import cancelReserveModal from '@/components/reserves/cancelReserveModal.vue';
 moment.locale('es', {
   monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
   months: 'enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre'.split(
-      '_'
+    '_'
   ),
 })
 
@@ -54,13 +54,13 @@ const getDialogData = (e) => {
 }
 const getPaymentStatus = (booking) => {
   if (booking.amount > 0) {
-    return !booking.pay  
-    ? 'No pagada' 
-    : booking.pay.status == 1 
-    ? 'Pendiente de aprobación' 
-    : 'Pagado';
+    return !booking.pay
+      ? 'No pagada'
+      : booking.pay.status == 1
+        ? 'Pendiente de aprobación'
+        : 'Pagado';
   }
-  return booking.status == 3 ? 'Confirmado' : 'Cancelado' ;
+  return booking.status == 3 ? 'Confirmado' : 'Cancelado';
 }
 
 const getPaymentAmount = (booking) => {
@@ -90,7 +90,8 @@ onMounted(() => {
         <!-- Lista de reservas -->
         <div v-if="reserves.length > 0" class="space-y-3 md:px-5">
           <div v-for="reserve in reserves" :key="reserve.id"
-            class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden md:mb-5" style="position: relative;">
+            class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden md:mb-5"
+            style="position: relative;">
 
             <!-- Sección superior - Detalles de la reserva -->
             <div class="px-4 pb-4 pt-2 border-b border-dashed border-gray-300">
@@ -102,7 +103,7 @@ onMounted(() => {
                   </h3>
                 </div>
                 <!-- Estado badge -->
-                <span :class="'bg-'+reserve.status_color"
+                <span :class="'bg-' + reserve.status_color"
                   class="inline-block px-3 py-2 text-xs font-bold text-white badgeReserve">
                   {{ reserve.status_label }}
                 </span>
@@ -134,7 +135,7 @@ onMounted(() => {
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     <span class="font-medium">
-                      {{ reserve.time_from}} - {{ reserve.time_to }}
+                      {{ reserve.time_from }} - {{ reserve.time_to }}
                     </span>
                   </div>
                   <div class="flex items-center text-sm text-gray-700">
@@ -162,33 +163,34 @@ onMounted(() => {
                   <span class="text-sm font-medium text-gray-700">{{ getPaymentStatus(reserve) }}</span>
                 </div>
                 <div class="flex items-center">
-                  <q-btn unelevated rounded color="warning" size="sm" class="ml-3" v-if="reserve.status == 1"  
+                  <q-btn unelevated rounded color="warning" size="sm" class="ml-3" v-if="reserve.status == 1"
                     @click="goTo('/client/reserves/pay-reserve/' + reserve.id)">
                     <q-tooltip class="bg-primary  text-white text-body2" :offset="[10, 10]">
                       Proceder con el pago
                     </q-tooltip>
                     <div v-html="iconsApp.procedToPay"></div>
                   </q-btn>
-                  <div flat rounded color="primary" size="sm" class="ml-3 cursor-pointer" >
+                  <div flat rounded color="primary" size="sm" class="ml-3 cursor-pointer">
                     <div v-html="iconsApp.optionsBook"></div>
                     <q-menu>
-                    <q-list style="min-width: 150px">
-                      <q-item clickable v-close-popup @click="goTo('/client/reserves/view/'+reserve.id)">
-                        <q-item-section>Ver detalles</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup @click="showDialog($event)" data-dialog="cancel" :data-reserve="reserve.id" v-if="reserve.status != 0">
-                        <q-item-section>Cancelar reserva</q-item-section>
-                      </q-item>
-                      <q-separator />
-                      <q-item clickable v-close-popup v-if="reserve.status == 1" >
-                        <q-item-section>Pagar</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup v-if="reserve.status == 3">
-                        <q-item-section>Descarga pase</q-item-section>
-                      </q-item>
-                      <q-separator />
-                    </q-list>
-                  </q-menu>
+                      <q-list style="min-width: 150px">
+                        <q-item clickable v-close-popup @click="goTo('/client/reserves/view/' + reserve.id)">
+                          <q-item-section>Ver detalles</q-item-section>
+                        </q-item>
+                        <q-item clickable v-close-popup @click="showDialog($event)" data-dialog="cancel"
+                          :data-reserve="reserve.id" v-if="reserve.status != 0">
+                          <q-item-section>Cancelar reserva</q-item-section>
+                        </q-item>
+                        <q-separator />
+                        <q-item clickable v-close-popup v-if="reserve.status == 1">
+                          <q-item-section>Pagar</q-item-section>
+                        </q-item>
+                        <q-item clickable v-close-popup v-if="reserve.status == 3">
+                          <q-item-section>Descarga pase</q-item-section>
+                        </q-item>
+                        <q-separator />
+                      </q-list>
+                    </q-menu>
                   </div>
                 </div>
               </div>
@@ -215,7 +217,7 @@ onMounted(() => {
       </div>
     </div>
     <!-- Botón flotante para crear reserva -->
-    <div class="px-4  md:px-0 md:flex  md:justify-center items-center md:w-full md:px-12" style="height: 10%;">
+    <div class="px-4 md:flex  md:justify-center items-center md:w-full md:px-12" style="height: 10%;">
       <q-btn color="primary" unelevated class="w-full mt-0 md:mx-24 createBookingButton md:w-full"
         style="border-radius: 0.5rem; width: 100%;" @click="goTo('/client/reserves/form/add')">
         <div class="flex items-center py-2">
@@ -227,15 +229,11 @@ onMounted(() => {
       </q-btn>
     </div>
     <template v-if="Object.values(selectedReserve).length > 0">
-      <cancelReserveModal 
-        :dialog="(dialog == 'cancel' )" 
-        :reserve="selectedReserve" 
-        @closeModal="dialog = ''"
-        @updateList="getReserves()"
-      />
+      <cancelReserveModal :dialog="(dialog == 'cancel')" :reserve="selectedReserve" @closeModal="dialog = ''"
+        @updateList="getReserves()" />
     </template>
   </div>
-</template> 
+</template>
 
 <style scoped>
 /* Estilos adicionales si es necesario */
