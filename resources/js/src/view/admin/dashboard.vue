@@ -1,10 +1,10 @@
 <script setup>
-import { storeToRefs } from 'pinia';
+import iconsApp from '@/assets/icons/index';
 import { useAuthStore } from '@/services/store/auth.services';
-import iconsApp from '@/assets/icons/index'
-import { useRouter } from 'vue-router';
 import { useReserveStore } from '@/services/store/reserve.store';
-import { onMounted, ref} from 'vue';
+import { storeToRefs } from 'pinia';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const { user } = storeToRefs(useAuthStore())
 const pendindgReserveCount = ref(0);
@@ -26,18 +26,7 @@ const menu = [
     subtitle: 'Gestiona las areas comunes',
     link: '/admin/comun-area/list',
   },
-  {
-    title: 'Noticias',
-    icon: iconsApp.news,
-    subtitle: 'Envia información sobre: eventos, servicio, etc',
-    link: '/news',
-  },
-  {
-    title: 'Ajustes',
-    icon: iconsApp.config,
-    subtitle: 'Configura la app',
-    link: '/config',
-  },
+  
   {
     title: 'Servicios',
     icon: iconsApp.services,
@@ -49,6 +38,18 @@ const menu = [
     icon: iconsApp.reserve,
     subtitle: 'Informacion de reservas',
     link: '/reserves',
+  },
+  {
+    title: 'Noticias',
+    icon: iconsApp.news,
+    subtitle: 'Envia información sobre: eventos, servicio, etc',
+    link: '/news',
+  },
+  {
+    title: 'Ajustes',
+    icon: iconsApp.config,
+    subtitle: 'Configura la app',
+    link: '/config',
   },
 ];
 

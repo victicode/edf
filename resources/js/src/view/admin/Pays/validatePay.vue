@@ -110,7 +110,7 @@ const showModal = (modal) => {
       <div v-else-if="pay" class="flex flex-col items-center h-full" >
 
         <!-- Tarjeta de detalles -->
-        <div class="bg-white rounded-xl shadow-lg border border-gray-100 w-full max-w-sm p-6 pb-4 mb-8">
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 w-full max-w-sm md:max-w-4xl p-6 pb-4 mb-8">
           <div class="space-y-4">
             <!-- Estado del pago -->
             <div class="flex justify-between items-center pb-2"

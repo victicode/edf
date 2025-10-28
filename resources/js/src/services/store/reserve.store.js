@@ -3,7 +3,8 @@ import ApiService from '@/services/axios'
 
 export const useReserveStore = defineStore('Reserve', {
   actions: {
-    async getReservesByUser() {
+    async getReservesByUser(filter) {
+
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
@@ -190,6 +191,9 @@ export const useReserveStore = defineStore('Reserve', {
           reject(response.data.error);
         });
       })
+    },
+    filterQuery(filter){
+
     }
     
   },

@@ -2,13 +2,9 @@ import App from '@/App.vue'
 import { createApp } from 'vue';
 import quasarIconSet from 'quasar/icon-set/eva-icons'
 import { createPinia } from 'pinia'
-import {
-  Quasar,
-  Notify,
-  AddressbarColor
-} from 'quasar'
+
 import router  from '@/routes'
-// import '@quasar/extras/material-symbols-outlined/material-symbols-outlined.css'
+
 import '@quasar/extras/material-icons-outlined/material-icons-outlined.css'
 import { 
   outlinedArrowBack, 
@@ -24,11 +20,20 @@ import {
   roundNotifications,
 } from '@quasar/extras/material-icons-round/index.js'
 
+import {
+  Quasar,
+  Notify,
+  AddressbarColor
+} from 'quasar'
+
 import '@quasar/extras/ionicons-v4/ionicons-v4.css'
 import '@quasar/extras/eva-icons/eva-icons.css'
 import mitt from 'mitt'
 import 'quasar/src/css/index.sass'
 import '@/assets/scss/app.scss'
+import 'vant/lib/index.css';
+
+
 // import { useAuthStore } from '@/services/store/auth.services';
 
 const materialIcons = {

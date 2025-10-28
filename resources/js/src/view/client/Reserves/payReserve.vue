@@ -137,12 +137,8 @@ const activeClass = (event) => {
 const onFileChange = () => {
   if(payFormData.value.reference) disable.value = false
 }
-const copyData = (data) => {
 
-}
-const longFormatData = () => {
 
-}
 const showNotify = (type, text) => {
   Notify.create({
     color: type,
@@ -175,6 +171,38 @@ const createReservePay = () => {
     showNotify('positive', 'Error al crear el pago')
 
   })
+}
+const formatToCopy = () => {
+  let dataFormatted = ''
+  try {
+    payData[payFormData.value.pay_method].forEach(data => {
+      if(data.title !='QR'){
+        dataFormatted += data.value.replaceAll(' ', '')+' '
+      }
+    });
+  } catch (error) {
+    console.log('Error al copiar la data')
+  }
+  copyData(dataFormatted)
+}
+const copyData = (texto) => {
+  const element = document.getElementById('textToPaste')
+  const textArea = document.createElement('textarea');
+  textArea.value = texto.replaceAll(' ', '');
+  textArea.style.opacity = 0;
+
+  element.appendChild(textArea);
+  textArea.select();
+
+  try {
+    const success = document.execCommand('copy');
+    showNotify('positive', 'Datos copiados con exito')
+  } catch (err) {
+    console.error(err.name, err.message);
+  }
+  finally{
+    element.removeChild(textArea);
+  }
 }
 onMounted(() => {
   getBookingById()
@@ -233,11 +261,11 @@ onMounted(() => {
                       <img style="width: 8rem;" :src="data.value" alt="" v-if="data.title == 'QR'" class="mx-auto">
                       <div v-else style="font-size: 1.05rem;" class="text-black text-bold ">{{ data.value }}</div>
                     </div>
-                    <div v-html="iconsApp.copyIcon"  v-if="data.title != 'QR'"/>
+                    <div v-html="iconsApp.copyIcon" class="cursor-pointer" v-if="data.title != 'QR'" @click="copyData(data.value)"/>
                   </div>
                   <div class="flex flex-center mt-6 cursor-pointer"> 
                     <div v-html="iconsApp.copyIcon" />
-                    <div class="ml-1 text-primary " style="font-size: 1.02rem; font-weight: medium;">Copiar datos</div>
+                    <div class="ml-1 text-primary" @click="formatToCopy()" style="font-size: 1.02rem; font-weight: medium;">Copiar datos</div>
                   </div>
                 </div>
               </div>
@@ -285,7 +313,7 @@ onMounted(() => {
                       <div class="text-subtitle2 text-black">
                         Fecha de pago:
                       </div>
-                      <div class="col-6  pr-2 md:pr-4">
+                      <div class="pr-2 md:pr-4">
                         <q-input v-model="payFormData.date" :rules="[val => !(!val) || 'Fecha es requerida']" dense
                             borderless clearable class="form__inputsPay mt-1" color="primary" accept=".jpg, image/*">
                             <template v-slot:append>
@@ -305,11 +333,12 @@ onMounted(() => {
 
                       </div>
                     </div>
-                    <div class="col-12 mt-2">
+                    <div class="col-12 mt-2 ">
                       <div class="text-subtitle2 text-black ">
                         Referencia de pago
                       </div>
-                      <q-input
+                      <div class="pr-2 md:pr-4">
+                        <q-input
                           dense
                           borderless
                           clearable
@@ -318,30 +347,33 @@ onMounted(() => {
                           :maxlength="12"
                           color="primary"
                           :rules="[ val => !(!val) ||  'La refrencia de pago es obligatoria']"
-                      />
+                        />
+                      </div>
                     </div>                    
                     <div class="col-12 mt-2 mb-4">
                       <div class="text-subtitle2 text-black ">
                         Vaucher de pago
                       </div>
-                      <q-file v-model="payFormData.vaucher"  dense
-                        borderless
-                        clearable
-                        class="form__inputsPay mt-1"
-                        color="primary"
-                        @update:model-value="onFileChange"
-                      >
-                        <template v-slot:append>
-                          <q-icon name="eva-folder-add-outline" class="cursor-pointer">
-                          </q-icon>
+                      <div class="pr-2 md:pr-4">
+                        <q-file v-model="payFormData.vaucher"  dense
+                          borderless
+                          clearable
+                          class="form__inputsPay mt-1"
+                          color="primary"
+                          @update:model-value="onFileChange"
+                        >
+                          <template v-slot:append>
+                            <q-icon name="eva-folder-add-outline" class="cursor-pointer">
+                            </q-icon>
+                          </template>
+                          <template v-slot:selected>
+                          <div class="row items-center q-gutter-x-sm">
+                            <q-icon name="eva-checkmark-circle-2-outline" color="positive" size="sm" />
+                            <div>Archivo subido</div>
+                          </div>
                         </template>
-                        <template v-slot:selected>
-                        <div class="row items-center q-gutter-x-sm">
-                          <q-icon name="eva-checkmark-circle-2-outline" color="positive" size="sm" />
-                          <div>Archivo subido</div>
-                        </div>
-                      </template>
-                      </q-file>
+                        </q-file>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -382,6 +414,7 @@ onMounted(() => {
       </div>
 
     </q-form>
+    <div id="textToPaste" />
   </div>
 </template>
 <style lang="scss">

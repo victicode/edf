@@ -5,6 +5,8 @@ import { useRouter } from 'vue-router';
 import iconsApp from '@/assets/icons/index'
 import moment from 'moment';
 import cancelReserveModal from '@/components/reserves/cancelReserveModal.vue';
+import filterModal from '@/components/reserves/filterModal.vue';
+
 moment.locale('es', {
   monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
   months: 'enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre'.split(
@@ -18,10 +20,10 @@ const reserveStore = useReserveStore();
 const router = useRouter();
 const dialog = ref('');
 const selectedReserve = ref({})
-
-const getReserves = () => {
+const filter = ref({})
+const getReserves = () =>{
   loading.value = true;
-  reserveStore.getReservesByUser()
+  reserveStore.getReservesByUser(filter)
     .then((response) => {
       if (response.code !== 200) throw response;
       reserves.value = response.data;
@@ -32,6 +34,9 @@ const getReserves = () => {
     .finally(() => {
       loading.value = false;
     });
+}
+const getReserveWithFilter = () =>{
+  getReserves()
 }
 
 const goTo = (url) => {
@@ -52,16 +57,7 @@ const selectReserve = (id) => {
 const getDialogData = (e) => {
   return e.target.closest('.q-item').dataset
 }
-const getPaymentStatus = (booking) => {
-  if (booking.amount > 0) {
-    return !booking.pay  
-    ? 'No pagada' 
-    : booking.pay.status == 1 
-    ? 'Pendiente de aprobación' 
-    : 'Pagado';
-  }
-  return booking.status == 3 ? 'Confirmado' : 'Cancelado' ;
-}
+
 
 const getPaymentAmount = (booking) => {
   if (booking.amount > 0) {
@@ -81,13 +77,20 @@ onMounted(() => {
       <div v-if="loading" class="flex justify-center items-center py-20">
         <!-- <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div> -->
         <q-spinner-dots color="primary" size="7rem" />
-
       </div>
 
       <!-- Content -->
-      <div v-else class="px-4 py-6 md:px-28">
+      <div v-else class="px-4 pb-6 pt-3 md:px-28">
+        <div class="flex justify-end md:pr-5 pr-1">
+          <q-btn
+            outline
+            color="primary"
+            icon="eva-funnel-outline"
+            @click="dialog = 'filter'"
+          />
+        </div>
         <!-- Lista de reservas -->
-        <div v-if="reserves.length > 0" class="space-y-3 md:px-5">
+        <div v-if="reserves.length > 0" class="space-y-3 pt-3 md:px-5">
           <div v-for="reserve in reserves" :key="reserve.id"
             class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden md:mb-5" style="position: relative;">
 
@@ -197,10 +200,14 @@ onMounted(() => {
       </div>
     </div>
     <!-- Botón flotante para crear reserva -->
-
+    <filterModal 
+        :dialog="(dialog == 'filter')" 
+        @closeModal="dialog = ''"
+        @updateList="getReserves()"
+      />
     <template v-if="Object.values(selectedReserve).length > 0">
       <cancelReserveModal 
-        :dialog="(dialog == 'cancel' )" 
+        :dialog="(dialog == 'cancel')" 
         :reserve="selectedReserve" 
         @closeModal="dialog = ''"
         @updateList="getReserves()"
