@@ -182,7 +182,7 @@ onMounted(() => {
                           <q-item-section>Cancelar reserva</q-item-section>
                         </q-item>
                         <q-separator />
-                        <q-item clickable v-close-popup v-if="reserve.status == 1">
+                        <q-item clickable v-close-popup v-if="reserve.status == 1" @click="goTo('/client/reserves/pay-reserve/' + reserve.id)">
                           <q-item-section>Pagar</q-item-section>
                         </q-item>
                         <q-item clickable v-close-popup v-if="reserve.status == 3">

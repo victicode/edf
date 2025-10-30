@@ -291,6 +291,17 @@ const routes = [
           pagTitle: 'Detalles de reserva'
         }
       }
+      ,
+      {
+        path: '/client/notifications',
+        component: () => import('@/view/client/Notifications/notificationsPage.vue'),
+        name:'notificationsPage',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Notificaciones'
+        }
+      }
       
     ]
   },

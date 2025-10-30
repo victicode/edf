@@ -146,11 +146,11 @@ const reloadBooking = () => {
   
               <!-- Método de pago -->
               <div class="flex justify-between items-center pb-2"
-                v-if="booking.amount > 0"
+                v-if="booking.amount > 0 &&  booking.pay"
                 style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);">
                 <span class="text-gray-600 font-medium">Método de pago</span>
                 <span class="text-gray-900 font-semibold">
-                  {{ booking.pay_method == 1 ? 'Transferencia' : booking.pay_method == 2 ? 'Efectivo' : 'Otro' }}
+                  {{ booking.pay?.pay_method_label || 'S/N'  }}
                 </span>
               </div>
   
@@ -174,7 +174,6 @@ const reloadBooking = () => {
               <span class="ml-2" v-html="iconsApp.voucher"></span>
             </div>
           </div>
-          
           <!-- Botones de acción -->
           <div class="w-full  space-y-4">
             <!-- Botón de descargar recibo -->
@@ -218,7 +217,6 @@ const reloadBooking = () => {
 .dateFact{
   border-bottom: 1px solid $primary;
   border-left: 1px solid $primary;
-
   width: fit-content;
   border-bottom-left-radius: 1rem;
 }

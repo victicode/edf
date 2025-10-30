@@ -49,7 +49,7 @@ import { useReserveStore } from '@/services/store/reserve.store';
 
 </script>
 <template>
-   <q-dialog v-model="dialog" class="createPayMethodDialog" persistent backdrop-filter="blur(0.5px)">
+  <q-dialog v-model="dialog" class="createPayMethodDialog" persistent backdrop-filter="blur(0.5px)">
       <q-card class="dialog_document public" style="border-radius:1rem">
           <div>
             <q-card-section class="q-px-none">
@@ -78,7 +78,7 @@ import { useReserveStore } from '@/services/store/reserve.store';
           </section>
 
       </q-card>
-    </q-dialog>
+  </q-dialog>
 </template>
 <style lang="scss">
 .statusInput.q-field--auto-height.q-field--labeled .q-field__control-container{

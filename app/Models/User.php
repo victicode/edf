@@ -12,7 +12,10 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes; 
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -54,20 +57,22 @@ class User extends Authenticatable
         ];
     }
 
-    public function getStatusLabelAttribute(){
+    public function getStatusLabelAttribute()
+    {
         $status = [
             '---',
             'Solvente',
             'Moroso',
         ];
 
-        return $status[$this->status]; 
-
+        return $status[$this->status];
     }
-    public function apartaments() {
+    public function apartaments()
+    {
         return $this->hasMany(Departament::class);
     }
-    public function rol() {
+    public function rol()
+    {
         return $this->belongsTo(Rol::class);
     }
 }

@@ -20,10 +20,18 @@ const reserveStore = useReserveStore();
 const router = useRouter();
 const dialog = ref('');
 const selectedReserve = ref({})
-const filter = ref({})
+const filter = ref({
+  status: 4,
+  area_id: '',
+  date_from: '',
+  date_to: '',
+  amount_type: '',
+  sort_by: 'created_at',
+  sort_dir: 'desc'
+})
 const getReserves = () =>{
   loading.value = true;
-  reserveStore.getReservesByUser(filter)
+  reserveStore.getReservesByUser(filter.value)
     .then((response) => {
       if (response.code !== 200) throw response;
       reserves.value = response.data;
@@ -35,8 +43,9 @@ const getReserves = () =>{
       loading.value = false;
     });
 }
-const getReserveWithFilter = () =>{
-  getReserves()
+const getReserveWithFilter = (newFilter) =>{
+  filter.value = { ...filter.value, ...newFilter };
+  getReserves();
 }
 
 const goTo = (url) => {
@@ -203,7 +212,7 @@ onMounted(() => {
     <filterModal 
         :dialog="(dialog == 'filter')" 
         @closeModal="dialog = ''"
-        @updateList="getReserves()"
+        @updateList="getReserveWithFilter"
       />
     <template v-if="Object.values(selectedReserve).length > 0">
       <cancelReserveModal 

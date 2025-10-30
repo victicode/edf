@@ -14,7 +14,7 @@ const dialog = ref('')
 // Estados reactivos
 const pay = ref(null)
 const loading = ref(false)
-const ready = ref(false)
+const ready = ref(true)
 
 const error = ref(null)
 
@@ -27,6 +27,9 @@ const getPayById = async (id) => {
   } catch (err) {
     console.error('Error al obtener la reserva:', err)
     error.value = err || 'Error al cargar la reserva'
+  }
+  finally{
+    ready.value = false
   }
 }
 

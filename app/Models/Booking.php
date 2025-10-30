@@ -11,35 +11,41 @@ class Booking extends Model
 {
     //
     use SoftDeletes;
+
     protected $fillable = [
-        "user_id", 
-        "comun_area_id", 
+        "user_id",
+        "comun_area_id",
         "booking_number",
-        "date", 
-        "time_from", 
-        "time_to", 
-        "amount", 
-        "note", 
+        "date",
+        "time_from",
+        "time_to",
+        "amount",
+        "note",
         "status",
         "is_exclusive"
     ];
     public $appends  =   ["booking_hour", "status_label", "status_color"];
 
-    public function comunArea(): BelongsTo {
+    public function comunArea(): BelongsTo
+    {
         return $this->belongsTo(ComunArea::class, 'comun_area_id', 'id');
     }
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
-    public function pay(): HasOne {
+    public function pay(): HasOne
+    {
         return $this->hasOne(Pay::class);
     }
-    public function getBookingHourAttribute(){
+    public function getBookingHourAttribute()
+    {
         $hour = intval(substr($this->time_to, 0, 2)) - intval(substr($this->time_from, 0, 2));
         return  $hour;
     }
-    public function getStatusLabelAttribute(){
-        $status= [
+    public function getStatusLabelAttribute()
+    {
+        $status = [
             "Cancelada",
             "Pago pendiente",
             "Pendiente de aprob.",
@@ -47,13 +53,14 @@ class Booking extends Model
         ];
         return  $status[$this->status];
     }
-    public function getStatusColorAttribute(){
-        $status= [
+    public function getStatusColorAttribute()
+    {
+        $color = [
             "negative",
             "warning",
             "warning",
             "positive"
         ];
-        return  $status[$this->status];
+        return  $color[$this->status];
     }
 }

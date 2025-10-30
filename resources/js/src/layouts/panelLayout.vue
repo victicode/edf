@@ -6,20 +6,27 @@ import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/services/store/auth.services';
 import loaderPage from '@/components/layout/loaderPage.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import logoutModal from '@/components/layout/logoutModal.vue';
 import storage from '@/services/storage'
+import { useNotificationsStore } from '@/services/store/notifications.store'
+import { useQuasar } from 'quasar'
 
 const route = useRoute()
 const ready = ref(false)
 const { user } = storeToRefs(useAuthStore())
 const showModal = ref('')
+const notificationsStore = useNotificationsStore()
+const $q = useQuasar()
+const prevUnread = ref(0)
+const lastShownId = ref(null)
 
 onMounted(() => {
   useAuthStore().currentUser()
     .then((response) => {
       if (user.value.rol_id) {
         ready.value = true
+        getNotifications()
       }
     })
     .catch(() => {
@@ -27,6 +34,45 @@ onMounted(() => {
       storage.deleteItem("access_token");
     })
 
+})
+
+const getNotifications = () => {
+  // Inicializar notificaciones
+  notificationsStore.fetchUnreadCount().finally(() => {
+    prevUnread.value = notificationsStore.unreadCount
+  })
+  notificationsStore.bindEchoListener(user.value.id)
+
+}
+watch(() => notificationsStore.unreadCount, (newVal, oldVal) => {
+  prevUnread.value = newVal
+})
+
+watch(() => notificationsStore.lastIncoming, (notif) => {
+
+  console.log(notif)
+  if (!notif) return
+  // Evitar duplicados
+  const id = notif.id || `${notif.title}-${notif.message}-${notif.url}-${Date.now()}`
+  if (lastShownId.value === id) return
+  lastShownId.value = id
+
+  // Si es cliente y es una notificación de "Reserva creada", NO mostrar toast
+  const isClient = user.value?.rol_id && user.value.rol_id != 1
+  const title = notif.title || notif?.data?.title
+  const message = notif.message || notif?.data?.message || 'Nueva notificación recibida'
+
+  if (isClient && title === 'Reserva creada') {
+    return
+  }
+
+  $q.notify({
+    classes:'q-mt-lg', 
+    color: 'primary', 
+    message: `${title ? title + ': ' : ''}${message}`, 
+    icon: 'eva-bell-outline', 
+    position: 'top-right' 
+  })
 })
 
 </script>
@@ -54,6 +100,7 @@ onMounted(() => {
 </template>
 
 <style lang="scss">
+
 .header__container {
   height: 12%;
   overflow: hidden;

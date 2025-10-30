@@ -172,23 +172,26 @@ const createReservePay = () => {
 
   })
 }
-const formatToCopy = () => {
+const formatAllToCopy = () => {
   let dataFormatted = ''
   try {
     payData[payFormData.value.pay_method].forEach(data => {
       if(data.title !='QR'){
-        dataFormatted += data.value.replaceAll(' ', '')+' '
+        dataFormatted += (data.title !='Titular de la cuenta' ? data.value.replaceAll(' ', '') : data.value) +' '  
       }
     });
   } catch (error) {
     console.log('Error al copiar la data')
   }
-  copyData(dataFormatted)
+  copyData(dataFormatted.trim())
+}
+const formatCopy = (texto) => {
+  copyData(texto.replaceAll(' ', '').trim())
 }
 const copyData = (texto) => {
   const element = document.getElementById('textToPaste')
   const textArea = document.createElement('textarea');
-  textArea.value = texto.replaceAll(' ', '');
+  textArea.value = texto
   textArea.style.opacity = 0;
 
   element.appendChild(textArea);
@@ -224,7 +227,7 @@ onMounted(() => {
               </div>
             </div>
         </section>
-        <div class="px-4 " style="height: 68%;">
+        <div class="md:px-20 md:mx-20 " style="height: 68%;">
           <Transition name="horizontal">
             <div class="h-full "  v-if="step == 1">
               <div class="text-h6 text-bold text-black py-5">
@@ -246,9 +249,9 @@ onMounted(() => {
             </div>
           </Transition>
           <Transition name="horizontal">
-            <div class="h-full " style="overflow: auto;" v-if="step == 2">
+            <div class="h-full md:pt-5" style="overflow: auto;" v-if="step == 2">
               <div v-if="payFormData.pay_method!==3">
-                <div class="dataPayCard pt-6 pb-3 px-3" style="transform: translateY(-0.4rem);">
+                <div class="dataPayCard pt-6 pb-3 px-3 md:px-8 md:py-8"  style="transform: translateY(-0.4rem);">
                   <div class="pb-5 text-h6 text-bold text-black"> 
                     Paga tu reserva
                     <div class=" text-grey-7 mt-1" style="font-size: 0.85rem;line-height: 1.3;">
@@ -261,16 +264,17 @@ onMounted(() => {
                       <img style="width: 8rem;" :src="data.value" alt="" v-if="data.title == 'QR'" class="mx-auto">
                       <div v-else style="font-size: 1.05rem;" class="text-black text-bold ">{{ data.value }}</div>
                     </div>
-                    <div v-html="iconsApp.copyIcon" class="cursor-pointer" v-if="data.title != 'QR'" @click="copyData(data.value)"/>
+                    <div v-html="iconsApp.copyIcon" class="cursor-pointer" v-if="data.title != 'QR'" 
+                    @click="data.title.includes('Titular') ? copyData(data.value) : formatCopy(data.value)"/>
                   </div>
-                  <div class="flex flex-center mt-6 cursor-pointer"> 
+                  <div class="flex flex-center mt-6 cursor-pointer">
                     <div v-html="iconsApp.copyIcon" />
-                    <div class="ml-1 text-primary" @click="formatToCopy()" style="font-size: 1.02rem; font-weight: medium;">Copiar datos</div>
+                    <div class="ml-1 text-primary" @click="formatAllToCopy()" style="font-size: 1.02rem; font-weight: medium;">Copiar datos</div>
                   </div>
                 </div>
               </div>
               <div v-else>
-                <div class="dataPayCard pt-6 pb-3 px-3" style="transform: translateY(-0.4rem);">
+                <div class="dataPayCard pt-6 pb-3 px-3 md:px-8 md:py-8" style="transform: translateY(-0.4rem);">
                   <div class="pb-7 text-h6 text-bold text-black"> 
                     Paga tu reserva
                     <div class=" text-grey-7 mt-1" style="font-size: 0.85rem;line-height: 1.3;">
@@ -280,8 +284,10 @@ onMounted(() => {
                   <div class="text-center text-black text-moneyEfectivo" >
                     Dirigete a la siguiente ubicación de nuestra oficina para realizar el abono en efectivo:
                   </div>
-                  <div class="my-4 text-center text-grey-8 text-subtitle1 px-4 py-4 box-data" >
-                    Av. Alfredo Benavides 430, Miraflores 15074.
+                  <div class="md:px-8">
+                    <div class="my-4 text-center text-grey-8 text-subtitle1 px-4 py-4 box-data" >
+                      Av. Alfredo Benavides 430, Miraflores 15074.
+                    </div>
                   </div>
                   <div class="mt-7 mb-4 text-center">
                     <div class="text-moneyEfectivo text-black">El codigo de tu reservación es:</div>
@@ -299,81 +305,79 @@ onMounted(() => {
             </div>
           </Transition>
           <Transition name="horizontal">
-            <div class="h-full " style="" v-if="step == 3">
-              <div>
-                <div class="dataPayCard pt-5 pb-3 px-3" style="transform: translateY(-0.4rem);">
-                  <div class="pb-7 text-h6 text-bold text-black"> 
-                    Confirma tu pago
-                    <div class=" text-grey-7 mt-1" style="font-size: 0.85rem;line-height: 1.3;">
-                      Completa el formulario
-                    </div>
+            <div class="h-full md:pt-5" style="" v-if="step == 3">
+              <div class="dataPayCard p-5 pb-3 px-3 md:px-8 md:py-8" style="transform: translateY(-0.4rem);">
+                <div class="pb-7 text-h6 text-bold text-black"> 
+                  Confirma tu pago
+                  <div class=" text-grey-7 mt-1" style="font-size: 0.85rem;line-height: 1.3;">
+                    Completa el formulario
                   </div>
-                  <div class=" row mt-1 px-1 md:px-12">
-                    <div class="col-12 mt-0">
-                      <div class="text-subtitle2 text-black">
-                        Fecha de pago:
-                      </div>
-                      <div class="pr-2 md:pr-4">
-                        <q-input v-model="payFormData.date" :rules="[val => !(!val) || 'Fecha es requerida']" dense
-                            borderless clearable class="form__inputsPay mt-1" color="primary" accept=".jpg, image/*">
-                            <template v-slot:append>
-                              <q-icon name="eva-calendar-outline" class="cursor-pointer">
-                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                  <q-date mask="DD-MM-YYYY" v-model="payFormData.date"
-                                    @update:model-value="getAvaibleBookingByDay"
-                                    :navigation-min-year-month="moment().format('YYYY/MM')" :locale="myLocale">
-                                    <div class="row items-center justify-end">
-                                      <q-btn v-close-popup label="Aceptar" color="primary" flat />
-                                    </div>
-                                  </q-date>
-                                </q-popup-proxy>
-                              </q-icon>
-                            </template>
-                          </q-input>
-
-                      </div>
+                </div>
+                <div class=" row mt-1 px-1 md:px-12">
+                  <div class="col-12 mt-0">
+                    <div class="text-subtitle2 text-black">
+                      Fecha de pago:
                     </div>
-                    <div class="col-12 mt-2 ">
-                      <div class="text-subtitle2 text-black ">
-                        Referencia de pago
-                      </div>
-                      <div class="pr-2 md:pr-4">
-                        <q-input
-                          dense
-                          borderless
-                          clearable
-                          v-model="payFormData.reference"
-                          class="form__inputsPay mt-1"
-                          :maxlength="12"
-                          color="primary"
-                          :rules="[ val => !(!val) ||  'La refrencia de pago es obligatoria']"
-                        />
-                      </div>
-                    </div>                    
-                    <div class="col-12 mt-2 mb-4">
-                      <div class="text-subtitle2 text-black ">
-                        Vaucher de pago
-                      </div>
-                      <div class="pr-2 md:pr-4">
-                        <q-file v-model="payFormData.vaucher"  dense
-                          borderless
-                          clearable
-                          class="form__inputsPay mt-1"
-                          color="primary"
-                          @update:model-value="onFileChange"
-                        >
+                    <div class="pr-2 md:pr-4">
+                      <q-input v-model="payFormData.date" :rules="[val => !(!val) || 'Fecha es requerida']" dense
+                          borderless clearable class="form__inputsPay mt-1" color="primary" accept=".jpg, image/*">
                           <template v-slot:append>
-                            <q-icon name="eva-folder-add-outline" class="cursor-pointer">
+                            <q-icon name="eva-calendar-outline" class="cursor-pointer">
+                              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                <q-date mask="DD-MM-YYYY" v-model="payFormData.date"
+                                  @update:model-value="getAvaibleBookingByDay"
+                                  :navigation-min-year-month="moment().format('YYYY/MM')" :locale="myLocale">
+                                  <div class="row items-center justify-end">
+                                    <q-btn v-close-popup label="Aceptar" color="primary" flat />
+                                  </div>
+                                </q-date>
+                              </q-popup-proxy>
                             </q-icon>
                           </template>
-                          <template v-slot:selected>
-                          <div class="row items-center q-gutter-x-sm">
-                            <q-icon name="eva-checkmark-circle-2-outline" color="positive" size="sm" />
-                            <div>Archivo subido</div>
-                          </div>
+                        </q-input>
+
+                    </div>
+                  </div>
+                  <div class="col-12 mt-2 ">
+                    <div class="text-subtitle2 text-black ">
+                      Referencia de pago
+                    </div>
+                    <div class="pr-2 md:pr-4">
+                      <q-input
+                        dense
+                        borderless
+                        clearable
+                        v-model="payFormData.reference"
+                        class="form__inputsPay mt-1"
+                        :maxlength="12"
+                        color="primary"
+                        :rules="[ val => !(!val) ||  'La refrencia de pago es obligatoria']"
+                      />
+                    </div>
+                  </div>                    
+                  <div class="col-12 mt-2 mb-4">
+                    <div class="text-subtitle2 text-black ">
+                      Vaucher de pago
+                    </div>
+                    <div class="pr-2 md:pr-4">
+                      <q-file v-model="payFormData.vaucher"  dense
+                        borderless
+                        clearable
+                        class="form__inputsPay mt-1"
+                        color="primary"
+                        @update:model-value="onFileChange"
+                      >
+                        <template v-slot:append>
+                          <q-icon name="eva-folder-add-outline" class="cursor-pointer">
+                          </q-icon>
                         </template>
-                        </q-file>
-                      </div>
+                        <template v-slot:selected>
+                        <div class="row items-center q-gutter-x-sm">
+                          <q-icon name="eva-checkmark-circle-2-outline" color="positive" size="sm" />
+                          <div>Archivo subido</div>
+                        </div>
+                      </template>
+                      </q-file>
                     </div>
                   </div>
                 </div>
@@ -381,31 +385,33 @@ onMounted(() => {
             </div>
           </Transition>
         </div>
-        <div style="height: 22%; border-top-left-radius: 1rem; border-top-right-radius: 1rem; box-shadow: 0px 0.2rem 1rem 0px rgb(155 155 155 / 53%);" class=" bg-white py-3">
-          <div class="mb-3 md:px-16 px-5">
-            <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid lightgrey;">
-              <div class="text-subtitle2 text-grey-8">Reserva</div>
-              <div class="text-subtitle1 text-bold text-black">{{ reserve.comun_area.name }}</div>
-            </div>
-            <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid lightgrey;">
-              <div class="text-subtitle2 text-grey-8">Total</div>
-              <div class="text-subtitle1 text-bold text-black">S/. {{ reserve.amount }}</div>
-            </div>
-          </div>
-          <div class="flex flex-center w-full">
-            <q-btn color="primary" class="" style="width: 90%; border-radius: 0.5rem;" type="submit"
-              :loading="loading" :disable="disable">
-              <div class="py-1 md:py-2">
-                {{ 
-                  step == 3 
-                  ? 'Pagar reserva' 
-                  : step == 2 && payFormData.pay_method == 3 
-                  ? 'Confirmar pago'
-                  : step == 2
-                  ? 'Ya hice el pago' 
-                  : 'Siguiente' }}
+        <div class="md:px-20 md:mx-20 " style="height: 22%;">
+          <div style="" class=" py-3 summarySection">
+            <div class="mb-3 md:px-16 px-5">
+              <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid lightgrey;">
+                <div class="text-subtitle2 text-grey-8">Reserva</div>
+                <div class="text-subtitle1 text-bold text-black">{{ reserve.comun_area.name }}</div>
               </div>
-            </q-btn>
+              <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid lightgrey;">
+                <div class="text-subtitle2 text-grey-8">Total</div>
+                <div class="text-subtitle1 text-bold text-black">S/. {{ reserve.amount }}</div>
+              </div>
+            </div>
+            <div class="flex flex-center w-full">
+              <q-btn color="primary" class="" style="width: 90%; border-radius: 0.5rem;" type="submit"
+                :loading="loading" :disable="disable">
+                <div class="py-1 md:py-2">
+                  {{ 
+                    step == 3 
+                    ? 'Pagar reserva' 
+                    : step == 2 && payFormData.pay_method == 3 
+                    ? 'Confirmar pago'
+                    : step == 2
+                    ? 'Ya hice el pago' 
+                    : 'Siguiente' }}
+                </div>
+              </q-btn>
+            </div>
           </div>
         </div>
       </template>
@@ -418,6 +424,11 @@ onMounted(() => {
   </div>
 </template>
 <style lang="scss">
+.summarySection{
+  border: 2px solid lightgray;
+  border-top-left-radius: 1rem; 
+  border-top-right-radius: 1rem; 
+}
 .q-date__today{
   background: #0351824d;
   color: $primary
@@ -433,8 +444,7 @@ onMounted(() => {
 }
 .dataPayCard{
     background: white;
-    border-bottom-left-radius: 1.2rem;
-    border-bottom-right-radius: 1.2rem;
+    border-radius: 1.2rem;
 }
 .payMethodItem{
   border-radius: 0.6rem;
@@ -466,12 +476,25 @@ onMounted(() => {
     padding: 0px 1rem;
   }
 }
+
+
 @media (max-width: 780px) {
 .form__inputsPay{
   & .q-field__inner {
 
     padding: 0.1rem 1rem;
   }
+}
+.dataPayCard{
+  border-radius: 0;
+  border-bottom-left-radius: 1.2rem;
+  border-bottom-right-radius: 1.2rem;
+}
+.summarySection{
+  border: 1px solid lightgray;
+  border-top-left-radius: 1rem; 
+  border-top-right-radius: 1rem; 
+  box-shadow: 0px 0.2rem 1rem 0px rgb(155 155 155 / 53%);
 }
 }
 

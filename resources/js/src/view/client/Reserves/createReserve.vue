@@ -106,17 +106,34 @@ const optionsFn = (date) => {
   return date >= moment().format('YYYY/MM/DD')
 }
 const limitToTime = () => {
-
-  let fromHour = parseInt(formData.value.time_from.substring(0, 2))
-  let maxHour = []
-
-  for (let index = 1; index <= selectedComunArea.value.max_time_reserve; index++) {
-    maxHour.push(fromHour + index)
+  if (!formData.value.time_from) {
+    formData.value.time_to = ''
+    hourOptionsTo.value = []
+    return
   }
-  hourOptionsTo.value = temporal.value;
-  hourOptionsTo.value = hourOptionsTo.value.filter((h) => maxHour.includes(h))
 
+  const fromHour = parseInt(formData.value.time_from.substring(0, 2))
+  const maxReserveHours = Number(selectedComunArea.value.max_time_reserve || 0)
+  const maxHourCandidates = []
+
+  for (let hour = 1; hour <= maxReserveHours; hour++) {
+    maxHourCandidates.push(fromHour + hour)
+  }
+
+  // Filtrar según disponibilidad devuelta por la API
+  hourOptionsTo.value = temporal.value.filter((hour) => maxHourCandidates.includes(hour))
+
+  timeToDefalutAssing();
 }
+const timeToDefalutAssing = () => {
+    if (hourOptionsTo.value.length > 0) {
+      const targetHour = hourOptionsTo.value[hourOptionsTo.value.length - 1];
+      const hour = String(targetHour).padStart(2, '0');
+      formData.value.time_to = `${hour}:00`;
+    } else {
+      formData.value.time_to = '';
+    }
+  }
 
 const showNotify = (type, text) => {
   Notify.create({
@@ -405,9 +422,7 @@ onMounted(() => {
   color: black;
 }
 
-.buttonSection {
-  box-shadow: 0px -5px 10px 0px rgb(207 207 207)
-}
+
 
 .md\:order-3 {
   order: 3
@@ -423,14 +438,7 @@ onMounted(() => {
   color: #006396;
 }
 
-.form__inputsReverse {
-  & .q-field__inner {
-    box-shadow: 0px 3px 4px 0px #bfbfbf48;
-    border-radius: 0.5rem;
-    border: 1px solid rgb(223, 223, 223);
-    padding: 0px 1rem;
-  }
-}
+
 
 .selectAreaItem {
   border-radius: 0.6rem;
@@ -445,7 +453,18 @@ onMounted(() => {
   }
 }
 
+.form__inputsReverse {
+  & .q-field__inner {
+    box-shadow: 0px 3px 4px 0px #bfbfbf48;
+    border-radius: 0.5rem;
+    border: 1px solid rgb(223, 223, 223);
+    padding: 0px 1rem;
+  }
+}
 @media (max-width: 780px) {
+  .buttonSection {
+    box-shadow: 0px -5px 10px 0px rgb(207 207 207)
+  }
   .form__inputsReverse {
     & .q-field__inner {
 

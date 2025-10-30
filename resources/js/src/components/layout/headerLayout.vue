@@ -3,12 +3,15 @@ import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/services/store/auth.services';
 import { inject, ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useNotificationsStore } from '@/services/store/notifications.store'
 const route = useRoute()
 const router = useRouter()
 const { user } = storeToRefs(useAuthStore())
+const notificationsStore = useNotificationsStore()
 const emitter = inject('emitter')
 const materialIcons = inject('materialIcons')
 const pagTitle = ref(route.meta.pagTitle)
+
 const showSidebar = () => {
   emitter.emit('showInfoNews')
 }
@@ -43,9 +46,11 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <div>
-        <q-btn :icon="materialIcons.roundNotifications" unelevated color="white" flat size="1rem" round
-          @click="showSidebar()" />
+      <div class="relative">
+        <q-badge class="badgeNotificationCount" 
+        v-if="notificationsStore.unreadCount > 0" color="red"  :label="notificationsStore.unreadCount" />
+        <q-btn id="notiftyButton" :icon="materialIcons.roundNotifications" unelevated color="white" flat size="1rem" round
+          @click="router.push({ name: 'notificationsPage' })" />
       </div>
     </template>
     <template v-else>
@@ -63,6 +68,12 @@ onMounted(() => {
 </template>
 
 <style lang="scss">
+.badgeNotificationCount{
+  top: 0.5rem;
+  right: 0.5rem;
+  position: absolute;
+  z-index: 2;
+}
 .header__container {
   box-shadow: 0px -0.1rem 1rem 0px rgb(0 0 0 / 38%);
 }

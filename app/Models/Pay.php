@@ -10,36 +10,41 @@ class Pay extends Model
 {
     //
     use SoftDeletes;
+
     protected $fillable = [
-        "user_id", 
-        "booking_id", 
-        "quota_id", 
-        "amount", 
-        "vaucher", 
-        "reference", 
+        "user_id",
+        "booking_id",
+        "quota_id",
+        "amount",
+        "vaucher",
+        "reference",
         "pay_date",
-        "pay_id", 
+        "pay_id",
         "pay_method",
         "status"
     ];
     public $appends  =   ["status_label", "status_color", "pay_method_label"];
 
-    public function booking(): BelongsTo {
+    public function booking(): BelongsTo
+    {
         return $this->belongsTo(Booking::class, 'booking_id', 'id');
     }
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
-    public function getStatusLabelAttribute(){
-        $status= [
+    public function getStatusLabelAttribute()
+    {
+        $status = [
             "Cancelada",
             "Pendiente de aprob.",
             "Exitoso"
         ];
         return  $status[$this->status];
     }
-    public function getPayMethodLabelAttribute(){
-        $payMethod= [
+    public function getPayMethodLabelAttribute()
+    {
+        $payMethod = [
             '',
             "Transferencia bancaria",
             "Yape",
@@ -47,8 +52,9 @@ class Pay extends Model
         ];
         return  $payMethod[$this->pay_method];
     }
-    public function getStatusColorAttribute(){
-        $status= [
+    public function getStatusColorAttribute()
+    {
+        $status = [
             "negative",
             "warning",
             "positive"
