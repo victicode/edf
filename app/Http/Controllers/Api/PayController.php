@@ -42,38 +42,43 @@ class PayController extends Controller
 
         $this->updateBooking($id);
         $this->uploadVaucher($pay, $request);
+        // $this->sendNotification($pay);
         return $this->returnSuccess(200, ["idPay" => $pay->id]);
     }
     public function updateStatus(Request $request, $payId)
     {
-        $pay = Pay::find($payId);
+        $pay = Pay::with(["booking"])->find($payId);
 
         if (!$payId) {
             return $this->returnFail(404, ['messageType' => 'negative', 'message' => 'Pago no encontrado']);
         }
+
         try {
             $pay->update([
                 "status" => $request->status,
             ]);
 
             $return =  $pay->booking_id
-            ? $this->bookingActionByStatus($pay->booking_id, $request->status)
+            ? $this->bookingActionByStatus($pay)
             : '';
         } catch (Exception $th) {
-            //throw $th;
             return $this->returnFail(500, ['messageType' => 'negative', 'message' => 'Error al cambiar estado de pago']);
         }
 
         return $this->returnSuccess(200, $return);
     }
-    private function bookingActionByStatus($booking, $status)
+    private function bookingActionByStatus($pay)
     {
-        if ($status == 0) {
-            $this->cancelBooking($booking);
-            return  ['messageType' => 'negative', 'message' => 'Pago cancelado con exito'];
-        }
-        $this->approveBooking($booking);
-        return  ['messageType' => 'positive', 'message' => 'Pago aprobado con exito'];
+        $returnMessage = $pay->status == 0
+        ? ['messageType' => 'negative', 'message' => 'Pago cancelado con exito']
+        : ['messageType' => 'positive', 'message' => 'Pago aprobado con exito'];
+
+        $pay->status == 0
+        ? $this->cancelBooking($pay->booking_id)
+        : $this->approveBooking($pay->booking_id);
+
+        $this->sendReserveNotification($pay);
+        return $returnMessage;
     }
     private function cancelBooking($booking)
     {
@@ -143,56 +148,75 @@ class PayController extends Controller
             "status" => 2
         ]);
     }
-    private function sendNotification($booking)
+
+    private function sendNotification($pay)
     {
         $users = [
             "admin" => User::find(1),
-            "client" => User::find($booking->user_id),
+            "client" => User::find($pay->user_id),
         ];
-        $booking->status == 0
-        ? $this->cancelReserveNotification($users, $booking)
-        : $this->successReserveNotification($users, $booking);
+        $pay->status == 0
+        ? $this->cancelNotification($users, $pay)
+        : $this->successNotification($users, $pay);
     }
-    private function successReserveNotification($users, $booking)
+    private function successNotification($users, $pay)
     {
         try {
             $users["client"]->notify(new RealtimeNotification(
-                title: 'Reserva creada',
-                message: 'Tu reserva #' . $booking->booking_number . ' fue cancelada.',
-                url: '/client/reserves/view/' . $booking->id,
-                meta: ['booking_id' => $booking->id]
+                title: 'Pago de reserva aceptado',
+                message: 'Tu pago por la reserva #' . $pay->booking_number . ' fue aprobada.',
+                url: '/client/reserves/view/' . $pay->id,
+                meta: ['booking_id' => $pay->id]
             ));
-
-            if ($users["admin"]) {
-                $users["admin"]->notify(new RealtimeNotification(
-                    title: 'Nueva reserva',
-                    message: 'Se creó la reserva #' . $booking->booking_number . '.',
-                    url: '/admin/reserves',
-                    meta: ['booking_id' => $booking->id]
-                ));
-            }
         } catch (\Throwable $e) {
             // Silenciar errores de notificación para no romper el flujo
         }
     }
-    private function cancelReserveNotification($users, $booking)
+    private function cancelNotification($users, $pay)
     {
         try {
             $users["client"]->notify(new RealtimeNotification(
-                title: 'Reserva creada',
-                message: 'Tu reserva #' . $booking->booking_number . ' fue creada.',
-                url: '/client/reserves/view/' . $booking->id,
-                meta: ['booking_id' => $booking->id]
+                title: 'Pago de reserva rechazado',
+                message: 'Tu pago por la reserva #' . $pay->booking->booking_number . ' fue rechazado.',
+                url: '/client/reserves/view/' . $pay->id,
+                meta: ['booking_id' => $pay->id]
             ));
-
-            if ($users["admin"]) {
-                $users["admin"]->notify(new RealtimeNotification(
-                    title: 'Nueva reserva',
-                    message: 'Se creó la reserva #' . $booking->booking_number . '.',
-                    url: '/admin/reserves',
-                    meta: ['booking_id' => $booking->id]
-                ));
-            }
+        } catch (\Throwable $e) {
+            // Silenciar errores de notificación para no romper el flujo
+        }
+    }
+    private function sendReserveNotification($pay)
+    {
+        $users = [
+            "admin" => User::find(1),
+            "client" => User::find($pay->user_id),
+        ];
+        $pay->status == 0
+        ? $this->cancelReserveNotification($users, $pay)
+        : $this->successReserveNotification($users, $pay);
+    }
+    private function successReserveNotification($users, $pay)
+    {
+        try {
+            $users["client"]->notify(new RealtimeNotification(
+                title: 'Pago de reserva aceptado',
+                message: 'Tu pago por la reserva #' . $pay->booking->booking_number . ' fue aprobada.',
+                url: '/client/reserves/view/' . $pay->id,
+                meta: ['booking_id' => $pay->id]
+            ));
+        } catch (\Throwable $e) {
+            // Silenciar errores de notificación para no romper el flujo
+        }
+    }
+    private function cancelReserveNotification($users, $pay)
+    {
+        try {
+            $users["client"]->notify(new RealtimeNotification(
+                title: 'Pago de reserva rechazado',
+                message: 'Tu pago por la reserva #' . $pay->booking->booking_number . ' fue rechazado.',
+                url: '/client/reserves/view/' . $pay->id,
+                meta: ['booking_id' => $pay->id]
+            ));
         } catch (\Throwable $e) {
             // Silenciar errores de notificación para no romper el flujo
         }

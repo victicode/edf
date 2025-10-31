@@ -40,8 +40,7 @@ class BookingController extends Controller
             return $this->returnFail(500, "Error al intentar crear reservación");
         }
         $this->sendNotification($booking);
-        // Storage::disk('public')
-        // ->put('vaucher/'.$request->vaucher->getClientOriginalName(), file_get_contents($request->vaucher));
+
         return $this->returnSuccess(200, ['toPay' => $booking->amount > 0, 'id' => $booking->id]);
     }
 
@@ -60,7 +59,7 @@ class BookingController extends Controller
         $booking = Booking::with('comunArea', 'user', 'pay')->find($id);
         return $this->returnSuccess(200, $booking);
     }
-    public function getBookingByAreaId(Request $request, $areaId)
+    public function getBookingByAreaId($areaId)
     {
 
         $bookings = Booking::with('pay', 'user')->where('comun_area_id', $areaId)->orderBy("created_at", "desc");
@@ -258,9 +257,17 @@ class BookingController extends Controller
             "admin" => User::find(1),
             "client" => User::find($booking->user_id),
         ];
-        $booking->status == 0
-        ? $this->cancelReserveNotification($users, $booking)
-        : $this->successReserveNotification($users, $booking);
+
+        if ($booking->status == 0) {
+            $this->cancelReserveNotification($users, $booking);
+            return;
+        }
+        if ($booking->status == 1) {
+            $this->pedingToPayReserveNotification($users, $booking);
+            return;
+        }
+
+        $this->successReserveNotification($users, $booking);
     }
     private function successReserveNotification($users, $booking)
     {
@@ -284,20 +291,42 @@ class BookingController extends Controller
             // Silenciar errores de notificación para no romper el flujo
         }
     }
-    private function cancelReserveNotification($users, $booking)
+    private function pedingToPayReserveNotification($users, $booking)
     {
         try {
             $users["client"]->notify(new RealtimeNotification(
-                title: 'Reserva creada',
-                message: 'Tu reserva #' . $booking->booking_number . ' fue creada.',
+                title: 'Reserva no completada',
+                message: 'Tu reserva #' . $booking->booking_number . ' fue creada, pero falta que realices el pago',
                 url: '/client/reserves/view/' . $booking->id,
                 meta: ['booking_id' => $booking->id]
             ));
 
             if ($users["admin"]) {
                 $users["admin"]->notify(new RealtimeNotification(
-                    title: 'Nueva reserva',
-                    message: 'Se creó la reserva #' . $booking->booking_number . '.',
+                    title: 'Nueva reserva no completada',
+                    message: 'Se creó la reserva #' . $booking->booking_number . ', pero falta que se realice el pago correspondiente',
+                    url: '/admin/reserves',
+                    meta: ['booking_id' => $booking->id]
+                ));
+            }
+        } catch (\Throwable $e) {
+            // Silenciar errores de notificación para no romper el flujo
+        }
+    }
+    private function cancelReserveNotification($users, $booking)
+    {
+        try {
+            $users["client"]->notify(new RealtimeNotification(
+                title: 'Reserva cancelada',
+                message: 'Tu reserva #' . $booking->booking_number . ' fue cancelada.',
+                url: '/client/reserves/view/' . $booking->id,
+                meta: ['booking_id' => $booking->id]
+            ));
+
+            if ($users["admin"]) {
+                $users["admin"]->notify(new RealtimeNotification(
+                    title: 'Reserva cancelada',
+                    message: 'Se canceló la reserva #' . $booking->booking_number . '.',
                     url: '/admin/reserves',
                     meta: ['booking_id' => $booking->id]
                 ));

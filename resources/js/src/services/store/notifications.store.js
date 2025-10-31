@@ -76,6 +76,25 @@ export const useNotificationsStore = defineStore('Notifications', {
           })
       })
     },
+    async deleteNotification(id) {
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) { throw '' }
+        ApiService.setHeader();
+        const notificationToDelete = this.items.find(n => n.id === id)
+        const wasUnread = notificationToDelete && !notificationToDelete.read_at
+        ApiService.delete(`/api/notifications/${id}`)
+          .then(({ data }) => {
+            if (data.code != 200) throw data
+            this.items = this.items.filter(n => n.id !== id)
+            if (wasUnread) {
+              this.unreadCount = Math.max(0, this.unreadCount - 1)
+            }
+            resolve(data)
+          }).catch(({ response }) => {
+            reject(response?.data?.error || 'Error al eliminar notificación')
+          })
+      })
+    },
     onIncoming(notification) {
       // Estructura que llega desde BroadcastNotificationCreated
       this.items = [{ id: notification.id || crypto.randomUUID?.() || String(Date.now()), data: notification, read_at: null, created_at: new Date().toISOString() }, ...this.items]

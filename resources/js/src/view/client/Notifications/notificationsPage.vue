@@ -2,18 +2,22 @@
 import { onMounted, ref } from 'vue'
 import { useNotificationsStore } from '@/services/store/notifications.store'
 import { useRouter } from 'vue-router'
-
+import { Notify } from 'quasar'
+import iconsApp from '@/assets/icons/index'
 const notifications = useNotificationsStore()
 const router = useRouter()
 const loading = ref(false)
+const ready = ref(false)
 
 const load = async (page = 1) => {
   loading.value = true
+
   try {
     await notifications.fetch({ page, per_page: 15 })
     await notifications.fetchUnreadCount()
   } finally {
     loading.value = false
+    ready.value = true
   }
 }
 
@@ -32,6 +36,74 @@ const markAll = async () => {
   await notifications.markAllAsRead()
 }
 
+const deleteItem = async (item) => {
+  try {
+    await notifications.deleteNotification(item.id)
+    Notify.create({
+      type: 'positive',
+      message: 'Notificación eliminada',
+      position: 'top',
+      timeout: 2000
+    })
+  } catch (error) {
+    Notify.create({
+      type: 'negative',
+      message: 'Error al eliminar notificación',
+      position: 'top',
+      timeout: 2000
+    })
+  }
+}
+
+const getNotificationIcon = (item) => {
+  const title = (item?.data?.title || '').toLowerCase()
+  if (title.includes('admin')) {
+    return 'eva-calendar-outline'
+  } else if (title.includes('notice') || title.includes('tablón')) {
+    return 'eva-volume-up-outline'
+  } else if (title.includes('maintenance') || title.includes('mantenimiento')) {
+    return 'eva-credit-card-outline'
+  } else if (title.includes('service') || title.includes('servicio')) {
+    return 'eva-settings-outline'
+  }
+  return 'eva-bell-outline'
+}
+
+const getNotificationIconColor = (item) => {
+  const title = (item?.data?.title || '').toLowerCase()
+  if (title.includes('admin')) {
+    return 'blue'
+  } else if (title.includes('notice') || title.includes('tablón')) {
+    return 'orange'
+  } else if (title.includes('maintenance') || title.includes('mantenimiento')) {
+    return 'red'
+  } else if (title.includes('service') || title.includes('servicio')) {
+    return 'primary'
+  }
+  return item.read_at ? 'grey' : 'primary'
+}
+
+const formatTimeAgo = (dateString) => {
+  if (!dateString) return ''
+  
+  const now = new Date()
+  const date = new Date(dateString)
+  const diffInSeconds = Math.floor((now - date) / 1000)
+  
+  if (diffInSeconds < 60) {
+    return '1 min'
+  } else if (diffInSeconds < 3600) {
+    const minutes = Math.floor(diffInSeconds / 60)
+    return `${minutes} min`
+  } else if (diffInSeconds < 86400) {
+    const hours = Math.floor(diffInSeconds / 3600)
+    return `${hours} hr`
+  } else {
+    const days = Math.floor(diffInSeconds / 86400)
+    return `${days} día${days > 1 ? 's' : ''}`
+  }
+}
+
 onMounted(() => {
   load()
 })
@@ -39,41 +111,201 @@ onMounted(() => {
 
 <template>
   <div class="h-full overflow-auto md:px-8 md:mx-28 px-3 pb-6">
-    <div class="flex justify-between items-center py-3">
-      <div class="text-h6">Notificaciones</div>
-      <q-btn color="primary" label="Marcar todas como leídas" dense @click="markAll" :disable="notifications.unreadCount===0"/>
-    </div>
+    <template v-if="ready">
+      <div class="flex justify-end items-center pt-3">
+        <q-btn color="primary" style="border-radius: 0.4rem;" no-caps @click="markAll" :disable="notifications.unreadCount===0">
+          <div class="px-2">
+            Marcar todas como leídas
+          </div>
+        </q-btn>
+      </div>    
+      
+      <div class="notification-list">
+        <q-slide-item
+          v-for="item in notifications.items"
+          :key="item.id"
+          @left="() => deleteItem(item)"
+          left-color="red-8"
+          class="my-3 notification-container"
+          style="border-radius: 12px!important;"
+        >
+          <template v-slot:left>
+            <div class="row items-center" style="border-radius: 12px;">
+              <q-icon name="eva-trash-2-outline" />
+              <div class="ml-1 text-subtitle2">
+                Borrar notificación
+              </div>
+            </div>
+          </template>
+          
+          <q-card 
+            class="notification-card q-mb-3"
+            :class="{ 'notification-read': item.read_at }"
+            flat
+            bordered
+          >
+            <q-card-section class="q-py-xs q-px-sm justify-between" horizontal>
+              <!-- Icon Section -->
+               <section class="flex firstPart" @click="openItem(item)" >
+                 <q-card-section class="notification-icon-section q-pa-0  q-px-none flex flex-center">
+                   <div 
+                     :class="`bg-${getNotificationIconColor(item)}` " 
+                     class="iconNotificationList p-3"
+                   >
+                     <q-icon :name="getNotificationIcon(item)" color="white" size="35px" />
+                   </div>
+                 </q-card-section>
+   
+                 <!-- Content Section -->
+                 <q-card-section class="notification-content-section q-pa-0 q-px-none  q-pl-sm" style="flex: 1;">
+                   <div class="flex justify-between items-start">
+                     <div style="flex: 1;">
+                       <div 
+                         class="notification-title font-medium"
+                         :class="{ 'text-weight-bold': !item.read_at }"
+                       >
+                         {{ item.data?.title || 'Notificación' }}
+                       </div>
+                       <div class="notification-message mt-1">
+                         {{ item.data?.message || '' }}
+                       </div>
+                     </div>
+                     
+                   </div>
+                 </q-card-section>
+               </section>
 
-    <q-inner-loading :showing="loading" />
+              <!-- Action Button -->
+              <q-card-section class="flex column items-end   q-pa-0 q-px-none">
+                <div class="notification-time mb-0 ">
+                  {{ formatTimeAgo(item.created_at) }}(s)
+                </div>
+                <div class="notification-action-section">
+                  <q-btn 
+                    flat 
+                    round 
+                    dense 
+                    size="1.1rem"
+                    icon="eva-checkmark-circle-2-outline" 
+                    :color="item.read_at ? 'grey' : 'primary'"
+                    @click.stop="markItem(item)" 
+                    :disable="!!item.read_at" 
+                  />
+                  <div flat rounded color="primary" size="sm" class="ml-1 md:ml-3 cursor-pointer">
+                    <div v-html="iconsApp.optionsBook"></div>
+                    <q-menu>
+                      <q-list style="min-width: 150px">
+                        <q-item clickable v-close-popup @click.stop="markItem(item)" v-if="!item.read_at" >
+                          <q-item-section>Marcar como leida</q-item-section>
+                        </q-item>
+                        <q-separator />
+                        <q-item clickable v-close-popup @click="deleteItem(item)">
+                          <q-item-section>Borrar</q-item-section>
+                        </q-item>
+                        <q-separator />
+                      </q-list>
+                    </q-menu>
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card-section>
+          </q-card>
+        </q-slide-item>
+      </div>
 
-    <q-list bordered separator>
-      <q-item v-for="item in notifications.items" :key="item.id" clickable @click="openItem(item)">
-        <q-item-section avatar>
-          <q-icon name="eva-bell-outline" :color="item.read_at ? 'grey' : 'primary'" />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label class="text-weight-bold">{{ item.data?.title || 'Notificación' }}</q-item-label>
-          <q-item-label caption>{{ item.data?.message }}</q-item-label>
-        </q-item-section>
-        <q-item-section side>
-          <q-btn flat round dense icon="eva-checkmark-circle-2-outline" @click.stop="markItem(item)" :disable="!!item.read_at" />
-        </q-item-section>
-      </q-item>
-    </q-list>
-
-    <div class="flex justify-end py-4">
-      <q-pagination
-        v-model="notifications.pagination.current_page"
-        :max="Math.ceil(notifications.pagination.total / notifications.pagination.per_page) || 1"
-        @update:model-value="(p) => load(p)"
-        color="primary"
-      />
-    </div>
+      <div class="flex justify-end py-4">
+        <q-pagination
+          v-model="notifications.pagination.current_page"
+          :max="Math.ceil(notifications.pagination.total / notifications.pagination.per_page) || 1"
+          @update:model-value="(p) => load(p)"
+          color="primary"
+        />
+      </div>
+    </template>
+    <template v-else>
+      <div class="h-full flex flex-center">
+        <q-spinner
+          color="primary"
+          size="4rem"
+          :thickness="5"
+        />
+      </div>
+    </template>
   </div>
-  
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.firstPart{
+  width: 90%;
+}
+
+.iconNotificationList{
+  border-radius: 12px;
+}
+.notification-list {
+  padding-top: 8px;
+}
+.notification-container{
+  box-shadow: 0px 5px 5px 0px rgba(54, 54, 54, 0.082)!important;
+  border-radius: 12px;
+
+}
+.notification-card {
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &.notification-read {
+    opacity: 0.8;
+  }
+}
+
+.notification-icon-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-content-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.notification-title {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.3;
+}
+
+.notification-message {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: #999;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.notification-action-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>
 
 
