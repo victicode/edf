@@ -43,6 +43,24 @@ export const useApartmentStore = defineStore('Apartment', {
       })
 
     },
+    async getApartmentByUser() {
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.get('/api/apartments/byUser')
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+  
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+        
+      })
+
+    },
     async getPaginationApartment(data) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {

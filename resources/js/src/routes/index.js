@@ -301,13 +301,30 @@ const routes = [
           title: 'Bienvenido',
           pagTitle: 'Notificaciones'
         }
+      },
+      {
+        path: '/client/department/list',
+        component: () => import('@/view/client/Apartments/apartmentsList.vue'),
+        name:'apartmentClient',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Gestion de apartamento'
+        }
       }
       
     ]
   },
-  
-
-  
+  // Ruta 404 - debe estar al final para capturar todas las rutas no encontradas
+  {
+    path: '/:pathMatch(.*)*',
+    component: () => import('@/view/errors/404.vue'),
+    name: '404',
+    meta: {
+      title: 'Página no encontrada',
+      pagTitle: '404'
+    }
+  }
 ]
 
 const router = createRouter({

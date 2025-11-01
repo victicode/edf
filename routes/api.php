@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [DepartamentController::class, 'paginationApartment']);
         Route::post('/', [DepartamentController::class, 'storeApartment']);
         Route::get('/byFind', [DepartamentController::class, 'apartmentsByfind']);
+        Route::get('/byUser', [DepartamentController::class, 'getApartmentsByUser']);
     });
     Route::prefix('comun-area')->name('comun.area.')->group(function () {
         Route::get('/', [ComunAreaController::class, 'paginationAreas']);

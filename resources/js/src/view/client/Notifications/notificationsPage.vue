@@ -66,7 +66,8 @@ const getNotificationIcon = (item) => {
   } else if (title.includes('service') || title.includes('servicio')) {
     return 'eva-settings-outline'
   }
-  return 'eva-bell-outline'
+  console.log(item?.data?.meta)
+  return item?.data?.meta?.icon || 'eva-bell-outline'
 }
 
 const getNotificationIconColor = (item) => {

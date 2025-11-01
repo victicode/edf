@@ -48,7 +48,7 @@ class BookingController extends Controller
     {
         $bookings = Booking::with('comunArea', 'user', 'pay');
         if ($request->user()->id != 1) {
-            $bookings->where('user_id', $request->user()->id);
+            $bookings->where('user_id', $request->user()->id)->orderBy('date', 'desc');
         }
         $this->applyFilter($bookings, $request);
         return $this->returnSuccess(200, $bookings->get());
@@ -276,7 +276,10 @@ class BookingController extends Controller
                 title: 'Reserva creada',
                 message: 'Tu reserva #' . $booking->booking_number . ' fue creada.',
                 url: '/client/reserves/view/' . $booking->id,
-                meta: ['booking_id' => $booking->id]
+                meta: [
+                        'booking_id' => $booking->id,
+                        'icon' => $booking->icon_status
+                    ]
             ));
 
             if ($users["admin"]) {
@@ -284,7 +287,10 @@ class BookingController extends Controller
                     title: 'Nueva reserva',
                     message: 'Se creó la reserva #' . $booking->booking_number . '.',
                     url: '/admin/reserves',
-                    meta: ['booking_id' => $booking->id]
+                    meta: [
+                        'booking_id' => $booking->id,
+                        'icon' => $booking->icon_status
+                    ]
                 ));
             }
         } catch (\Throwable $e) {
@@ -298,7 +304,10 @@ class BookingController extends Controller
                 title: 'Reserva no completada',
                 message: 'Tu reserva #' . $booking->booking_number . ' fue creada, pero falta que realices el pago',
                 url: '/client/reserves/view/' . $booking->id,
-                meta: ['booking_id' => $booking->id]
+                meta: [
+                        'booking_id' => $booking->id,
+                        'icon' => $booking->icon_status
+                    ]
             ));
 
             if ($users["admin"]) {
@@ -306,7 +315,10 @@ class BookingController extends Controller
                     title: 'Nueva reserva no completada',
                     message: 'Se creó la reserva #' . $booking->booking_number . ', pero falta que se realice el pago correspondiente',
                     url: '/admin/reserves',
-                    meta: ['booking_id' => $booking->id]
+                    meta: [
+                        'booking_id' => $booking->id,
+                        'icon' => $booking->icon_status
+                    ]
                 ));
             }
         } catch (\Throwable $e) {
@@ -320,7 +332,10 @@ class BookingController extends Controller
                 title: 'Reserva cancelada',
                 message: 'Tu reserva #' . $booking->booking_number . ' fue cancelada.',
                 url: '/client/reserves/view/' . $booking->id,
-                meta: ['booking_id' => $booking->id]
+                meta: [
+                    'booking_id' => $booking->id,
+                    'icon' => $booking->icon_status
+                ]
             ));
 
             if ($users["admin"]) {
@@ -328,7 +343,10 @@ class BookingController extends Controller
                     title: 'Reserva cancelada',
                     message: 'Se canceló la reserva #' . $booking->booking_number . '.',
                     url: '/admin/reserves',
-                    meta: ['booking_id' => $booking->id]
+                    meta: [
+                        'booking_id' => $booking->id,
+                        'icon' => $booking->icon_status
+                    ]
                 ));
             }
         } catch (\Throwable $e) {

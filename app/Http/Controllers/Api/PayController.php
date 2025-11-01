@@ -202,7 +202,10 @@ class PayController extends Controller
                 title: 'Pago de reserva aceptado',
                 message: 'Tu pago por la reserva #' . $pay->booking->booking_number . ' fue aprobada.',
                 url: '/client/reserves/view/' . $pay->id,
-                meta: ['booking_id' => $pay->id]
+                meta: [
+                    'booking_id' => $pay->id,
+                    'icon' => $pay->status_icon
+                ]
             ));
         } catch (\Throwable $e) {
             // Silenciar errores de notificación para no romper el flujo
@@ -215,7 +218,10 @@ class PayController extends Controller
                 title: 'Pago de reserva rechazado',
                 message: 'Tu pago por la reserva #' . $pay->booking->booking_number . ' fue rechazado.',
                 url: '/client/reserves/view/' . $pay->id,
-                meta: ['booking_id' => $pay->id]
+                meta: [
+                    'booking_id' => $pay->id,
+                    'icon' => $pay->status_icon
+                ]
             ));
         } catch (\Throwable $e) {
             // Silenciar errores de notificación para no romper el flujo

@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
-
 class DepartamentController extends Controller
 {
     /**
@@ -18,21 +17,18 @@ class DepartamentController extends Controller
     {
         $departaments = Departament::with('owner')->paginate(15);
         return $this->returnSuccess(200, $departaments);
-
     }
 
     /**
      * Display a listing of the resource.
      */
     public function apartmentsByfind(Request $request)
-    {   
+    {
         $departaments = [];
-        if($request->find == 'available'){
-
+        if ($request->find == 'available') {
             $departaments = Departament::where('user_id', null)->get();
         }
         return $this->returnSuccess(200, $departaments);
-
     }
 
     /**
@@ -42,8 +38,9 @@ class DepartamentController extends Controller
     {
         //
         $validated = $this->validateFieldsFromInput($request->all());
-        if (count($validated) > 0) return $this->returnFail(400, $validated[0]);
-
+        if (count($validated) > 0) {
+            return $this->returnFail(400, $validated[0]);
+        }
 
         Departament::create([
             'number' => $request->number,
@@ -55,31 +52,30 @@ class DepartamentController extends Controller
         ]);
 
         return $this->returnSuccess(200, 'ok');
-
-
     }
 
 
     public function assingApartment(Request $request)
     {
         //
-        if($request->user()->id == 1){
-
+        if ($request->user()->id == 1) {
             Departament::find($request->idApartament)->update([
                 'user_id' => $request->user
             ]);
         }
 
         return $this->returnSuccess(200, 'ok');
-
-
     }
-    /**
-     * Display the specified resource.
-     */
-    public function show(Departament $departament)
+
+    public function getApartmentsByUser(Request $request)
     {
-        //
+        $apartments = Departament::with(["owner"])->where("user_id", $request->user()->id)->get();
+
+        if (!$apartments) {
+            return $this->returnFail(400, "Apartamentos no encontrados");
+        }
+
+        return $this->returnSuccess(200, $apartments);
     }
 
     /**
@@ -98,15 +94,15 @@ class DepartamentController extends Controller
         //
     }
 
-    private function validateFieldsFromInput($inputs){
-        $rules =[
+    private function validateFieldsFromInput($inputs)
+    {
+        $rules = [
             'number'     => ['required', 'regex:/^[a-z 0-9 A-Z-À-ÿ .\-]+$/i'],
             'address'    => ['required', 'regex:/^[a-z 0-9 A-Z-À-ÿ ., &]+$/i'],
             'block'      => ['regex:/^[a-z 0-9 A-Z À-ÿ .]+$/i'],
             'area'       => ['required', 'numeric'],
             'floor'      => ['required', 'numeric'],
             'description' =>  ['regex:/^[a-z a-z 0-9 A-Z-À-ÿ ., \-]+$/i'],
-
         ];
         $messages = [
             'number.required'   => 'El número de apartamento es requerido.',
@@ -119,14 +115,11 @@ class DepartamentController extends Controller
             'floor.required'    => 'Número de piso es requerida',
             'floor.numeric'     => 'Número de piso no valido',
             'description.regex' => 'Nota no valida',
-            
         ];
 
 
          $validator = Validator::make($inputs, $rules, $messages)->errors();
 
         return $validator->all() ;
-
     }
-
 }

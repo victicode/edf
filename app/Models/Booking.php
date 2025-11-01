@@ -24,7 +24,7 @@ class Booking extends Model
         "status",
         "is_exclusive"
     ];
-    public $appends  =   ["booking_hour", "status_label", "status_color"];
+    public $appends  =   ["booking_hour", "status_label", "status_color", "status_color"];
 
     public function comunArea(): BelongsTo
     {

@@ -107,7 +107,7 @@
                 </div>
               </div>
               <div class="md:px-16 px-3 mt-2 flex justify-end ">
-                <q-btn flat class="btn__login" :loading="loading" size="lg" type="submit" >
+                <q-btn flat class="btn__login"  color="white" :loading="loading" size="lg" type="submit" >
                   <div class="md:hidden blockx text-subtitle1 text-bold px-2 text-white"  >Continuar</div>
                   <q-icon name="eva-arrow-forward-outline" size="lg" class="icon_login_b px-2 " color="white" />
                 </q-btn>

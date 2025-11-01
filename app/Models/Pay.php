@@ -23,7 +23,7 @@ class Pay extends Model
         "pay_method",
         "status"
     ];
-    public $appends  =   ["status_label", "status_color", "pay_method_label"];
+    public $appends  =   ["status_label", "status_color", "status_icon", "pay_method_label"];
 
     public function booking(): BelongsTo
     {
@@ -58,6 +58,15 @@ class Pay extends Model
             "negative",
             "warning",
             "positive"
+        ];
+        return  $status[$this->status];
+    }
+    public function getStatusIconAttribute()
+    {
+        $status = [
+            "eva-close-outline",
+            "eva-alert-circle-outline",
+            "eva-checkmark-outline"
         ];
         return  $status[$this->status];
     }

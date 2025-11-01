@@ -10,6 +10,7 @@ class Departament extends Model
 {
     /** @use HasFactory<\Database\Factories\Api\DepartamentControllerFactory> */
     use HasFactory;
+    
     protected $fillable = [
         'number',
         'address',
@@ -24,6 +25,6 @@ class Departament extends Model
 
     public function owner()
     {
-        return $this->belongsTo(User::class,'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }
