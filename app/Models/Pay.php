@@ -15,6 +15,7 @@ class Pay extends Model
         "user_id",
         "booking_id",
         "quota_id",
+        "type",
         "amount",
         "vaucher",
         "reference",

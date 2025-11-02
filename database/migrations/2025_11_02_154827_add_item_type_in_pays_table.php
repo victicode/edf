@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('bookings', function (Blueprint $table) {
+        Schema::table('pays', function (Blueprint $table) {
             //
-            $table->integer('status')->default(1)->after('note');
-            $table->string('booking_number')->after('comun_area_id')->nullable();
+            $table->integer("types")->nullable()->after("quota_id");
         });
-
     }
 
     /**
@@ -24,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('bookings', function (Blueprint $table) {
+        Schema::table('pays', function (Blueprint $table) {
             //
         });
     }

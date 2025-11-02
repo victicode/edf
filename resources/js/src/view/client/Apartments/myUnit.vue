@@ -29,6 +29,10 @@ const expanded = ref(false)
 const showPick = (id) => {
   console.log('Pick apartment:'+ id)
 }
+const internalNumber = (number) => {
+  let splitNumber = number.split("-")
+  return splitNumber[1] 
+}
 onMounted(() => {
   getApartaments()
 });
@@ -36,7 +40,7 @@ onMounted(() => {
 
 <template>
   <div class="h-full" style="overflow: hidden;">
-    <div class="" style="height: 90%; overflow: auto;">
+    <div class="" style="height: 100%; overflow: auto;">
       <!-- Loading State -->
       <div v-if="!ready" class="flex justify-center items-center py-20">
         <!-- <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div> -->
@@ -130,17 +134,66 @@ onMounted(() => {
                   Ficha Unidad Inmobiliaria
                 </div>
                 <div class="row">
-                  <div class="col-12 col-md-6 flex">
-                    <div class="text-black font-medium">Dirección:</div>
-                    <div class="ml-1 text-black font-medium">{{ apartment.address }}</div>
+                  <div class="col-12 col-md-6">
+                    <div class="flex my-2">
+                      <div class="text-black font-medium">Dirección:</div>
+                      <div class="ml-1 text-black font-medium">{{ apartment.address }}</div>
+                    </div>
+                    <div class="flex my-2">
+                      <div class="text-black font-medium">Tipo:</div>
+                      <div class="ml-1 text-black font-medium">{{ 'Departamento' }}</div>
+                    </div>
+                    <div class="flex my-2">
+                      <div class="text-black font-medium">Nro interno:</div>
+                      <div class="ml-1 text-black font-medium">{{ internalNumber(apartment.number) }}</div>
+                    </div>
+                    <div class="flex my-2">
+                      <div class="text-black font-medium">Número:</div>
+                      <div class="ml-1 text-black font-medium">{{ internalNumber(apartment.number) }}</div>
+                    </div>
+                    <div class="flex my-2">
+                      <div class="text-black font-medium">Área ocupada (m²):</div>
+                      <div class="ml-1 text-black font-medium">{{ apartment.area }}</div>
+                    </div>
+                    <div class="flex my-2">
+                      <div class="text-black font-medium">Sector / Bloque:</div>
+                      <div class="ml-1 text-black font-medium">{{ apartment.block }}</div>
+                    </div>
+                    <div class="flex my-2">
+                      <div class="text-black font-medium">Propietario:</div>
+                      <div class="ml-1 text-black font-medium">{{ apartment.owner.name }}</div>
+                    </div>
+                    <div class="flex my-2">
+                      <div class="text-black font-medium">Poseedor:</div>
+                      <div class="ml-1 text-black font-medium">{{ apartment.owner.name }}</div>
+                    </div>
+                    <div class="flex my-2">
+                      <div class="text-black font-medium">Descripcion:</div>
+                      <div class="ml-1 text-black font-medium">{{ apartment.description }}</div>
+                    </div>
                   </div>
-                  <div class="col-6"></div>
-                  <div class="col-6"></div>
-                  <div class="col-6"></div>
-                  <div class="col-6"></div>
-                  <div class="col-6"></div>
-                  <div class="col-6"></div>
-                  <div class="col-6"></div>
+                  <div class="col-12 col-md-6">
+                    <div class="flex my-2">
+                      <div class="text-black font-medium">Urbanización:</div>
+                      <div class="ml-1 text-black font-medium"></div>
+                    </div>
+                    <div class="flex my-2">
+                      <div class="text-black font-medium">Uso:</div>
+                      <div class="ml-1 text-black font-medium"></div>
+                    </div>
+                    <div class="flex my-2">
+                      <div class="text-black font-medium">Nro. part. registral:</div>
+                      <div class="ml-1 text-black font-medium">0</div>
+                    </div>
+                    <div class="flex my-2">
+                      <div class="text-black font-medium">Área de terreno (m²):</div>
+                      <div class="ml-1 text-black font-medium">{{ apartment.area }}</div>
+                    </div>
+                    <div class="flex my-2">
+                      <div class="text-black font-medium">Nro. Piso:</div>
+                      <div class="ml-1 text-black font-medium">{{ apartment.floor }}</div>
+                    </div>
+                  </div>
                 </div>
               </q-card-section>
             </q-card>

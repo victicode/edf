@@ -303,8 +303,18 @@ const routes = [
         }
       },
       {
-        path: '/client/department/list',
-        component: () => import('@/view/client/Apartments/apartmentsList.vue'),
+        path: '/client/department/options',
+        component: () => import('@/view/client/Apartments/optionList.vue'),
+        name:'apartmentOption',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Gestion de apartamento'
+        }
+      },
+      {
+        path: '/client/department/my-unit',
+        component: () => import('@/view/client/Apartments/myUnit.vue'),
         name:'apartmentClient',
         beforeEnter: auth,
         meta:{

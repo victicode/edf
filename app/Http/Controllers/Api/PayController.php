@@ -36,6 +36,7 @@ class PayController extends Controller
             "reference"     => $request->reference ?? "000000",
             "pay_id"        => $prefixPayId[$request->pay_method] . $id . '-' . rand(1000, 9999),
             "pay_date"      => $request->pay_date ? date("Y-m-d", strtotime($request->pay_date)) : date("Y-m-d"),
+            "type"          => 2,
             "pay_method"    => $request->pay_method,
             "status"        => 1
         ]);
@@ -155,16 +156,14 @@ class PayController extends Controller
             "admin" => User::find(1),
             "client" => User::find($pay->user_id),
         ];
-        $pay->status == 0
-        ? $this->cancelNotification($users, $pay)
-        : $this->successNotification($users, $pay);
+        $this->successNotification($users, $pay);
     }
     private function successNotification($users, $pay)
     {
         try {
             $users["client"]->notify(new RealtimeNotification(
-                title: 'Pago de reserva aceptado',
-                message: 'Tu pago por la reserva #' . $pay->booking_number . ' fue aprobada.',
+                title: 'Pago de reserva realizado',
+                message: '',
                 url: '/client/reserves/view/' . $pay->id,
                 meta: ['booking_id' => $pay->id]
             ));
@@ -172,18 +171,21 @@ class PayController extends Controller
             // Silenciar errores de notificación para no romper el flujo
         }
     }
-    private function cancelNotification($users, $pay)
+    private function getDataToNotification($pay)
     {
-        try {
-            $users["client"]->notify(new RealtimeNotification(
-                title: 'Pago de reserva rechazado',
-                message: 'Tu pago por la reserva #' . $pay->booking->booking_number . ' fue rechazado.',
-                url: '/client/reserves/view/' . $pay->id,
-                meta: ['booking_id' => $pay->id]
-            ));
-        } catch (\Throwable $e) {
-            // Silenciar errores de notificación para no romper el flujo
-        }
+        return $pay->type == 1
+        ? [
+            "title" => "Pago realizado",
+            "message" => "Tu pago por la cuota #" . $pay->quota->number . "fue realizado, el personal de administración lo validará en breve.",
+            "url" => "/client/reserves/view/" . $pay->id,
+            "meta" =>  ['booking_id' => $pay->id],
+        ]
+        : [
+            "title" => "Pago de reserva realizado",
+            "message" => "Tu pago por la reserva #" . $pay->booking->booking_number  . "fue realizado, el personal de administración lo validará en breve.",
+            "url" => "/client/reserves/view/" . $pay->id,
+            "meta" =>  ['booking_id' => $pay->id],
+        ];
     }
     private function sendReserveNotification($pay)
     {

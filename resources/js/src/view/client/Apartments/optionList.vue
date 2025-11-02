@@ -9,36 +9,29 @@ const { user } = storeToRefs(useAuthStore())
 const router = useRouter()
 const menu = [
   {
-    title: 'Mi Perfil',
-    icon: iconsApp.users2,
-    subtitle: 'Configura tu perfil',
+    title: 'Mis pagos',
+    icon: iconsApp.payApartment,
+    subtitle: 'Consulta tus pagos',
     link: '/client/profile',
   },
   {
-    title: 'Apartamento',
-    icon: iconsApp.departmet,
+    title: 'Mi unidad',
+    icon: iconsApp.myUnit,
     subtitle: 'Informacion sobre tu inmobiliario',
-    link: '/client/department/options',
+    link: '/client/department/my-unit',
   },
   {
-    title: 'Reservas',
-    icon: iconsApp.reserve,
-    subtitle: 'Gestiona tu reservas',
+    title: 'Estado',
+    icon: iconsApp.contract,
+    subtitle: 'Revisa tu estado y cuotas actuales',
     link: '/client/reserves/list',
   },
   {
-    title: 'Visitas',
+    title: 'Control de accesos',
     icon: iconsApp.visitor,
-    subtitle: 'Gestiona tu pase de visitas',
+    subtitle: 'Gestiona los inquilinos de tu unidad',
     link: '/client/visits/list',
   },
-  {
-    title: 'Servicios',
-    icon: iconsApp.services,
-    subtitle: 'Consulta los servicios',
-    link: '/client/services/list',
-  },
-
 
 ];
 
