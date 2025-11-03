@@ -12,7 +12,7 @@ const menu = [
     title: 'Mis pagos',
     icon: iconsApp.payApartment,
     subtitle: 'Consulta tus pagos',
-    link: '/client/profile',
+    link: '/client/pays/quotasList',
   },
   {
     title: 'Mi unidad',

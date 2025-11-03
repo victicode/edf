@@ -36,6 +36,7 @@ const payFormData = ref({
   reference:'',
   date:'',
   booking_id: route.params.id || route.query.id,
+  type:2
 })
 
 const payMethods = [
@@ -153,12 +154,13 @@ const createReservePay = () => {
   dataForm.append('reference', payFormData.value.reference)
   dataForm.append('pay_date', payFormData.value.date)
   dataForm.append('pay_method', payFormData.value.pay_method)
+  dataForm.append('booking_id', reserve.value.id)
+  dataForm.append('type', 2)
+
+
   loading.value = true
-  const postData = {
-    id: reserve.value.id,
-    dataForm
-  } 
-  reserveStore.createReservePay(postData)
+
+  reserveStore.createReservePay(dataForm)
   .then((response) => {
     showNotify('positive', 'Pago creado con exito')
     setTimeout(() => {

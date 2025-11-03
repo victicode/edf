@@ -1,23 +1,20 @@
 import { defineStore } from 'pinia'
 import ApiService from '@/services/axios'
 
-export const usePayStore = defineStore('Pay', {
+export const useQuotaStore = defineStore('Quota', {
   actions: {
-    async getPaysByUser(filters = {}) {
+    async getQuotaByUser(filters) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        const queryParams = this.formatFiltersQuery(filters) // Construir query string con filtros
-        
-        const url = queryParams.toString() 
-          ? `/api/pays?${queryParams.toString()}`
-          : '/api/pays';
-        
+        const query = this.filterQuery(filters);
+        const url = '/api/quotas' + (query ? `?${query}` : '');
         ApiService.get(url)
         .then(({data}) => {
           if(data.code !=200) throw data;
+          
           resolve(data);
         }).catch(( {response}) => {
           console.log(response)
@@ -26,13 +23,13 @@ export const usePayStore = defineStore('Pay', {
         
       })
     },
-    async createPay(data) {
+    async createQuota(data) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.post('/api/pays', data)
+        ApiService.post('/api/quotas', data)
         .then(({data}) => {
           if(data.code !=200) throw data;
           
@@ -48,14 +45,13 @@ export const usePayStore = defineStore('Pay', {
       })
 
     },
-     
-    async getPayById(id) {
+    async createQuotaPay(postData){
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.get('/api/pays/byId/'+id)
+        ApiService.post('/api/pays/quotas/'+postData.id, postData.dataForm)
         .then(({data}) => {
           if(data.code !=200) throw data;
   
@@ -69,13 +65,50 @@ export const usePayStore = defineStore('Pay', {
 
     },
      
-    async updatePay(data) {
+    async getQuotaById(id) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.put('/api/pays/'+data.id, data)
+        ApiService.get('/api/quotas/byId/'+id)
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+  
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+        
+      })
+    },
+    async getQuotaByArea(area){
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.get('/api/quotas/byArea/'+area)
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+  
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+        
+      })
+    },
+
+    async updateQuota(data) {
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.put('/api/quotas/'+data.id, data)
         .then(({data}) => {
           if(data.code !=200) throw data;
           
@@ -91,13 +124,13 @@ export const usePayStore = defineStore('Pay', {
       })
 
     },
-    async getAvailablePayInDayByArea(data){
+    async getAvailableQuotaInDayByArea(data){
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.get('/api/pays/availableBooking/'+data.idArea+'?date='+data.date+'&')
+        ApiService.get('/api/quotas/availableBooking/'+data.idArea+'?date='+data.date+'&')
         .then(({data}) => {
           if(data.code !=200) throw data;
           
@@ -109,13 +142,13 @@ export const usePayStore = defineStore('Pay', {
       })
 
     },
-    async deletePay(id) {
+    async deleteQuota(id) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.delete('/api/pays/'+id)
+        ApiService.delete('/api/quotas/'+id)
         .then(({data}) => {
           if(data.code !=200) throw data;
           
@@ -126,37 +159,55 @@ export const usePayStore = defineStore('Pay', {
         });
       })
     },
-    async updateStatus(data) {      
+    async cancelQuota(id) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.post('/api/pays/updateStatus/'+data.id, data.data)
+        ApiService.post('/api/quotas/cancel/'+id)
         .then(({data}) => {
           if(data.code !=200) throw data;
           
           resolve(data);
         }).catch(( {response}) => {
           console.log(response)
-          if(response.data.code == 403){
-            reject(response.data);
-          }
           reject(response.data.error);
         });
-        
       })
-
     },
-    formatFiltersQuery(filters){
-      const queryParams = new URLSearchParams();
-      Object.keys(filters).forEach(key => {
-        if (filters[key] !== null && filters[key] !== '' && filters[key] !== undefined) {
-          queryParams.append(key, filters[key]);
+    async getPendingQuota(){
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
         }
-      });
-
-      return queryParams;
+        ApiService.setHeader();
+        ApiService.get('/api/quotas/pendings')
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+          
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+      })
+    },
+    filterQuery(filter){
+      try {
+        const params = new URLSearchParams();
+        if (!filter || typeof filter !== 'object') return '';
+        if (filter.status !== undefined && Number(filter.status) !== 4) params.set('status', String(filter.status));
+        if (filter.area_id) params.set('area_id', String(filter.area_id));
+        if (filter.date_from) params.set('date_from', String(filter.date_from));
+        if (filter.date_to) params.set('date_to', String(filter.date_to));
+        if (filter.amount_type) params.set('amount_type', String(filter.amount_type));
+        if (filter.sort_by) params.set('sort_by', String(filter.sort_by));
+        if (filter.sort_dir) params.set('sort_dir', String(filter.sort_dir));
+        return params.toString();
+      } catch (e) {
+        return '';
+      }
     }
     
   },

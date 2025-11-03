@@ -51,7 +51,7 @@ export const useReserveStore = defineStore('Reserve', {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.post('/api/pays/bookings/'+postData.id, postData.dataForm)
+        ApiService.post('/api/pays/bookings', postData)
         .then(({data}) => {
           if(data.code !=200) throw data;
   

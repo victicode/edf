@@ -303,6 +303,16 @@ const routes = [
         }
       },
       {
+        path: '/client/pays/quotasList',
+        component: () => import('@/view/client/Payments/paymentHistory.vue'),
+        name:'paymentHistory',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Historial de pagos'
+        }
+      },
+      {
         path: '/client/department/options',
         component: () => import('@/view/client/Apartments/optionList.vue'),
         name:'apartmentOption',

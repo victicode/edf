@@ -2,12 +2,13 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\QuotaController;
+use App\Http\Controllers\Api\PayController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\ComunAreaController;
 use App\Http\Controllers\Api\DepartamentController;
-use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\PayController;
 use App\Http\Controllers\Api\NotificationController;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -48,7 +49,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/pendings', [BookingController::class, 'getPendings']);
     });
     Route::prefix('pays')->name('pay.')->group(function () {
-        Route::post('/bookings/{id}', [PayController::class, 'payBooking']);
+        Route::get('/', [PayController::class, 'getPaysByUser']);
+        Route::post('/bookings', [PayController::class, 'payBooking']);
         Route::get('/byId/{id}', [PayController::class, 'getPayById']);
         Route::post('/updateStatus/{id}', [PayController::class, 'updateStatus']);
     });
@@ -58,5 +60,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
         Route::post('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
         Route::delete('/{id}', [NotificationController::class, 'destroy']);
+    });
+    Route::prefix('quotas')->name('quota.')->group(function () {
+        Route::get('/', [QuotaController::class, 'index']);
     });
 });

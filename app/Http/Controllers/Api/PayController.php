@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Quota;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\RealtimeNotification;
@@ -20,7 +21,64 @@ class PayController extends Controller
 
         return $this->returnSuccess(200, $pay);
     }
-    public function payBooking(Request $request, $id)
+
+    public function getPayQuotas($id)
+    {
+        $pay = Pay::with(['booking.comunArea', 'user'])->find($id);
+
+        return $this->returnSuccess(200, $pay);
+    }
+
+    public function getPaysByUser(Request $request)
+    {
+        $pays = Pay::with(['booking.comunArea', 'quota', 'user']);
+
+        // Filtrar por usuario si no es admin
+        if ($request->user()->id != 1) {
+            $pays->where('user_id', $request->user()->id);
+        }
+
+        // Aplicar filtros
+        $this->applyPaysFilter($pays, $request);
+
+        return $this->returnSuccess(200, $pays->get());
+    }
+
+    private function applyPaysFilter($query, Request $request)
+    {
+        $VIEW_ALL_STATUS = 4;
+
+        // Filtro por estado
+        if ($request->filled('status') && intval($request->status) !== $VIEW_ALL_STATUS) {
+            $query->where('status', intval($request->status));
+        }
+
+        // Filtro por método de pago
+        if ($request->filled('pay_method')) {
+            $query->where('pay_method', intval($request->pay_method));
+        }
+
+        // Filtro por tipo de pago
+        if ($request->filled('type')) {
+            $query->where('type', intval($request->type));
+        }
+
+        // Filtro por rango de fechas
+        if ($request->filled('date_from')) {
+            $query->whereDate('pay_date', '>=', $request->get('date_from'));
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('pay_date', '<=', $request->get('date_to'));
+        }
+
+        // Ordenamiento
+        $validSortFields = ['created_at', 'pay_date', 'amount', 'status'];
+        $sortBy = in_array($request->get('sort_by'), $validSortFields)
+            ? $request->get('sort_by') : 'created_at';
+        $sortDir = $request->get('sort_dir') === 'asc' ? 'asc' : 'desc';
+        $query->orderBy($sortBy, $sortDir);
+    }
+    public function payBooking(Request $request)
     {
         $validated = $this->validateFieldsFromInput($request->all());
         if (count($validated) > 0) {
@@ -31,19 +89,20 @@ class PayController extends Controller
 
         $pay = Pay::create([
             "user_id"       => $request->user()->id,
-            "booking_id"    => $id,
+            "booking_id"    => $request->booking_id ?? null,
+            "quota_id"      => $request->quota_id ?? null,
             "amount"        => $request->amount,
             "reference"     => $request->reference ?? "000000",
-            "pay_id"        => $prefixPayId[$request->pay_method] . $id . '-' . rand(1000, 9999),
+            "pay_id"        => $prefixPayId[$request->pay_method] . ($request->booking_id ?? $request->quota_id) . '-' . rand(1000, 9999),
             "pay_date"      => $request->pay_date ? date("Y-m-d", strtotime($request->pay_date)) : date("Y-m-d"),
-            "type"          => 2,
+            "type"          => $request->type,
             "pay_method"    => $request->pay_method,
             "status"        => 1
         ]);
 
-        $this->updateBooking($id);
+        $this->afterPayAction($pay);
         $this->uploadVaucher($pay, $request);
-        // $this->sendNotification($pay);
+        $this->sendNotification($pay);
         return $this->returnSuccess(200, ["idPay" => $pay->id]);
     }
     public function updateStatus(Request $request, $payId)
@@ -67,6 +126,14 @@ class PayController extends Controller
         }
 
         return $this->returnSuccess(200, $return);
+    }
+    private function afterPayAction($pay)
+    {
+        if ($pay->type == 2) {
+            $this->updateBooking($pay->booking_id);
+            return;
+        }
+        $this->updateQuota($pay->quota_id);
     }
     private function bookingActionByStatus($pay)
     {
@@ -137,8 +204,12 @@ class PayController extends Controller
         $path = "";
 
         if ($vaucher->file("vaucher")) {
-            $path = "/public/images/vaucher/" . rand(1000000, 9999999) . "_" . trim(str_replace(" ", "_", $pay->id)) . "." . $vaucher->file("vaucher")->extension();
-            $vaucher->file("vaucher")->move(public_path() . "/images/vaucher/", $path);
+            $rand = rand(1000000, 9999999);
+            $fileName = trim(str_replace(" ", "_", $pay->id));
+            $extension = $vaucher->file("vaucher")->extension();
+            $path = "/public/images/vaucher/{$rand}_{$fileName}.{$extension}";
+            $vaucherPath = public_path() . "/images/vaucher/";
+            $vaucher->file("vaucher")->move($vaucherPath, $path);
         }
         $pay->vaucher = $path;
         $pay->save();
@@ -150,39 +221,47 @@ class PayController extends Controller
         ]);
     }
 
+    private function updateQuota($id)
+    {
+        Quota::find($id)->update([
+            "status" => 2
+        ]);
+    }
+
     private function sendNotification($pay)
     {
         $users = [
             "admin" => User::find(1),
             "client" => User::find($pay->user_id),
         ];
-        $this->successNotification($users, $pay);
-    }
-    private function successNotification($users, $pay)
-    {
+        $dataNotificaction = $this->getDataToNotification($pay);
+
         try {
             $users["client"]->notify(new RealtimeNotification(
-                title: 'Pago de reserva realizado',
-                message: '',
-                url: '/client/reserves/view/' . $pay->id,
-                meta: ['booking_id' => $pay->id]
+                title: $dataNotificaction["title"],
+                message: $dataNotificaction["message"],
+                url: $dataNotificaction["url"],
+                meta: $dataNotificaction["meta"],
             ));
         } catch (\Throwable $e) {
             // Silenciar errores de notificación para no romper el flujo
         }
     }
+
     private function getDataToNotification($pay)
     {
         return $pay->type == 1
         ? [
             "title" => "Pago realizado",
-            "message" => "Tu pago por la cuota #" . $pay->quota->number . "fue realizado, el personal de administración lo validará en breve.",
+            "message" => "Tu pago por la cuota #" . $pay->quota->number
+                . "fue realizado, el personal de administración lo validará en breve.",
             "url" => "/client/reserves/view/" . $pay->id,
             "meta" =>  ['booking_id' => $pay->id],
         ]
         : [
             "title" => "Pago de reserva realizado",
-            "message" => "Tu pago por la reserva #" . $pay->booking->booking_number  . "fue realizado, el personal de administración lo validará en breve.",
+            "message" => "Tu pago por la reserva #" . $pay->booking->booking_number
+                . "fue realizado, el personal de administración lo validará en breve.",
             "url" => "/client/reserves/view/" . $pay->id,
             "meta" =>  ['booking_id' => $pay->id],
         ];

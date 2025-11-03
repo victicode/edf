@@ -25,7 +25,7 @@ return new class extends Migration
                 $table->timestamps();
                 $table->softDeletes();
             });
-    
+
             Schema::create('pays', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('user_id');
@@ -35,10 +35,10 @@ return new class extends Migration
                 $table->unsignedBigInteger('quota_id')->nulleable();
                 $table->foreign('quota_id')->nulleable()->references('id')->on('quotas')->onDelete('cascade');
                 $table->double('amount');
-                $table->longText('vaucher');
+                $table->longText('vaucher')->nullable();
                 $table->longText('reference');
                 $table->longText('pay_id');
-                $table->integer('pay_mehtod');
+                $table->integer('pay_method');
                 $table->integer('status')->default(1);
                 $table->timestamps();
                 $table->softDeletes();

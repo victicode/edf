@@ -69,7 +69,7 @@ watch(() => notificationsStore.lastIncoming, (notif) => {
   $q.notify({
     classes:'q-mt-lg', 
     color: 'primary', 
-    message: `${title ? title + ': ' : ''}${message}`, 
+    message: `${title ? title + '' : ''}`, 
     icon: 'eva-bell-outline', 
     position: 'top-right' 
   })

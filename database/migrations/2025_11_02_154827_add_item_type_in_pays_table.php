@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('pays', function (Blueprint $table) {
             //
-            $table->integer("types")->nullable()->after("quota_id");
+            $table->integer("type")->nullable()->after("quota_id");
         });
     }
 

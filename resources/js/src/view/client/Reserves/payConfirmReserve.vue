@@ -41,7 +41,7 @@ const downloadReceipt = () => {
 
 // Función para ir al inicio
 const goToHome = () => {
-  router.go(-2)
+  router.go(-3)
 }
 
 // Obtener el ID del pay desde la URL o props

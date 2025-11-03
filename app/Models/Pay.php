@@ -24,11 +24,15 @@ class Pay extends Model
         "pay_method",
         "status"
     ];
-    public $appends  =   ["status_label", "status_color", "status_icon", "pay_method_label"];
+    public $appends  =   ["status_label", "status_color", "status_icon", "pay_method_label", "title_pay"];
 
     public function booking(): BelongsTo
     {
         return $this->belongsTo(Booking::class, 'booking_id', 'id');
+    }
+    public function quota(): BelongsTo
+    {
+        return $this->belongsTo(Quota::class, 'quota_id', 'id');
     }
     public function user(): BelongsTo
     {
@@ -52,6 +56,15 @@ class Pay extends Model
             "Pago en efectivo"
         ];
         return  $payMethod[$this->pay_method];
+    }
+    public function getTitlePayAttribute()
+    {
+        $payMethod = [
+            '',
+            "Pago de quota",
+            "Pago de Reserva",
+        ];
+        return  $payMethod[$this->type];
     }
     public function getStatusColorAttribute()
     {
