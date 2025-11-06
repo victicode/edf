@@ -12,7 +12,7 @@ const menu = [
     title: 'Mis pagos',
     icon: iconsApp.payApartment,
     subtitle: 'Consulta tus pagos',
-    link: '/client/pays/quotasList',
+    link: '/client/pays/list',
   },
   {
     title: 'Mi unidad',
@@ -24,7 +24,7 @@ const menu = [
     title: 'Estado',
     icon: iconsApp.contract,
     subtitle: 'Revisa tu estado y cuotas actuales',
-    link: '/client/reserves/list',
+    link: '/client/balance/list',
   },
   {
     title: 'Control de accesos',

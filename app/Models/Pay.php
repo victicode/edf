@@ -61,7 +61,7 @@ class Pay extends Model
     {
         $payMethod = [
             '',
-            "Pago de quota",
+            "Pago de quota" ,
             "Pago de Reserva",
         ];
         return  $payMethod[$this->type];

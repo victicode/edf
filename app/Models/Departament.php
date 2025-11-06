@@ -10,7 +10,7 @@ class Departament extends Model
 {
     /** @use HasFactory<\Database\Factories\Api\DepartamentControllerFactory> */
     use HasFactory;
-    
+
     protected $fillable = [
         'number',
         'address',

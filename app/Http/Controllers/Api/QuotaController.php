@@ -10,9 +10,20 @@ class QuotaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
+        $pays = Quota::with(["pay", "departament.user"]);
+
+        // Filtrar por usuario si no es admin
+        if ($request->user()->id != 1) {
+            $pays->where('user_id', $request->user()->id);
+        }
+
+        // Aplicar filtros
+        // $this->applyPaysFilter($pays, $request);
+
+        return $this->returnSuccess(200, $pays->get());
     }
 
     /**

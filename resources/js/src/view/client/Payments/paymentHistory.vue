@@ -40,7 +40,11 @@ const getPays = () => {
     });
 }
 
-const goTo = (url) => {
+const goTo = (pay) => {
+  let url = pay.type === 1
+  ? ('/client/quota/view/'+pay.booking_id)
+  : ('/client/reserves/view/'+pay.booking_id)
+
   router.push(url);
 }
 
@@ -58,12 +62,10 @@ const closeModal = () => {
 }
 
 const getTitlePay = (pay) => {
-  if (pay.type === 1) {
-    return pay.title_pay || 'Pago de cuota';
-  } else if (pay.type === 2 && pay.booking) {
-    return `Reserva #${pay.booking.booking_number}`;
-  }
-  return pay.title_pay || 'Pago';
+  let typeOperation = pay.type === 1 
+  ? pay.quota.number
+  : pay.booking.booking_number
+  return `${pay.title_pay} #${typeOperation}`
 }
 
 const getDescriptionPay = (pay) => {
@@ -93,7 +95,7 @@ onMounted(() => {
 
 <template>
   <div class="h-full" style="overflow: hidden;">
-    <div class="flex justify-end pt-4 md:px-28 md:mx-5">
+    <div class="flex justify-end pt-4 md:px-28 md:mx-5 mx-4">
       <q-btn
         outline
         color="primary"
@@ -116,30 +118,31 @@ onMounted(() => {
             v-for="pay in pays" 
             :key="pay.id"
             class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden md:mb-5"
-            style="position: relative;">
+            style="position: relative;"
+            @click="goTo(pay)"
+          >
             
             <!-- Sección superior - Detalles del pago -->
-            <div class="px-4 pb-4 pt-2">
+            <div class="px-4 pb-4 pt-2" >
               <!-- Header con título y badge -->
-              <div class="flex justify-between items-start mb-2">
+              <div class="flex justify-between items-start mb-0 pb-1" style="border-bottom: 1px dashed #111827;">
                 <div class="flex-1">
                   <h3 class="text-lg font-bold text-gray-900 mb-1">
-                    {{ getTitlePay(pay) }}
+                    {{ getTitlePay(pay) }}  
+                    <!-- Badge "New" opcional -->
+                    <span 
+                      v-if="pay.created_at && moment(pay.created_at).isAfter(moment().subtract(7, 'days'))"
+                      class="absolute top-2 right-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded-md">
+                      Nuevo
+                    </span>
                   </h3>
-                  <p class="text-sm text-gray-600" v-if="getDescriptionPay(pay)">
-                    {{ getDescriptionPay(pay) }}
-                  </p>
                 </div>
                 <!-- Estado badge -->
-                <span 
-                  :class="'bg-' + pay.status_color"
-                  class="inline-block px-3 py-1 text-xs font-bold text-white rounded-md">
-                  {{ pay.status_label }}
-                </span>
+                
               </div>
 
               <!-- Contenido principal con detalle -->
-              <div class="space-y-2 mt-3">
+              <div class="space-y-2 pt-3">
                 <!-- Monto -->
                 <div class="flex items-center text-sm text-gray-700">
                   <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,14 +164,14 @@ onMounted(() => {
                 </div>
 
                 <!-- Método de pago -->
-                <div class="flex items-center text-sm text-gray-700">
+                <!-- <div class="flex items-center text-sm text-gray-700">
                   <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
                     </path>
                   </svg>
                   <span class="font-medium">{{ pay.pay_method_label }}</span>
-                </div>
+                </div> -->
               </div>
             </div>
 
@@ -206,13 +209,6 @@ onMounted(() => {
                 </div>
               </div>
             </div>
-
-            <!-- Badge "New" opcional -->
-            <span 
-              v-if="pay.created_at && moment(pay.created_at).isAfter(moment().subtract(7, 'days'))"
-              class="absolute top-2 right-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded-md">
-              Nuevo
-            </span>
           </div>
         </div>
 

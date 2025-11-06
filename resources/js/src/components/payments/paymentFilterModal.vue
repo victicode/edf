@@ -81,7 +81,7 @@ import { RadioGroup, Radio } from 'vant';
             </div>
             
           </div>
-          <div class="row py-4 px-5" style="border-top: 1px solid lightgray;">
+          <div class="row py-4 px-5 pb-5" style="border-top: 1px solid lightgray;">
             <div class="mb-3 text-lg font-medium text-primary col-12">
               Método de pago
             </div>
@@ -104,7 +104,7 @@ import { RadioGroup, Radio } from 'vant';
             </div>
             
           </div>
-          <div class="row py-4 px-5" style="border-top: 1px solid lightgray;">
+          <div class="row py-4 px-5 pb-5" style="border-top: 1px solid lightgray;">
             <div class="mb-3 text-lg font-medium text-primary col-12">
               Tipo de pago
             </div>
@@ -126,7 +126,7 @@ import { RadioGroup, Radio } from 'vant';
             </div>
             
           </div>
-          <div class="row py-4 px-5" style="border-top: 1px solid lightgray;">
+          <div class="row py-4 px-5 pb-5" style="border-top: 1px solid lightgray;">
             <div class="mb-4 text-lg font-medium text-primary col-12">
               Rango de fechas de pago
             </div>
@@ -192,11 +192,11 @@ import { RadioGroup, Radio } from 'vant';
   }
 }
 .header-sectionModal{
-  height: 9%;
+  height: 8%;
   overflow: hidden;
 }
 .content-sectionModal{
-  height: 91%;
+  height: 92%;
   overflow: auto;
 }
 .statusRadioGroup{
