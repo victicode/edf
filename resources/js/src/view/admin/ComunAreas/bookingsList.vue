@@ -155,7 +155,7 @@ onMounted(() => {
                     <div v-html="iconsApp.optionsBook"></div>
                     <q-menu>
                     <q-list style="min-width: 150px">
-                      <q-item clickable v-close-popup>
+                      <q-item clickable v-close-popup @click="goTo('/client/reserves/view/'+reserve.id)">
                         <q-item-section>Ver detalles</q-item-section>
                       </q-item>
                       <q-item clickable v-close-popup v-if="reserve.status == 2" @click="goTo('/admin/pay/validate/' + reserve.pay.id)" >

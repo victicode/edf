@@ -74,7 +74,7 @@ class MonthlyQuota extends Command
                     'month' => $month,
                     'due_date' =>  date('Y') . '-' . $month . '-10',
                     'type' => 1,
-                    'description' => 'Pago de mensualidad del mes de ' . $this->labelMonth($month),
+                    'description' => 'Cuota mensual: mes ' . $this->labelMonth($month),
                     'status' => 1
                 ]);
             } catch (Exception $th) {

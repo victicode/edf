@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\QuotaController;
+use App\Http\Controllers\Api\QuotaController;
 use App\Http\Controllers\Api\PayController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
@@ -63,5 +63,6 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::prefix('quotas')->name('quota.')->group(function () {
         Route::get('/', [QuotaController::class, 'index']);
+        Route::get('/byId/{id}', [QuotaController::class, 'show']);
     });
 });

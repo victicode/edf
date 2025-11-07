@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Quota;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class QuotaController extends Controller
 {
@@ -13,17 +15,19 @@ class QuotaController extends Controller
     public function index(Request $request)
     {
         //
-        $pays = Quota::with(["pay", "departament.user"]);
+        $quotas = Quota::with(["pay", "departament.owner"]);
 
         // Filtrar por usuario si no es admin
         if ($request->user()->id != 1) {
-            $pays->where('user_id', $request->user()->id);
+            $quotas->whereHas('departament', function (Builder $query) use ($request) {
+                $query->where('user_id', $request->user()->id);
+            });
         }
 
         // Aplicar filtros
-        // $this->applyPaysFilter($pays, $request);
+        // $this->applyPaysFilter($quotas, $request);
 
-        return $this->returnSuccess(200, $pays->get());
+        return $this->returnSuccess(200, $quotas->get());
     }
 
     /**
@@ -40,6 +44,7 @@ class QuotaController extends Controller
     public function show(Quota $quota)
     {
         //
+        return $this->returnSuccess(200, $quota);
     }
 
     /**

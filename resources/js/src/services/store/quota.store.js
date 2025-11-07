@@ -3,14 +3,16 @@ import ApiService from '@/services/axios'
 
 export const useQuotaStore = defineStore('Quota', {
   actions: {
-    async getQuotaByUser(filters) {
+    async getQuotasByUser(filters) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
+
         ApiService.setHeader();
         const query = this.filterQuery(filters);
         const url = '/api/quotas' + (query ? `?${query}` : '');
+
         ApiService.get(url)
         .then(({data}) => {
           if(data.code !=200) throw data;

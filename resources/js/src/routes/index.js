@@ -303,7 +303,7 @@ const routes = [
         }
       },
       {
-        path: '/client/pays/quotasList',
+        path: '/client/pays/list',
         component: () => import('@/view/client/Payments/paymentHistory.vue'),
         name:'paymentHistory',
         beforeEnter: auth,
@@ -330,6 +330,16 @@ const routes = [
         meta:{
           title: 'Bienvenido',
           pagTitle: 'Gestion de apartamento'
+        }
+      },
+      {
+        path: '/client/balance/list',
+        component: () => import('@/view/client/Quotas/quotasByUserList.vue'),
+        name:'apartmentClient',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Balance de pagos'
         }
       }
       
