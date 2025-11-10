@@ -41,9 +41,10 @@ class QuotaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Quota $quota)
+    public function show(string $id)
     {
         //
+        $quota = Quota::findOrFail($id);
         return $this->returnSuccess(200, $quota);
     }
 

@@ -49,8 +49,6 @@ watch(() => notificationsStore.unreadCount, (newVal, oldVal) => {
 })
 
 watch(() => notificationsStore.lastIncoming, (notif) => {
-
-  console.log(notif)
   if (!notif) return
   // Evitar duplicados
   const id = notif.id || `${notif.title}-${notif.message}-${notif.url}-${Date.now()}`
@@ -74,15 +72,23 @@ watch(() => notificationsStore.lastIncoming, (notif) => {
     position: 'top-right' 
   })
 })
-
+const isShowablePage = () => {
+  return (['reserveConfirm', 'reservePay', 'reservePayConfirm', 'quotaPay'].includes(route.name))
+}
+const showNavbar = () => {
+  return ['dashboardAdmin', 'financePage', 'usersAdmin'].includes(route.name)
+}
 </script>
 
 <template>
   <div class="h-full bg-stone-100 w-full" style="position: relative; overflow: hidden;">
     <template v-if="ready">
-      <headerLayout class="header__container" v-if="!(['reserveConfirm', 'reservePay', 'reservePayConfirm'].includes(route.name))" />
+      <headerLayout class="header__container" v-if="!isShowablePage()" />
       <section
-        :class="{ 'withoutNav': ['reserveConfirm', 'reservePay', 'reservePayConfirm'].includes(route.name), 'page__container': ['dashboardAdmin', 'financePage', 'usersAdmin'].includes(route.name), 'page_continerFull': !(['dashboardAdmin', 'financePage', 'usersAdmin'].includes(route.name)) }">
+        :class="{ 
+          'withoutNav': isShowablePage(), 
+          'page__container': showNavbar(), 
+          'page_continerFull': !showNavbar()}">
         <router-view v-slot="{ Component }">
           <transition name="horizontal">
             <component :is="Component" />

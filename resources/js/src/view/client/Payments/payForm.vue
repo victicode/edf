@@ -5,6 +5,8 @@ import yape from '@/assets/img/util/yape.webp'
 import cash from '@/assets/img/util/cash.webp'
 import { useRoute, useRouter } from 'vue-router';
 import { useReserveStore } from '@/services/store/reserve.store'
+import { useQuotaStore } from '@/services/store/quota.store'
+
 import iconsApp from '@/assets/icons/index'
 import moment from 'moment';
 import { Notify } from 'quasar';
@@ -23,12 +25,18 @@ const myLocale = {
 const route = useRoute()
 const router = useRouter()
 const reserveStore = useReserveStore()
+const quotaStore = useQuotaStore()
+
 const ready = ref(false)
 const step = ref(1)
 const loading = ref(false)
 const disable =  ref(true)
 const materialIcons = inject('materialIcons')
-const reserve = ref({})
+const toPay = ref({})
+const typePay = () => {
+
+ return ['quotaPay'].includes(route.name) ? 'quota' : 'reserve' 
+}
 const payFormData = ref({
   pay_method:0,
   amount:'',
@@ -36,7 +44,8 @@ const payFormData = ref({
   reference:'',
   date:'',
   booking_id: route.params.id || route.query.id,
-  type:2
+  quota_id: route.params.id || route.query.id,
+  type: typePay() == 'quota' ? 1 : 2 
 })
 
 const payMethods = [
@@ -95,7 +104,7 @@ const payData = [
 
 const nextStep = () => {
   if(step.value == 3 || (step.value == 2 && payFormData.value.pay_method == 3)){
-    createReservePay()
+    createPay()
     return
   }
 
@@ -113,11 +122,26 @@ const stepBack = () => {
   } 
   step.value--
 }
-
+const getToPay = () => {
+  typePay() == 'quota'
+  ? getQuotaById()
+  : getBookingById()
+}
 const getBookingById = () => {
   reserveStore.getReserveById(route.params.id || route.query.id)
   .then((response) => {
-    reserve.value = response.data
+    toPay.value = response.data
+    ready.value = true
+  })
+  .catch((response) => {
+    console.log(response)
+    ready.value = true
+  })
+}
+const getQuotaById = () => {
+  quotaStore.getQuotaById(route.params.id || route.query.id)
+  .then((response) => {
+    toPay.value = response.data
     ready.value = true
   })
   .catch((response) => {
@@ -147,25 +171,20 @@ const showNotify = (type, text) => {
     timeout: 2000
   })
 }
-const createReservePay = () => {
-  const dataForm = new FormData
-  dataForm.append('amount', reserve.value.amount)
-  dataForm.append('vaucher', payFormData.value.vaucher)
-  dataForm.append('reference', payFormData.value.reference)
-  dataForm.append('pay_date', payFormData.value.date)
-  dataForm.append('pay_method', payFormData.value.pay_method)
-  dataForm.append('booking_id', reserve.value.id)
-  dataForm.append('type', 2)
+const createPay = () => {
+  const storeToUse =  typePay() == 'quota'
+  ? quotaStore.createQuotaPay
+  : reserveStore.createReservePay
 
-
+  const dataForm = dataToForm()
   loading.value = true
 
-  reserveStore.createReservePay(dataForm)
+  storeToUse(dataForm)
   .then((response) => {
     showNotify('positive', 'Pago creado con exito')
     setTimeout(() => {
       loading.value = false
-      router.push('/client/reserves/pay/details/'+response.data.idPay)
+      router.push('/client/pay/details/'+response.data.idPay)
     }, 1000);
   })
   .catch((response) => {
@@ -174,6 +193,7 @@ const createReservePay = () => {
 
   })
 }
+
 const formatAllToCopy = () => {
   let dataFormatted = ''
   try {
@@ -209,8 +229,22 @@ const copyData = (texto) => {
     element.removeChild(textArea);
   }
 }
+const dataToForm = () => {
+  const dataForm =  new FormData
+  dataForm.append('amount', toPay.value.amount)
+  dataForm.append('vaucher', payFormData.value.vaucher)
+  dataForm.append('reference', payFormData.value.reference)
+  dataForm.append('pay_date', payFormData.value.date)
+  dataForm.append('pay_method', payFormData.value.pay_method)
+  dataForm.append('to_pay_id', toPay.value.id)
+  dataForm.append('type', payFormData.value.type)
+
+  return { id:route.params.id, dataForm}
+}
+
+
 onMounted(() => {
-  getBookingById()
+  getToPay()
 })
 </script>
 <template>
@@ -231,8 +265,8 @@ onMounted(() => {
         </section>
         <div class="md:px-20 md:mx-20 " style="height: 68%;">
           <Transition name="horizontal">
-            <div class="h-full "  v-if="step == 1">
-              <div class="text-h6 text-bold text-black py-5">
+            <div class="h-full px-4 md:px-0 "  v-if="step == 1">
+              <div class="text-h6 text-bold text-black py-5 px-1">
                 ¿Cómo vas a pagar?
               </div>
               <div v-for="(method, key) in payMethods" :key="key"  class="payMethodItem mb-5 py-2 px-3 flex justify-between items-center">
@@ -291,7 +325,7 @@ onMounted(() => {
                       Av. Alfredo Benavides 430, Miraflores 15074.
                     </div>
                   </div>
-                  <div class="mt-7 mb-4 text-center">
+                  <div class="mt-7 mb-4 text-center" v-if="toPay.booking_number">
                     <div class="text-moneyEfectivo text-black">El codigo de tu reservación es:</div>
                     <div class="flex flex-center">
                       <div class="text-primary text-h5  mt-4 box-data pl-4 pr-3 py-3 flex items-center">
@@ -327,7 +361,6 @@ onMounted(() => {
                             <q-icon name="eva-calendar-outline" class="cursor-pointer">
                               <q-popup-proxy cover transition-show="scale" transition-hide="scale">
                                 <q-date mask="DD-MM-YYYY" v-model="payFormData.date"
-                                  @update:model-value="getAvaibleBookingByDay"
                                   :navigation-min-year-month="moment().format('YYYY/MM')" :locale="myLocale">
                                   <div class="row items-center justify-end">
                                     <q-btn v-close-popup label="Aceptar" color="primary" flat />
@@ -390,13 +423,17 @@ onMounted(() => {
         <div class="md:px-20 md:mx-20 " style="height: 22%;">
           <div style="" class=" py-3 summarySection">
             <div class="mb-3 md:px-16 px-5">
-              <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid lightgrey;">
+              <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid lightgrey; " v-if="toPay.comun_area">
                 <div class="text-subtitle2 text-grey-8">Reserva</div>
-                <div class="text-subtitle1 text-bold text-black">{{ reserve.comun_area.name }}</div>
+                <div class="text-subtitle1 text-bold text-black">{{ toPay.comun_area.name }}</div>
+              </div>
+              <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid lightgrey; " v-if="toPay.month">
+                <div class="text-subtitle2 text-grey-8">Mes</div>
+                <div class="text-subtitle1 text-bold text-black">{{ toPay.month_label }}</div>
               </div>
               <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid lightgrey;">
                 <div class="text-subtitle2 text-grey-8">Total</div>
-                <div class="text-subtitle1 text-bold text-black">S/. {{ reserve.amount }}</div>
+                <div class="text-subtitle1 text-bold text-black">S/. {{ toPay.amount }}</div>
               </div>
             </div>
             <div class="flex flex-center w-full">
@@ -405,7 +442,7 @@ onMounted(() => {
                 <div class="py-1 md:py-2">
                   {{ 
                     step == 3 
-                    ? 'Pagar reserva' 
+                    ? 'Finalizar' 
                     : step == 2 && payFormData.pay_method == 3 
                     ? 'Confirmar pago'
                     : step == 2

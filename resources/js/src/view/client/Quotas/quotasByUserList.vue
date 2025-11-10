@@ -42,9 +42,8 @@ const getQuotas = () => {
     });
 }
 
-const goTo = (url) => {
-  console.log(url)
-  // router.push(url);
+const goTo = (id) => {
+  router.push('/client/quota/pay/'+id);
 }
 
 const showDialog = () => {

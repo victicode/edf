@@ -263,7 +263,7 @@ const routes = [
       },
       {
         path: '/client/reserves/pay-reserve/:id', 
-        component: () => import('@/view/client/Reserves/payReserve.vue'),
+        component: () => import('@/view/client/Payments/payForm.vue'),
         name:'reservePay',
         beforeEnter: auth,
         meta:{
@@ -272,9 +272,9 @@ const routes = [
         }
       },
       {
-        path: '/client/reserves/pay/details/:id', 
-        component: () => import('@/view/client/Reserves/payConfirmReserve.vue'),
-        name:'reservePayConfirm',
+        path: '/client/pay/details/:id', 
+        component: () => import('@/view/client/Payments/payFinish.vue'),
+        name:'payConfirm',
         beforeEnter: auth,
         meta:{
           title: 'Bienvenido',
@@ -341,7 +341,18 @@ const routes = [
           title: 'Bienvenido',
           pagTitle: 'Balance de pagos'
         }
-      }
+      },
+      {
+        path: '/client/quota/pay/:id', 
+        component: () => import('@/view/client/Payments/payForm.vue'),
+
+        name:'quotaPay',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Realiza el pago'
+        }
+      },
       
     ]
   },

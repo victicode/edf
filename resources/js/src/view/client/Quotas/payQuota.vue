@@ -213,7 +213,7 @@ onMounted(() => {
 })
 </script>
 <template>
-  <div class="h-full md:px-28" >
+  <div class="h-full md:px-28 bg-white" >
     <q-form @submit="nextStep()" class="h-full ">
       <template v-if="ready">
         <section  class=" pt-2 px-3 flex justify-between items-center bg-primary header__container "
@@ -228,10 +228,10 @@ onMounted(() => {
               </div>
             </div>
         </section>
-        <div class="md:px-20 md:mx-20 " style="height: 68%;">
+        <div class="md:px-20 md:mx-20 bg-stone-100" style="height: 68%;">
           <Transition name="horizontal">
-            <div class="h-full "  v-if="step == 1">
-              <div class="text-h6 text-bold text-black py-5">
+            <div class="h-full px-4 md:px-0 "  v-if="step == 1">
+              <div class="text-h6 text-bold text-black py-5 px-1">
                 ¿Cómo vas a pagar?
               </div>
               <div v-for="(method, key) in payMethods" :key="key"  class="payMethodItem mb-5 py-2 px-3 flex justify-between items-center">
@@ -246,7 +246,7 @@ onMounted(() => {
                   <div>
                     <q-radio v-model="payFormData.pay_method" :val="(key+1)"  @click="activeClass($event)"   />
                   </div>
-                </div>
+              </div>
             </div>
           </Transition>
           <Transition name="horizontal">
@@ -390,8 +390,8 @@ onMounted(() => {
           <div style="" class=" py-3 summarySection">
             <div class="mb-3 md:px-16 px-5">
               <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid lightgrey;">
-                <div class="text-subtitle2 text-grey-8">Reserva</div>
-                <div class="text-subtitle1 text-bold text-black">{{ quota.comun_area.name }}</div>
+                <div class="text-subtitle2 text-grey-8">Mes</div>
+                <div class="text-subtitle1 text-bold text-black">{{ quota.month_label }}</div>
               </div>
               <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid lightgrey;">
                 <div class="text-subtitle2 text-grey-8">Total</div>

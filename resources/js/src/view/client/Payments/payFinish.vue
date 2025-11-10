@@ -170,9 +170,16 @@ const reloadBooking = () => {
 
             <!-- Área común -->
             <div class="flex justify-between items-center pb-2"
+              v-if="pay.booking"
               style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);">
               <span class="text-gray-600 font-medium">Reserva</span>
               <span class="text-gray-900 font-semibold">#{{ pay.booking?.booking_number  || 'Área Común' }}</span>
+            </div>
+            <div class="flex justify-between items-center pb-2"
+              v-if="pay.quota"
+              style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);">
+              <span class="text-gray-600 font-medium">Cuota del mes</span>
+              <span class="text-gray-900 font-semibold">{{ pay.quota?.month_label  || '---' }}</span>
             </div>
           </div>
         </div>

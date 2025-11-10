@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 class Quota extends Model
 {
@@ -21,6 +22,8 @@ class Quota extends Model
         "description",
         "status",
     ];
+
+
     public $appends  =   ["status_label", "status_color", "status_icon", "month_label"];
 
     public function departament(): BelongsTo
@@ -33,13 +36,13 @@ class Quota extends Model
     }
     public function getStatusLabelAttribute()
     {
-        $status = [
+        $statusLabels = [
             "Cancelada",
             "Pago pendiente",
             "Pendiente de aprob.",
             "Exitoso"
         ];
-        return  $status[$this->status];
+        return  $statusLabels[$this->status];
     }
     public function getMonthLabelAttribute()
     {

@@ -17,7 +17,7 @@ class PayController extends Controller
 {
     public function getPayById($id)
     {
-        $pay = Pay::with(['booking.comunArea', 'user'])->find($id);
+        $pay = Pay::with(['booking.comunArea', 'user', 'quota'])->find($id);
 
         return $this->returnSuccess(200, $pay);
     }
@@ -78,7 +78,7 @@ class PayController extends Controller
         $sortDir = $request->get('sort_dir') === 'asc' ? 'asc' : 'desc';
         $query->orderBy($sortBy, $sortDir);
     }
-    public function payBooking(Request $request)
+    public function storePay(Request $request)
     {
         $validated = $this->validateFieldsFromInput($request->all());
         if (count($validated) > 0) {
@@ -89,8 +89,8 @@ class PayController extends Controller
 
         $pay = Pay::create([
             "user_id"       => $request->user()->id,
-            "booking_id"    => $request->booking_id ?? null,
-            "quota_id"      => $request->quota_id ?? null,
+            "booking_id"    => $request->type == 2 ? $request->to_pay_id : null,
+            "quota_id"      => $request->type == 1 ? $request->to_pay_id : null,
             "amount"        => $request->amount,
             "reference"     => $request->reference ?? "000000",
             "pay_id"        => $prefixPayId[$request->pay_method] . ($request->booking_id ?? $request->quota_id) . '-' . rand(1000, 9999),
