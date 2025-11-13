@@ -52,7 +52,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [PayController::class, 'getPaysByUser']);
         Route::post('/bookings', [PayController::class, 'storePay']);
         Route::post('/quotas', [PayController::class, 'storePay']);
-
         Route::get('/byId/{id}', [PayController::class, 'getPayById']);
         Route::post('/updateStatus/{id}', [PayController::class, 'updateStatus']);
     });

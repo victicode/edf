@@ -22,6 +22,10 @@ export default defineConfig({
             'vue': 'vue/dist/vue.esm-bundler.js',
         },
     },
+    build: {
+        // Establece el directorio de salida (dist)
+        outDir: __dirname +'/dist', 
+    },
     server: {
             // Respond to all network requests
             host: "10.10.10.69",

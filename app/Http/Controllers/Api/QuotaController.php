@@ -44,7 +44,7 @@ class QuotaController extends Controller
     public function show(string $id)
     {
         //
-        $quota = Quota::findOrFail($id);
+        $quota = Quota::with(["pay", "departament.owner"])->findOrFail($id);
         return $this->returnSuccess(200, $quota);
     }
 

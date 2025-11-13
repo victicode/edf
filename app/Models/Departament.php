@@ -11,6 +11,8 @@ class Departament extends Model
     /** @use HasFactory<\Database\Factories\Api\DepartamentControllerFactory> */
     use HasFactory;
 
+    public $appends  =   ["inter_number"];
+
     protected $fillable = [
         'number',
         'address',
@@ -22,7 +24,10 @@ class Departament extends Model
         'user_id'
 
     ];
-
+    public function getInterNumberAttribute()
+    {
+        return substr($this->number, -3);
+    }
     public function owner()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
