@@ -117,7 +117,7 @@ onMounted(() => {
           <div 
             v-for="pay in pays" 
             :key="pay.id"
-            class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden md:mb-5"
+            class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden md:mb-5 cursor-pointer quotaItem"
             style="position: relative;"
             @click="goTo(pay)"
           >
@@ -127,7 +127,7 @@ onMounted(() => {
               <!-- Header con título y badge -->
               <div class="flex justify-between items-start mb-0 pb-1" style="border-bottom: 1px dashed #111827;">
                 <div class="flex-1">
-                  <h3 class="text-lg font-bold text-gray-900 mb-1">
+                  <h3 class="text-lg font-bold text-gray-900 mb-1 titleQuota">
                     {{ getTitlePay(pay) }}  
                     <!-- Badge "New" opcional -->
                     <span 
@@ -237,6 +237,19 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.quotaItem{
+  transition: all ease 0.5s;
+  &:hover{
+    opacity: 0.7;
+  }
+}
+.titleQuota{
+  transition: all ease 1s;
+  &:hover{
+    text-decoration: underline;
+  }
+
+}
 /* Estilos adicionales si es necesario */
 </style>
 

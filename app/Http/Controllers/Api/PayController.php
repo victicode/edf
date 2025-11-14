@@ -254,14 +254,14 @@ class PayController extends Controller
         ? [
             "title" => "Pago realizado",
             "message" => "Tu pago por la cuota #" . $pay->quota->number
-                . "fue realizado, el personal de administración lo validará en breve.",
+                . " fue realizado, el personal de administración lo validará en breve.",
             "url" => "/client/reserves/view/" . $pay->id,
             "meta" =>  ['booking_id' => $pay->id],
         ]
         : [
             "title" => "Pago de reserva realizado",
             "message" => "Tu pago por la reserva #" . $pay->booking->booking_number
-                . "fue realizado, el personal de administración lo validará en breve.",
+                . " fue realizado, el personal de administración lo validará en breve.",
             "url" => "/client/reserves/view/" . $pay->id,
             "meta" =>  ['booking_id' => $pay->id],
         ];

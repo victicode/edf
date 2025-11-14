@@ -42,8 +42,9 @@ const getQuotas = () => {
     });
 }
 
-const goTo = (id) => {
-  router.push('/client/quota/pay/'+id);
+const goTo = (quota) => {
+  let view =  quota.status == 1 ? 'pay' : 'view' 
+  router.push(`/client/quota/${view}/${quota.id}`);
 }
 
 const showDialog = () => {
@@ -98,7 +99,7 @@ onMounted(() => {
       <!-- Content -->
       <div v-else class="px-4 py-6 md:px-28">
         <!-- Lista de pagos -->
-        <div v-if="quotas.length > 0" class="space-y-3 md:px-5">
+        <div v-if="quotas.length > 0" class="space-y-5 md:px-5">
           <div 
             v-for="quota in quotas" 
             :key="quota.id"
@@ -107,7 +108,7 @@ onMounted(() => {
           >
             
             <!-- Sección superior - Detalles del pago -->
-            <div class="px-4 pb-2 pt-2" >
+            <div class="px-4 pb-2 pt-2 md:pt-4" >
               <!-- Header con título y badge -->
               <div class="flex justify-between items-start mb-0 pb-1" style="border-bottom: 1px dashed #111827;">
                 <div class="flex-1">
@@ -127,35 +128,37 @@ onMounted(() => {
 
               <!-- Contenido principal con detalle -->
               <div class="space-y-2 pt-3">
-                <!-- Apartamento -->
-                <div class="flex items-center text-sm text-gray-700">
-                  <svg style="transform: translateX(-3px);" width="23px" height="23px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" stroke-width="2" stroke="#374151" fill="none"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M34.82,52.73H14.69V22.18a1,1,0,0,1,.52-.87L33.34,11.4a1,1,0,0,1,1.48.88Z" stroke-linecap="round"></path><path d="M48.87,52.73H34.92V21.59L48.4,29.3a1,1,0,0,1,.47.85Z" stroke-linecap="round"></path><line x1="28.1" y1="24.86" x2="21.06" y2="24.86" stroke-linecap="round"></line><line x1="43.66" y1="32.41" x2="40.14" y2="32.41" stroke-linecap="round"></line><line x1="43.66" y1="36.9" x2="40.14" y2="36.9" stroke-linecap="round"></line><line x1="43.66" y1="41.71" x2="40.14" y2="41.71" stroke-linecap="round"></line><line x1="43.66" y1="46.19" x2="40.14" y2="46.19" stroke-linecap="round"></line><line x1="28.1" y1="30.44" x2="21.06" y2="30.44" stroke-linecap="round"></line><line x1="28.1" y1="35.94" x2="21.06" y2="35.94" stroke-linecap="round"></line><line x1="28.1" y1="41.44" x2="21.06" y2="41.44" stroke-linecap="round"></line><line x1="28.1" y1="46.94" x2="21.06" y2="46.94" stroke-linecap="round"></line><line x1="9.46" y1="52.73" x2="54.54" y2="52.73" stroke-linecap="round"></line></g></svg>
-                  <span class="font-medium">{{ quota.departament.number }}</span>
-                </div>
-                <!-- Monto -->
-                <div class="flex items-center text-sm text-gray-700">
-                  <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                    </path>
-                  </svg>
-                  <span class="font-medium">S/. {{ quota.amount }}</span>
+                <div class="row items-center ">
+                  <!-- Apartamento -->
+                  <div class="flex items-center text-sm text-gray-700 col-4 col-md-2 ">
+                    <svg style="transform: translateX(-3px);" width="23px" height="23px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" stroke-width="2" stroke="#374151" fill="none"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M34.82,52.73H14.69V22.18a1,1,0,0,1,.52-.87L33.34,11.4a1,1,0,0,1,1.48.88Z" stroke-linecap="round"></path><path d="M48.87,52.73H34.92V21.59L48.4,29.3a1,1,0,0,1,.47.85Z" stroke-linecap="round"></path><line x1="28.1" y1="24.86" x2="21.06" y2="24.86" stroke-linecap="round"></line><line x1="43.66" y1="32.41" x2="40.14" y2="32.41" stroke-linecap="round"></line><line x1="43.66" y1="36.9" x2="40.14" y2="36.9" stroke-linecap="round"></line><line x1="43.66" y1="41.71" x2="40.14" y2="41.71" stroke-linecap="round"></line><line x1="43.66" y1="46.19" x2="40.14" y2="46.19" stroke-linecap="round"></line><line x1="28.1" y1="30.44" x2="21.06" y2="30.44" stroke-linecap="round"></line><line x1="28.1" y1="35.94" x2="21.06" y2="35.94" stroke-linecap="round"></line><line x1="28.1" y1="41.44" x2="21.06" y2="41.44" stroke-linecap="round"></line><line x1="28.1" y1="46.94" x2="21.06" y2="46.94" stroke-linecap="round"></line><line x1="9.46" y1="52.73" x2="54.54" y2="52.73" stroke-linecap="round"></line></g></svg>
+                    <span class="font-medium">{{ quota.departament.number }}</span>
+                  </div>
+                  <!-- Monto -->
+                  <div class="flex items-center text-sm text-gray-700 pl-2 md:pl-0 col-4 col-md-2 ">
+                    <svg class="w-4 h-4 mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                      </path>
+                    </svg>
+                    <span class="font-medium">S/. {{ quota.amount }}</span>
+                  </div>
+                  <!-- Fecha de pago -->
+                  <div class="flex items-center text-sm text-gray-700 col-12 pt-2 md:pt-0 col-md-2 ">
+                    <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                      </path>
+                    </svg>
+                    <span class="font-medium">Fecha limite: {{ formatDate(quota.due_date) }}</span>
+                  </div>
                 </div>
 
-                <!-- Fecha de pago -->
-                <div class="flex items-center text-sm text-gray-700">
-                  <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                    </path>
-                  </svg>
-                  <span class="font-medium">Fecha limite: {{ formatDate(quota.due_date) }}</span>
-                </div>
               </div>
             </div>
 
             <!-- Sección inferior - Acciones -->
-            <div class="px-4 py-3 bg-gray-50 border-t" :class="`bg-${quota.status_color}`" @click="goTo(quota.id)">
+            <div class="px-4 py-2 md:py-3 bg-gray-50 border-t" :class="`bg-${quota.status_color}`" @click="goTo(quota)">
               <div class="flex justify-center items-center">
                 <div class="flex items-center">
                   <!-- Icono de estado -->
@@ -164,7 +167,7 @@ onMounted(() => {
                     color="white"
                     size="1.5rem"
                   />
-                  <span class="ml-2 text-sm font-medium text-white">{{ quota.status_label }}</span>
+                  <span class="ml-1 text-sm font-medium text-white">{{ quota.status_label }}</span>
                 </div>
               </div>
             </div>

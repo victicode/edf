@@ -95,34 +95,30 @@ const reloadQuota = () => {
       <div v-else-if="quota" class="flex flex-col items-center md:px-28 md:mx-28">
         <div class="bg-white rounded-xl shadow-lg border border-gray-100 flex flex-col items-center w-full ">
           <div class="row w-full mb-3 items-start">
-            <div class="flex flex-col items-start col-md-6 col-6 md:pl-5 pl-3 ">
+            <div class="flex flex-col items-start col-md-9 col-6 md:pl-5 pl-3 ">
               <div class="mb-4 pt-5">
-                <div class="bg-primary rounded-xl p-4">
+                <div class="bg-primary rounded-xl p-3">
                   <div v-html="iconsApp.mensuality2" />
                 </div>
               </div>
               <h1 class="text-2xl font-bold text-gray-900 md:mb-2">Cuota mes: {{quota.month_label}}</h1>
             </div>
-            <div class="col-md-6 col-6 text-right">
-              <div class="flex justify-end">
+            <div class="col-md-3 col-6 text-right">
+              <div class="flex justify-end md:pb-1">
                 <div class="p-4  dateFact text-primary text-md font-bold">
                   <span class="text-grey-7 font-medium text-md">Creada el:</span> {{ moment(quota.created_at).format('DD/MM/YYYY') }}
                 </div>
               </div>
               <div class="row ">
-                <div class="mt-4 md:pr-5 pr-3 col-6 col-md-6">
+                <div class="mt-4 md:mt-2 md:pr-5 pr-3 col-12">
                   <div class="text-grey-7 font-medium text-md">Apartemento N°:</div>
                   <div class="text-primary text-md font-bold">{{ quota.departament.number }}</div>
                 </div>
-                <div class="mt-4 md:pr-5 pr-3 col-6 col-md-6">
+                <div class="mt-4 md:mt-2 md:pr-5 pr-3 col-12">
                   <div class="text-grey-7 font-medium text-md">Propietario:</div>
-                  <div class="text-primary text-md font-bold">{{ quota.departament.owner.name ?? ''}}</div>
+                  <div class="text-primary text-md font-bold">{{ quota.departament.owner.name ?? ''}} </div>
                 </div>
-                <div class="col-0 col-md-6" />
-                <div class="mt-4 md:pr-5 pr-3 col-6 col-md-6">
-                  <div class="text-grey-7 font-medium text-md">Contacto:</div>
-                  <div class="text-primary text-md font-bold">{{ quota.departament.owner.phone ?? ''}}</div>
-                </div>
+                
               </div>
             </div>
           </div>
@@ -145,11 +141,11 @@ const reloadQuota = () => {
               </div>
   
               <!-- Fecha de pago -->
-              <!-- <div class="flex justify-between items-center pb-2"
+              <div class="flex justify-between items-center pb-2"
                 style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);">
-                <span class="text-gray-600 font-medium">Fecha de reserva</span>
-                <span class="text-gray-900 font-semibold">{{ new Date(quota.date).toLocaleDateString('es-ES') }}</span>
-              </div> -->
+                <span class="text-gray-600 font-medium">Fecha de pago</span>
+                <span class="text-gray-900 font-semibold">{{ moment(quota.pay.pay_date).format('DD/MM/YYYY')}}</span>
+              </div>
   
               <!-- Método de pago -->
               <div class="flex justify-between items-center pb-2"
@@ -167,12 +163,13 @@ const reloadQuota = () => {
                 <span class="text-gray-600 font-medium">ID de cuota</span>
                 <span class="text-gray-900 font-semibold">#{{ quota.number }}</span>
               </div>
-              <!-- Horarios -->
-              <!-- <div class="flex justify-between items-center pb-2"
+              <!-- N de operación -->
+              <div class="flex justify-between items-center pb-2"
                 style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);">
-                <span class="text-gray-600 font-medium">Horario</span>
-                <span class="text-gray-900 font-semibold">{{ quota.time_from }} - {{ quota.time_to }}</span>
-              </div> -->
+                <span class="text-gray-600 font-medium">Nro. de operación</span>
+                <span class="text-gray-900 font-semibold">#{{ quota.pay.reference }}</span>
+              </div>
+
             </div>
             <div class="flex flex-center mt-4" @click="dialog = true" v-if="quota.pay">
               <div class="text-center text-subtitle1 text-primary text-bold font-medium cursor-pointer text__vaucher" style="text-decoration:dotted">

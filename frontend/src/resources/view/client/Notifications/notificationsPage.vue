@@ -125,12 +125,12 @@ onMounted(() => {
         <q-slide-item
           v-for="item in notifications.items"
           :key="item.id"
-          @left="() => deleteItem(item)"
-          left-color="red-8"
+          @right="() => deleteItem(item)"
+          right-color="red-8"
           class="my-3 notification-container"
           style="border-radius: 12px!important;"
         >
-          <template v-slot:left>
+          <template v-slot:right>
             <div class="row items-center" style="border-radius: 12px;">
               <q-icon name="eva-trash-2-outline" />
               <div class="ml-1 text-subtitle2">
@@ -140,25 +140,25 @@ onMounted(() => {
           </template>
           
           <q-card 
-            class="notification-card q-mb-3"
+            class="notification-card q-mb-4 py-2 px-1"
             :class="{ 'notification-read': item.read_at }"
             flat
             bordered
           >
-            <q-card-section class="q-py-xs q-px-sm justify-between" horizontal>
+            <q-card-section class="q-py-none q-px-sm justify-between" horizontal>
               <!-- Icon Section -->
                <section class="flex firstPart" @click="openItem(item)" >
-                 <q-card-section class="notification-icon-section q-pa-0  q-px-none flex flex-center">
+                 <q-card-section class="notification-icon-section q-pa-0  q-px-none q-py-none flex flex-center">
                    <div 
                      :class="`bg-${getNotificationIconColor(item)}` " 
                      class="iconNotificationList p-3"
                    >
-                     <q-icon :name="getNotificationIcon(item)" color="white" size="35px" />
+                     <q-icon :name="getNotificationIcon(item)" color="white" size="25px" />
                    </div>
                  </q-card-section>
    
                  <!-- Content Section -->
-                 <q-card-section class="notification-content-section q-pa-0 q-px-none  q-pl-sm" style="flex: 1;">
+                 <q-card-section class="notification-content-section q-pa-0 q-px-none q-py-none  q-pl-sm" style="flex: 1;">
                    <div class="flex justify-between items-start">
                      <div style="flex: 1;">
                        <div 
@@ -168,7 +168,7 @@ onMounted(() => {
                          {{ item.data?.title || 'Notificación' }}
                        </div>
                        <div class="notification-message mt-1">
-                         {{ item.data?.message || '' }}
+                         {{ item.data?.message ? item.data?.message.substr(0, 30) : '' }}...
                        </div>
                      </div>
                      
@@ -177,7 +177,7 @@ onMounted(() => {
                </section>
 
               <!-- Action Button -->
-              <q-card-section class="flex column items-end   q-pa-0 q-px-none">
+              <q-card-section class="flex column items-end   q-pa-0 q-px-none q-py-none">
                 <div class="notification-time mb-0 ">
                   {{ formatTimeAgo(item.created_at) }}(s)
                 </div>
