@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\QuotaController;
+use App\Http\Controllers\Api\QuotaController;
 use App\Http\Controllers\Api\PayController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
@@ -50,7 +50,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::prefix('pays')->name('pay.')->group(function () {
         Route::get('/', [PayController::class, 'getPaysByUser']);
-        Route::post('/bookings', [PayController::class, 'payBooking']);
+        Route::post('/bookings', [PayController::class, 'storePay']);
+        Route::post('/quotas', [PayController::class, 'storePay']);
         Route::get('/byId/{id}', [PayController::class, 'getPayById']);
         Route::post('/updateStatus/{id}', [PayController::class, 'updateStatus']);
     });
@@ -63,5 +64,6 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::prefix('quotas')->name('quota.')->group(function () {
         Route::get('/', [QuotaController::class, 'index']);
+        Route::get('/byId/{id}', [QuotaController::class, 'show']);
     });
 });
