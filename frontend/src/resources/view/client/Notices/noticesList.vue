@@ -2,18 +2,18 @@
 import { ref, onMounted } from 'vue';
 import { useNoticeStore } from '@/services/store/notice.store';
 import { useRouter } from 'vue-router';
-import moment from 'moment';
+import NoticesList from '@/components/notices/noticesList.vue';
+import AnnouncesList from '@/components/notices/announcesList.vue';
 
-moment.locale('es', {
-  monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
-  months: 'enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre'.split('_'),
-})
+
 
 const notices = ref([]);
+const announces = ref([]);
 const loading = ref(true);
 const noticeStore = useNoticeStore();
 const router = useRouter();
 const dialog = ref(false);
+const panelToShow = ref('notices')
 const filters = ref({
   status: 4,
   notice_method: '',
@@ -29,7 +29,9 @@ const getNotices = () => {
   noticeStore.getNotices(filters.value)
     .then((response) => {
       if (response.code !== 200) throw response;
-      notices.value = response.data;
+      notices.value = response.data.notices;
+      announces.value = response.data.announces;
+
     })
     .catch((response) => {
       console.log(response);
@@ -51,16 +53,20 @@ onMounted(() => {
 
 <template>
   <div class="h-full" style="overflow: hidden;">
-    <div class="flex justify-end pt-4 md:px-28 md:mx-5 mx-4">
-      <q-btn
-        outline
-        color="primary"
-        icon="eva-funnel-outline"
-        @click="showDialog"
-      />
-    </div>
     <!-- Lista de pagos -->
     <div class="h-full" style="overflow: auto;">
+      <div class="flex justify-center mt-3 bg-stone-200 py-2 buttonsContainer" >
+        <div>
+          <div class="buttonSwichtNotices  px-6 mx-3" :class="{'active':panelToShow == 'notices'}" @click="panelToShow ='notices'">
+            Noticias
+          </div>
+        </div>
+        <div>
+          <div class="buttonSwichtNotices  px-6 mx-3" :class="{'active':panelToShow == 'announces'}" @click="panelToShow ='announces'">
+            Anuncios
+          </div>
+        </div>
+      </div>
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-20">
         <q-spinner-dots color="primary" size="7rem" />
@@ -69,22 +75,8 @@ onMounted(() => {
       <!-- Content -->
       <div v-else class="px-4 py-6 md:px-28">
         <!-- Lista de pagos -->
-        <div v-if="notices.length > 0" class="space-y-3 md:px-5">
-  
-        </div>
-
-        <!-- Estado vacío -->
-        <div v-else class="flex flex-col items-center justify-center py-20">
-          <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-6">
-            <svg class="w-10 h-10 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
-              </path>
-            </svg>
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">No tienes pagos</h3>
-          <p class="text-gray-600 text-center mb-6">Aún no has realizado ningún pago.</p>
-        </div>
+        <noticesList v-if="panelToShow == 'notices'" :notices="notices" />
+        <announcesList v-if="panelToShow == 'announces'" :announces="announces" />
       </div>
     </div>
 
@@ -92,19 +84,70 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
-.quotaItem{
-  transition: all ease 0.5s;
+<style  lang="scss">
+.buttonsContainer{
+  border-radius: 15px; 
+  width: max-content; 
+  margin-left: auto; margin-right: auto;
+}
+.buttonSwichtNotices{
+  padding-top:0.39rem ;
+  padding-bottom:0.39rem ;
+  color: white;
+  background: $primary;
+  border-radius: 15px;
+  opacity: 0.5;
+  transition: all ease-in 0.54s;
   &:hover{
-    opacity: 0.7;
+    opacity: 0.9;
+  }
+  &.active{
+    opacity: 1;
   }
 }
-.titleQuota{
-  transition: all ease 1s;
-  &:hover{
-    text-decoration: underline;
+.notices-badge{
+  position: absolute;
+  background: $primary;
+  color: white;
+  font-size: 0.7rem;
+  line-height: 1.7;
+  top: 0;
+  right: 0;
+  border-bottom-left-radius: 7px;
+}
+.notice__item{
+  background: white;
+  border-radius: 7px;
+  position: relative;
+  height: max-content;
+  overflow: hidden;
+  box-shadow: 0px 1px 10px 1px #77777754;
+  &::before{
+    content: '';
+    height: 100%;
+    background: $primary;
+    width: 6px;
+    position: absolute;
   }
-
+  &--title{
+    font-size:0.95rem; font-weight: 500;
+  }
+  &--description{
+    font-size:0.7rem; 
+    font-weight: 400;
+  }
+  &-bottom{
+    border-top: 1px dashed darkgray ;
+  }
+  &-bottom--postBy{
+    font-size:0.75rem; 
+    font-weight: 500;
+  }
+  &-bottom--dayPost{
+    font-size:0.75rem; 
+    font-weight: 500;
+    color: #777;
+  }
 }
 /* Estilos adicionales si es necesario */
 </style>

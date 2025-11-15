@@ -17,19 +17,21 @@ class Notice extends Model
 
     public function getGroupLabelAttribute()
     {
-        $statusLabels = [
-            "",
+        $groupLabel = [
+            "Información",
             "Automotores",
             "Empleos",
             "Inmuebles",
             "Oportunidades"
         ];
-        return  $statusLabels[$this->status];
+        return  $groupLabel[$this->group];
     }
     public function getCategoryLabelAttribute()
     {
         $categoryByGroupLabels = [
-            "",
+            [
+                "Información junta de condominio",
+            ],
             [
                 "Venta de automovil",
                 "Venta de maquinaria",

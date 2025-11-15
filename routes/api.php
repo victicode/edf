@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\ComunAreaController;
 use App\Http\Controllers\Api\DepartamentController;
+use App\Http\Controllers\Api\NoticeController;
 use App\Http\Controllers\Api\NotificationController;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -67,7 +68,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/byId/{id}', [QuotaController::class, 'show']);
     });
     Route::prefix('notices')->name('notice.')->group(function () {
-        Route::get('/', [QuotaController::class, 'index']);
-        Route::get('/byId/{id}', [QuotaController::class, 'show']);
+        Route::get('/', [NoticeController::class, 'index']);
+        Route::get('/byId/{id}', [NoticeController::class, 'show']);
     });
 });

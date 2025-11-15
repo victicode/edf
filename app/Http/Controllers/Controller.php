@@ -8,8 +8,9 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 abstract class Controller
 {
     //
-    use AuthorizesRequests, ValidatesRequests;
-    
+    use AuthorizesRequests;
+    use ValidatesRequests;
+
     public function returnSuccess($code, $data)
     {
         return response()->json([
