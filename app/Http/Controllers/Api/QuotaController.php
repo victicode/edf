@@ -15,7 +15,7 @@ class QuotaController extends Controller
     public function index(Request $request)
     {
         //
-        $quotas = Quota::with(["pay", "departament.owner"]);
+        $quotas = Quota::with(["pay", "departament.owner"])->orderBy('created_at', 'desc');
 
         // Filtrar por usuario si no es admin
         if ($request->user()->id != 1) {

@@ -66,4 +66,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [QuotaController::class, 'index']);
         Route::get('/byId/{id}', [QuotaController::class, 'show']);
     });
+    Route::prefix('notices')->name('notice.')->group(function () {
+        Route::get('/', [QuotaController::class, 'index']);
+        Route::get('/byId/{id}', [QuotaController::class, 'show']);
+    });
 });

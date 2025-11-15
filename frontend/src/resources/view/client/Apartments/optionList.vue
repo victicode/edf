@@ -26,12 +26,12 @@ const menu = [
     subtitle: 'Revisa tu estado y cuotas actuales',
     link: '/client/balance/list',
   },
-  {
-    title: 'Control de accesos',
-    icon: iconsApp.visitor,
-    subtitle: 'Gestiona los inquilinos de tu unidad',
-    link: '/client/visits/list',
-  },
+  // {
+  //   title: 'Control de accesos',
+  //   icon: iconsApp.visitor,
+  //   subtitle: 'Gestiona los inquilinos de tu unidad',
+  //   link: '/client/visits/list',
+  // },
 
 ];
 
