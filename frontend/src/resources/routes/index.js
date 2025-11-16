@@ -372,6 +372,16 @@ const routes = [
           pagTitle: 'Panel informativo'
         }
       },
+      {
+        path: '/client/notice/view/:id',
+        component: () => import('@/view/client/Notices/noticesView.vue'),
+        name:'noticeView',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Información'
+        }
+      },
       
     ]
   },

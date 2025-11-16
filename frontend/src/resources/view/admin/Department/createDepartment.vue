@@ -56,7 +56,7 @@ import { useRouter } from 'vue-router';
     Datos del inmobiliario
   </div>
   <q-form
-  @submit="createApartment()"
+    @submit="createApartment()"
   >
 
     <div class="row w-full" >
@@ -98,7 +98,6 @@ import { useRouter } from 'vue-router';
             clearable
             v-model="formData.block"
             type="number"
-
             class="form__inputsR mt-1"
             color="primary"
           />

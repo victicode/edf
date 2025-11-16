@@ -1,6 +1,7 @@
 <script setup>
 import moment from 'moment';
 import iconsApp from '@/assets/icons/index'
+import { useRouter } from 'vue-router';
 moment.locale('es', {
   monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
   months: 'enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre'.split('_'),
@@ -11,10 +12,19 @@ const props = defineProps({
     default: []
   },
 })
+const router = useRouter()
+const dataContactFormat = (dataString) => {
+  let {name} = JSON.parse(dataString);
+  return name
+}
+const goTo = (id) => {
+  router.push(`/client/notice/view/${id}`);
+}
+
 </script>
 <template>
-  <div v-if="announces.length > 0" class="space-y-3 md:px-5">
-    <div class="notice__item" v-for="announce in announces" :key="announce.id">
+  <div v-if="announces.length > 0" class="space-y-3 md:px-5" >
+    <div class="notice__item" v-for="announce in announces" :key="announce.id" @click="goTo(announce.id)">
       <div class="py-1 pl-4 pr-3">
         <div class="notices-badge px-3 ">
           Nuevo
@@ -29,7 +39,7 @@ const props = defineProps({
       </div>
       <div class="notice__item-bottom pl-4 flex items-center justify-between pr-3 py-2">
         <div class="notice__item-bottom--postBy">
-          Publicado por: {{'Admin'}}
+          Publicado por: {{dataContactFormat(announce.data_contact)}}
         </div>
         <div class="notice__item-bottom--dayPost">
           {{ moment(announce.created_at).format('DD MMM YYYY') }}

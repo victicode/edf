@@ -1,6 +1,7 @@
 <script setup>
 import moment from 'moment';
 import iconsApp from '@/assets/icons/index'
+import { useRouter } from 'vue-router';
 moment.locale('es', {
   monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
   months: 'enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre'.split('_'),
@@ -11,12 +12,16 @@ const props = defineProps({
     type: Array,
     default: []
   },
-
 })
+const router = useRouter()
+const goTo = (id) => {
+  router.push(`/client/notice/view/${id}`);
+}
+
 </script>
 <template>
   <div v-if="notices.length > 0" class="space-y-3 md:px-5">
-    <div class="notice__item" v-for="notice in notices" :key="notice.id">
+    <div class="notice__item" v-for="notice in notices" :key="notice.id" @click="goTo(notice.id)">
       <div class="py-1 pl-4 pr-3">
         <div class="notices-badge px-3 ">
           Nuevo

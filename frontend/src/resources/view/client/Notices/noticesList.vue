@@ -4,8 +4,7 @@ import { useNoticeStore } from '@/services/store/notice.store';
 import { useRouter } from 'vue-router';
 import NoticesList from '@/components/notices/noticesList.vue';
 import AnnouncesList from '@/components/notices/announcesList.vue';
-
-
+import createAnnouncesModal from '@/components/notices/createAnnouncesModal.vue';
 
 const notices = ref([]);
 const announces = ref([]);
@@ -14,6 +13,7 @@ const noticeStore = useNoticeStore();
 const router = useRouter();
 const dialog = ref(false);
 const panelToShow = ref('notices')
+const modal = ref('')
 const filters = ref({
   status: 4,
   notice_method: '',
@@ -40,11 +40,9 @@ const getNotices = () => {
       loading.value = false;
     });
 }
-
-const showDialog = () => {
-  dialog.value = true;
+const closeDialog = () => {
+  dialog.value = false
 }
-
 
 onMounted(() => {
   getNotices();
@@ -54,7 +52,7 @@ onMounted(() => {
 <template>
   <div class="h-full" style="overflow: hidden;">
     <!-- Lista de pagos -->
-    <div class="h-full" style="overflow: auto;">
+    <div class="h-full" style="overflow: auto; position: relative;">
       <div class="flex justify-center mt-3 bg-stone-200 py-2 buttonsContainer" >
         <div>
           <div class="buttonSwichtNotices  px-6 mx-3" :class="{'active':panelToShow == 'notices'}" @click="panelToShow ='notices'">
@@ -78,6 +76,10 @@ onMounted(() => {
         <noticesList v-if="panelToShow == 'notices'" :notices="notices" />
         <announcesList v-if="panelToShow == 'announces'" :announces="announces" />
       </div>
+      <div class="createAnnouncesFloat" v-if="panelToShow == 'announces'" @click="modal='create_announce'" >
+        <q-btn push color="primary" size="lg" round icon="eva-plus-outline" />
+      </div>
+      <createAnnouncesModal :dialog="(modal=='create_announce')" @closeModal="closeModal" @updateList="getNotices()"/>
     </div>
 
 
@@ -85,6 +87,11 @@ onMounted(() => {
 </template>
 
 <style  lang="scss">
+.createAnnouncesFloat{
+  position: fixed;
+  bottom: 3rem;
+  right: 1rem;
+}
 .buttonsContainer{
   border-radius: 15px; 
   width: max-content; 

@@ -39,9 +39,11 @@ class NoticeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Notice $notice)
+    public function show($id)
     {
-        //
+        $notice = Notice::with(["user"])->find($id);
+
+        return $this->returnSuccess(200, $notice);
     }
 
     /**
