@@ -14,10 +14,10 @@ class NoticeController extends Controller
     public function index()
     {
         //
-        $notices = Notice::with(["user"])->where("type", 1)->orderBy("create_at", "desc");
-        $announces = Notice::with(["user"])->where("type", 2)->orderBy("create_at", "desc");
+        $notices = Notice::with(["user"])->where("type", 1)->orderBy("created_at", "desc")->get();
+        $announces = Notice::with(["user"])->where("type", 2)->orderBy("created_at", "desc")->get();
 
-        $this->returnSuccess(200, ["notices" => $notices, "announces" => $announces]);
+        return $this->returnSuccess(200, ["notices" => $notices, "announces" => $announces]);
     }
 
     /**
@@ -39,9 +39,11 @@ class NoticeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Notice $notice)
+    public function show($id)
     {
-        //
+        $notice = Notice::with(["user"])->find($id);
+
+        return $this->returnSuccess(200, $notice);
     }
 
     /**

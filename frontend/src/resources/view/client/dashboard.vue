@@ -42,7 +42,7 @@ const menu = [
     title: 'Anuncios',
     icon: iconsApp.news2,
     subtitle: 'Observa y crea anuncios',
-    link: '/client/services/list',
+    link: '/client/notices/list',
   },
   {
     title: 'Eventos',

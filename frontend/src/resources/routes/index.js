@@ -334,7 +334,7 @@ const routes = [
       {
         path: '/client/balance/list',
         component: () => import('@/view/client/Quotas/quotasByUserList.vue'),
-        name:'apartmentClient',
+        name:'quotaList',
         beforeEnter: auth,
         meta:{
           title: 'Bienvenido',
@@ -360,6 +360,26 @@ const routes = [
         meta:{
           title: 'Bienvenido',
           pagTitle: 'Detalles de cuota'
+        }
+      },
+      {
+        path: '/client/notices/list',
+        component: () => import('@/view/client/Notices/noticesList.vue'),
+        name:'noticeList',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Panel informativo'
+        }
+      },
+      {
+        path: '/client/notice/view/:id',
+        component: () => import('@/view/client/Notices/noticesView.vue'),
+        name:'noticeView',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Información'
         }
       },
       

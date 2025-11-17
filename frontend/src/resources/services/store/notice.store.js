@@ -2,6 +2,41 @@ import { defineStore } from 'pinia'
 import ApiService from '@/services/axios'
 
 export const useNoticeStore = defineStore('Notices', {
+  state: () => ({
+    group: [
+      { name: "Información", value: 0 },
+      { name: "Automotores", value: 1 },
+      { name: "Empleos", value: 2 },
+      { name: "Inmuebles", value: 3 },
+      { name: "Oportunidades", value: 4},
+    ],
+    category: [
+      [
+        { name: "Información junta de condominio", value: 0},
+      ],
+      [
+        { name: "Venta de automovil", value: 0},
+        { name: "Venta de maquinaria", value: 1},
+        { name: "Venta de respuesto", value: 2},
+        { name: "Compra de automovil", value: 3},
+        { name: "Compra de maquinaria", value: 4},
+        { name: "Compra de respuesto", value: 5},
+        { name: "Servicios", value: 6},
+      ],
+      [
+        { name: "Oferta laboral", value: 0},
+        { name: "Servicios", value: 1},
+      ],
+      [
+        { name: "Venta de inmueble", value: 0},
+        { name: "Alquier de inmueble", value: 1},
+        { name: "Servicios", value: 2},
+      ],
+      [
+        { name: "Oportunidad", value: 0},
+      ],
+  ]
+  }),
   actions: {
     async getNotices(filters) {
       return await new Promise((resolve, reject) => {
@@ -47,7 +82,7 @@ export const useNoticeStore = defineStore('Notices', {
       })
 
     },
-    async getNoticesById(id) {
+    async getNoticeById(id) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
@@ -136,6 +171,9 @@ export const useNoticeStore = defineStore('Notices', {
       } catch (e) {
         return '';
       }
+    },
+    getCategoryByGroup(idGroup){
+      return this.category[idGroup]
     }
     
   },

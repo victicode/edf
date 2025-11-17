@@ -17,7 +17,8 @@
   const isPwd =  ref('true')
   const loading = ref(false)
   const router = useRouter();
-
+  const error = ref(false)
+  const errorMessage = ref('')
   const rules = (id) => {
     if(id=='user') return [ 
       val => val && val.length > 0 || 'Usuario no puede quedar vacio',
@@ -41,7 +42,7 @@
     loading.value = true
     authServices.login(login)
     .then((response) => {
-      if(response.status !==200){
+      if(response.status !== 200){
         throw response
       }
       showNotify('positive', 'Inicio de sesión correcto')
@@ -52,7 +53,11 @@
     })
     .catch((response) =>{
       showNotify('negative', response.status == 505 ? response.data.error : 'Error de conexión')
-      loading.value = false
+      loading.value = false;
+      error.value = true
+      errorMessage.value = response.data
+      console.log(error.value)
+      console.log(response.data)
 
     })
   }
@@ -122,6 +127,21 @@
         <tutorial @end="endTutorial()"/>
       </div>
     </Transition>
+    <q-dialog v-model="error">
+      <q-card class="">
+        <q-card-section>
+          <div class="text-h6">error</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+        {{ errorMessage }}
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
