@@ -6,7 +6,7 @@ import storage from '@/services/storage'
 
 axios.defaults.withCredentials = true
 axios.defaults.withXSRFToken = true
-axios.defaults.baseURL = 'http://10.10.10.69:8030/';
+axios.defaults.baseURL = 'http://192.168.31.20:8030';
 
 const ApiService = {
   
