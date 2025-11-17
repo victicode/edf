@@ -10,10 +10,9 @@ const notices = ref([]);
 const announces = ref([]);
 const loading = ref(true);
 const noticeStore = useNoticeStore();
-const router = useRouter();
-const dialog = ref(false);
 const panelToShow = ref('notices')
 const modal = ref('')
+const fabRight = ref(false);
 const filters = ref({
   status: 4,
   notice_method: '',
@@ -40,8 +39,8 @@ const getNotices = () => {
       loading.value = false;
     });
 }
-const closeDialog = () => {
-  dialog.value = false
+const closeModal = () => {
+  modal.value = ''
 }
 
 onMounted(() => {
@@ -76,8 +75,19 @@ onMounted(() => {
         <noticesList v-if="panelToShow == 'notices'" :notices="notices" />
         <announcesList v-if="panelToShow == 'announces'" :announces="announces" />
       </div>
-      <div class="createAnnouncesFloat" v-if="panelToShow == 'announces'" @click="modal='create_announce'" >
-        <q-btn push color="primary" size="lg" round icon="eva-plus-outline" />
+      <div class="createAnnouncesFloat" v-if="panelToShow == 'announces'"  >
+        <!-- <q-btn push color="primary" size="lg" round icon="eva-plus-outline" @click="modal='create_announce'" /> -->
+        <q-fab
+          v-model="fabRight"
+          color="primary"
+          size="lg"
+          icon="eva-plus-outline"
+          direction="up"
+          v-if="panelToShow == 'announces'"
+        >
+          <q-fab-action class="announceOption" label-position="right" color="primary" icon="eva-plus-outline" label="Crear anuncio" @click="modal='create_announce'"/>
+          <q-fab-action class="announceOption" label-position="right" color="secondary" icon="eva-archive-outline" label="Mis anuncios" />
+        </q-fab>
       </div>
       <createAnnouncesModal :dialog="(modal=='create_announce')" @closeModal="closeModal" @updateList="getNotices()"/>
     </div>
@@ -87,6 +97,11 @@ onMounted(() => {
 </template>
 
 <style  lang="scss">
+.announceOption{
+  &.q-btn{
+    transform: translateX(-34px) translateY(0px)!important;
+  }
+}
 .createAnnouncesFloat{
   position: fixed;
   bottom: 3rem;

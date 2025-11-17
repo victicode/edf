@@ -8,6 +8,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Notice extends Model
 {
     //
+    protected $fillable = [
+        "title",
+        "description",
+        "data_contact",
+        "group",
+        "category",
+        "img",
+        "type",
+        "views",
+        "status",
+        "user_id"
+    ];
     public $appends  =   ["group_label", "category_label"];
 
     public function user(): BelongsTo

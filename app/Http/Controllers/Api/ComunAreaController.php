@@ -15,21 +15,24 @@ class ComunAreaController extends Controller
         $comunAreas = ComunArea::withCount(["bookings", "bookingsToValidate"])->paginate(40);
         return $this->returnSuccess(200, $comunAreas);
     }
-    public function getAll(){
+    public function getAll()
+    {
         $comunAreas = ComunArea::get();
         return $this->returnSuccess(200, $comunAreas);
     }
-    public function comunAreaById($id){
+    public function comunAreaById($id)
+    {
         $area = ComunArea::find($id);
 
         return $this->returnSuccess(200, $area);
     }
-    public function storeArea(Request $request){
+    public function storeArea(Request $request)
+    {
         //
         $validated = $this->validateFieldsFromInput($request->all());
-        if (count($validated) > 0) return $this->returnFail(400, $validated[0]);
-
-
+        if (count($validated) > 0) {
+            return $this->returnFail(400, $validated[0]);
+        }
         ComunArea::create([
             'name' => $request->name,
             'capacity' => $request->capacity,
@@ -39,23 +42,24 @@ class ComunAreaController extends Controller
             'max_time_reserve' => $request->maxTime,
             'timeFrom' => $request->timeFrom,
             'timeTo' => $request->timeTo,
-            'rules' => htmlspecialchars($request->rules),
-            //'rules' => nl2br(htmlspecialchars($request->rules)),
-            
+            'rules' => htmlspecialchars($request->rules)
         ]);
 
         return $this->returnSuccess(200, 'ok');
-
     }
-    public function updateArea(Request $request, $id){
+    public function updateArea(Request $request, $id)
+    {
 
-        
         $validated = $this->validateFieldsFromInput($request->all());
-        if (count($validated) > 0) return $this->returnFail(400, $validated[0]);
+        if (count($validated) > 0) {
+            return $this->returnFail(400, $validated[0]);
+        }
 
         $area = ComunArea::find($id);
 
-        if(!$area) return $this->returnFail(400, 'Area común no encontrada');
+        if (!$area) {
+            return $this->returnFail(400, 'Area común no encontrada');
+        }
 
         $area->update([
             'name' => $request->name ?? $area->name,
@@ -70,17 +74,19 @@ class ComunAreaController extends Controller
         ]);
 
         return $this->returnSuccess(200, 'ok');
-
     }
-    public function deleteArea($id){
+    public function deleteArea($id)
+    {
         $area = ComunArea::find($id);
-        if(!$area) return $this->returnFail(400, 'Area común no encontrada');
+        if (!$area) {
+            return $this->returnFail(400, 'Area común no encontrada');
+        }
         $area->delete();
         return $this->returnSuccess(200, 'ok');
-
     }
-    private function validateFieldsFromInput($inputs){
-        $rules =[
+    private function validateFieldsFromInput($inputs)
+    {
+        $rules = [
             'name'          => ['required', 'regex:/^[a-z 0-9 A-Z-À-ÿ .\-]+$/i'],
             'capacity'      => ['required', 'numeric'],
             'price'         => ['required', 'numeric'],
@@ -92,7 +98,6 @@ class ComunAreaController extends Controller
             'rules'         => ['required', 'regex:/^[a-z 0-9 A-Z-À-ÿ ., \- \r \n  &]+$/i'],
         ];
 
-        
         $messages = [
             'name.required'          => 'Nombre del area es requerido.',
             'name.regex'             => 'Nombre no valido',
@@ -102,17 +107,14 @@ class ComunAreaController extends Controller
             'price.numeric'          => 'Precio no valida',
             'warrantyPrice.required' => 'Garantia es requerida',
             'warrantyPrice.numeric'  => 'Garantia no valida',
-            'description.regex'      => 'Description no valida',    
+            'description.regex'      => 'Description no valida',
             'maxTime.required'       => 'Maximo de tiempo de reserva es requerido',
             'timeFrom.required'      => 'Horario de apertura',
             'timeTo.required'        => 'Horario de cerre',
 
         ];
 
-
-         $validator = Validator::make($inputs, $rules, $messages)->errors();
-
+        $validator = Validator::make($inputs, $rules, $messages)->errors();
         return $validator->all() ;
-
     }
 }

@@ -20,7 +20,7 @@ const goTo = (id) => {
 
 </script>
 <template>
-  <div v-if="notices.length > 0" class="space-y-3 md:px-5">
+  <div v-if="notices.length > 0" class="space-y-5 md:px-5">
     <div class="notice__item" v-for="notice in notices" :key="notice.id" @click="goTo(notice.id)">
       <div class="py-1 pl-4 pr-3">
         <div class="notices-badge px-3 ">

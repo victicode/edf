@@ -35,7 +35,7 @@ export const useNoticeStore = defineStore('Notices', {
       [
         { name: "Oportunidad", value: 0},
       ],
-  ]
+    ]
   }),
   actions: {
     async getNotices(filters) {
@@ -60,7 +60,7 @@ export const useNoticeStore = defineStore('Notices', {
         
       })
     },
-    async createNotices(data) {
+    async createNotice(data) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
@@ -156,6 +156,23 @@ export const useNoticeStore = defineStore('Notices', {
         });
       })
     },
+    async setViewer(id){
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.post('/api/notices/set-viewer/'+id)
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+          
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+      })
+    },
     filterQuery(filter){
       try {
         const params = new URLSearchParams();
@@ -167,6 +184,8 @@ export const useNoticeStore = defineStore('Notices', {
         if (filter.amount_type) params.set('amount_type', String(filter.amount_type));
         if (filter.sort_by) params.set('sort_by', String(filter.sort_by));
         if (filter.sort_dir) params.set('sort_dir', String(filter.sort_dir));
+        if (filter.my_announces) params.set('my_announces', String(filter.announces));
+
         return params.toString();
       } catch (e) {
         return '';

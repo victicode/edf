@@ -12,7 +12,6 @@ const getNoticesById = () => {
   useNoticeStore().getNoticeById(route.params.id)
   .then((data) => {
     Object.assign(notice.value, data.data);
-    console.log(notice)
   })
   .catch((response) => {
     console.log(response)
@@ -25,7 +24,11 @@ const dataContactFormat = (dataString) => {
   let {name, apartment} = JSON.parse(dataString);
   return `${name} - ${apartment}`
 }
+const setInViewUser = () => {
+  useNoticeStore().setViewer(route.params.id)
+}
 onMounted(() => {
+  setInViewUser()
   getNoticesById()
 })
 </script>

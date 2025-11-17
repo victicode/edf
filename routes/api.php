@@ -70,5 +70,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('notices')->name('notice.')->group(function () {
         Route::get('/', [NoticeController::class, 'index']);
         Route::get('/byId/{id}', [NoticeController::class, 'show']);
+        Route::post('/', [NoticeController::class, 'store']);
+        Route::post('/set-viewer/{id}', [NoticeController::class, 'setViewer']);
     });
 });
