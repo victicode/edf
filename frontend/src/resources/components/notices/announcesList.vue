@@ -4,6 +4,7 @@ import iconsApp from '@/assets/icons/index'
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@//services/store/auth.services';
 import { storeToRefs } from 'pinia';
+import { ref, watch } from 'vue';
 moment.locale('es', {
   monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
   months: 'enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre'.split('_'),
@@ -13,7 +14,9 @@ const props = defineProps({
     type: Array,
     default: []
   },
+  myPost: Boolean
 })
+const isMyPost = ref(props.myPost)
 const { user } = storeToRefs(useAuthStore()) 
 const router = useRouter()
 const dataContactFormat = (dataString) => {
@@ -23,6 +26,9 @@ const dataContactFormat = (dataString) => {
 const goTo = (id) => {
   router.push(`/client/notice/view/${id}`);
 }
+watch(() => props.myPost, (newValue) => {
+  isMyPost.value = newValue
+});
 
 </script>
 <template>
@@ -31,6 +37,9 @@ const goTo = (id) => {
       <div class="py-1 pl-4 pr-3 " @click="goTo(announce.id)">
         <div class="notices-badge px-3 ">
           Nuevo
+        </div>
+        <div class="notices-badgeStatus px-3" :class="'bg-'+announce.status_color" v-if="announce.user_id == user.id && isMyPost">
+          {{ announce.status_label }}
         </div>
         <div>
           <div class="notice__item--title">{{announce.title}}</div>

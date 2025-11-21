@@ -42,6 +42,9 @@ onMounted(() => {
         <div class="mt-4 text-sm text-stone-600" style="line-height: 1.5;">
           {{ notice.description }}
         </div>
+        <div>
+          
+        </div>
         <div class="mt-4 text-xs text-stone-400" style="line-height: 1.5;">
           Publicado por: {{ notice.type == 1 ? 'Administrador' : dataContactFormat(notice.data_contact) }}
         </div>

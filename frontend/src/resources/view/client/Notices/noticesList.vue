@@ -12,9 +12,10 @@ const loading = ref(true);
 const noticeStore = useNoticeStore();
 const panelToShow = ref('notices')
 const modal = ref('')
-const fabRight = ref(false);
+const floatTab = ref(false);
 const filters = ref({
   status: 4,
+  only_my_posts: '',
   notice_method: '',
   type: '',
   date_from: '',
@@ -22,7 +23,10 @@ const filters = ref({
   sort_by: 'created_at',
   sort_dir: 'desc'
 });
-
+const getOnlyPost = (status) => {
+  filters.value.only_my_posts = status ? 'active' : ''
+  getNotices()
+}
 const getNotices = () => {
   loading.value = true;
   noticeStore.getNotices(filters.value)
@@ -60,7 +64,7 @@ onMounted(() => {
         </div>
         <div>
           <div class="buttonSwichtNotices  px-6 mx-3" :class="{'active':panelToShow == 'announces'}" @click="panelToShow ='announces'">
-            Anuncios
+            {{ filters.only_my_posts == 'active' ?  'Mis anuncios' : 'Anuncios'}}
           </div>
         </div>
       </div>
@@ -73,12 +77,11 @@ onMounted(() => {
       <div v-else class="px-4 py-6 md:px-28">
         <!-- Lista de pagos -->
         <noticesList v-if="panelToShow == 'notices'" :notices="notices" />
-        <announcesList v-if="panelToShow == 'announces'" :announces="announces" />
+        <announcesList v-if="panelToShow == 'announces'" :announces="announces" :myPost="(filters.only_my_posts =='active')"/>
       </div>
       <div class="createAnnouncesFloat" v-if="panelToShow == 'announces'"  >
-        <!-- <q-btn push color="primary" size="lg" round icon="eva-plus-outline" @click="modal='create_announce'" /> -->
         <q-fab
-          v-model="fabRight"
+          v-model="floatTab"
           color="primary"
           size="lg"
           icon="eva-plus-outline"
@@ -86,7 +89,9 @@ onMounted(() => {
           v-if="panelToShow == 'announces'"
         >
           <q-fab-action class="announceOption" label-position="right" color="primary" icon="eva-plus-outline" label="Crear anuncio" @click="modal='create_announce'"/>
-          <q-fab-action class="announceOption" label-position="right" color="secondary" icon="eva-archive-outline" label="Mis anuncios" />
+          <q-fab-action class="announceOption" label-position="right" color="secondary" icon="eva-archive-outline" label="Mis anuncios" @click="getOnlyPost(true)"  v-if="filters.only_my_posts == ''"/>
+          <q-fab-action class="announceOption" label-position="right" color="green-6" icon="eva-archive-outline" label="Todos los anuncios" @click="getOnlyPost(false)"  v-else/>
+
         </q-fab>
       </div>
       <createAnnouncesModal :dialog="(modal=='create_announce')" @closeModal="closeModal" @updateList="getNotices()"/>
@@ -97,9 +102,14 @@ onMounted(() => {
 </template>
 
 <style  lang="scss">
+.createAnnouncesFloat{
+  & .q-fab__actions {
+    align-items: end;
+  }
+}
 .announceOption{
   &.q-btn{
-    transform: translateX(-34px) translateY(0px)!important;
+    transform: translateX(10px) translateY(0px)!important;
   }
 }
 .createAnnouncesFloat{
@@ -136,6 +146,17 @@ onMounted(() => {
   top: 0;
   right: 0;
   border-bottom-left-radius: 7px;
+}
+.notices-badgeStatus{
+  position: absolute;
+  color: white;
+  font-size: 0.7rem;
+  line-height: 1.7;
+  top: 0;
+  right: 3.8rem;
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+
 }
 .notice__item{
   background: white;

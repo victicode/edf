@@ -12,17 +12,24 @@ class NoticeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
         $APPROVE_STATUS = 2;
         $notices = Notice::with(["user"])->where('status', $APPROVE_STATUS)
         ->where("type", 1)->orderBy("created_at", "desc")->get();
 
-        $announces = Notice::with(["user"])->where('status', $APPROVE_STATUS)
-        ->where("type", 2)->orderBy("created_at", "desc")->get();
+        $announces = Notice::with(["user"])
+        ->where("type", 2)->orderBy("created_at", "desc");
 
-        return $this->returnSuccess(200, ["notices" => $notices, "announces" => $announces]);
+        if ($request->only_my_posts == 'active') {
+            $announces->where('user_id', $request->user()->id);
+        } else {
+            $announces->where('status', $APPROVE_STATUS);
+        }
+        // $this->applyPaysFilter($notices, $request);
+
+        return $this->returnSuccess(200, ["notices" => $notices, "announces" => $announces->get()]);
     }
 
     /**
@@ -44,7 +51,7 @@ class NoticeController extends Controller
             return $this->returnFail(400, $validated[0]);
         }
 
-        Notice::create([
+        $notice = Notice::create([
             'title' => $request->title,
             'description' => htmlspecialchars($request->desciption),
             'group' => $request->group,
@@ -56,7 +63,9 @@ class NoticeController extends Controller
             'status' => $request->user()->rol_id == 1 ? 2 : 1
         ]);
 
-        return $this->returnSuccess(200, 'ok');
+        $this->uploadImages($notice, $request->file('img'));
+
+        return $this->returnSuccess(200, [count($request->img), count($request->file('img'))]);
     }
 
     /**
@@ -141,5 +150,63 @@ class NoticeController extends Controller
             return 'Admin';
         }
         return '{"name":"' . $user->name . '", "apartment":"' . $user->apartaments[0]->number . '"}';
+    }
+    private function applyPaysFilter($query, Request $request)
+    {
+        $VIEW_ALL_STATUS = 4;
+
+        // Filtro por estado
+        if ($request->filled('status') && intval($request->status) !== $VIEW_ALL_STATUS) {
+            $query->where('status', intval($request->status));
+        }
+
+        // Filtro por método de pago
+        if ($request->filled('pay_method')) {
+            $query->where('pay_method', intval($request->pay_method));
+        }
+
+        // Filtro por tipo de pago
+        if ($request->filled('type')) {
+            $query->where('type', intval($request->type));
+        }
+
+        // Filtro por rango de fechas
+        if ($request->filled('date_from')) {
+            $query->whereDate('pay_date', '>=', $request->get('date_from'));
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('pay_date', '<=', $request->get('date_to'));
+        }
+
+        // Ordenamiento
+        $validSortFields = ['created_at', 'pay_date', 'amount', 'status'];
+        $sortBy = in_array($request->get('sort_by'), $validSortFields)
+            ? $request->get('sort_by') : 'created_at';
+        $sortDir = $request->get('sort_dir') === 'asc' ? 'asc' : 'desc';
+        $query->orderBy($sortBy, $sortDir);
+    }
+    private function uploadImages($notice, $images)
+    {
+        $path = "";
+        $allImages = [];
+
+        if ($images) {
+            for ($i = 0; $i < count($images); $i++) {
+                $path = $this->getFormatNameImage($notice, $images[$i]);
+                $imagesPath = public_path() . "/images/post/";
+                $images[$i]->move($imagesPath, $path);
+
+                array_push($allImages, $path);
+            }
+        }
+
+        $notice->update(['img' => json_encode($allImages)]);
+    }
+    private function getFormatNameImage($notice, $image)
+    {
+        $rand = rand(1000000, 9999999);
+        $fileName = trim(str_replace(" ", "_", $notice->id));
+        $extension = $image->extension();
+        return "/public/images/posts/{$rand}_{$fileName}.{$extension}";
     }
 }

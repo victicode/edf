@@ -184,9 +184,9 @@ export const useNoticeStore = defineStore('Notices', {
         if (filter.amount_type) params.set('amount_type', String(filter.amount_type));
         if (filter.sort_by) params.set('sort_by', String(filter.sort_by));
         if (filter.sort_dir) params.set('sort_dir', String(filter.sort_dir));
-        if (filter.my_announces) params.set('my_announces', String(filter.announces));
+        if (filter.only_my_posts) params.set('only_my_posts', String(filter.only_my_posts));
 
-        return params.toString();
+        return params.toString()+ '&' ;
       } catch (e) {
         return '';
       }

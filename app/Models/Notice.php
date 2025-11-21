@@ -20,7 +20,7 @@ class Notice extends Model
         "status",
         "user_id"
     ];
-    public $appends  =   ["group_label", "category_label"];
+    public $appends  =   ["group_label", "category_label", "status_label", "status_color"];
 
     public function user(): BelongsTo
     {
@@ -67,5 +67,23 @@ class Notice extends Model
             ],
         ];
         return  $categoryByGroupLabels[$this->group][$this->category];
+    }
+    public function getStatusLabelAttribute()
+    {
+        $statusLabel = [
+            "Rechazada",
+            "Pendiente de aprb.",
+            "Publicada"
+        ];
+        return  $statusLabel[$this->status];
+    }
+    public function getStatusColorAttribute()
+    {
+        $statusColor = [
+            "negative",
+            "warning",
+            "positive"
+        ];
+        return  $statusColor[$this->status];
     }
 }
