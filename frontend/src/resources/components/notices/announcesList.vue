@@ -9,6 +9,8 @@ moment.locale('es', {
   monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
   months: 'enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre'.split('_'),
 })
+const emit = defineEmits(['openModal'])
+
 const props = defineProps({
   announces: {
     type: Array,
@@ -22,6 +24,9 @@ const router = useRouter()
 const dataContactFormat = (dataString) => {
   let {name} = JSON.parse(dataString);
   return name
+}
+const showDialog = (id, modal) => {
+  emit('openModal', id, modal)
 }
 const goTo = (id) => {
   router.push(`/client/notice/view/${id}`);
@@ -62,12 +67,11 @@ watch(() => props.myPost, (newValue) => {
               <div v-html="iconsApp.optionsBook" />
               <q-menu>
                 <q-list style="min-width: 150px">
-                  <q-item clickable v-close-popup @click="showDialog($event)" data-dialog="cancel"
-                    :data-reserve="announce.id">
+                  <q-item clickable v-close-popup @click="showDialog(announce.id, 'delete')" >
                     <q-item-section>Borrar anuncio</q-item-section>
                   </q-item>
                   <q-separator />
-                  <q-item clickable v-close-popup  @click="goTo('/client/reserves/pay-reserve/' + announce.id)">
+                  <q-item clickable v-close-popup  @click="showDialog(announce.id, 'update')"  >
                     <q-item-section>Editar anuncio</q-item-section>
                   </q-item>
                   <q-separator />

@@ -100,13 +100,13 @@ export const useNoticeStore = defineStore('Notices', {
         
       })
     },
-    async updateNotices(data) {
+    async updateNotice(data, id) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.put('/api/notices/'+data.id, data)
+        ApiService.post('/api/notices/'+id, data)
         .then(({data}) => {
           if(data.code !=200) throw data;
           

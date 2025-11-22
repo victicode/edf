@@ -5,6 +5,8 @@ import { useRouter } from 'vue-router';
 import NoticesList from '@/components/notices/noticesList.vue';
 import AnnouncesList from '@/components/notices/announcesList.vue';
 import createAnnouncesModal from '@/components/notices/createAnnouncesModal.vue';
+import deleteAnnounceModal from '@/components/notices/deleteAnnounceModal.vue';
+import updateAnnounceModal from '@/components/notices/updateAnnounceModal.vue';
 
 const notices = ref([]);
 const announces = ref([]);
@@ -23,10 +25,16 @@ const filters = ref({
   sort_by: 'created_at',
   sort_dir: 'desc'
 });
+const selectedAnnounce = ref({})
+const showModal = (modalId) => {
+  modal.value = modalId
+}
+
 const getOnlyPost = (status) => {
   filters.value.only_my_posts = status ? 'active' : ''
   getNotices()
 }
+
 const getNotices = () => {
   loading.value = true;
   noticeStore.getNotices(filters.value)
@@ -42,6 +50,12 @@ const getNotices = () => {
     .finally(() => {
       loading.value = false;
     });
+}
+
+const getSelectedAnnounce = (id, modal) => {
+
+  selectedAnnounce.value = announces.value.find((announce) => announce.id == id)
+  showModal(modal)
 }
 const closeModal = () => {
   modal.value = ''
@@ -77,7 +91,11 @@ onMounted(() => {
       <div v-else class="px-4 py-6 md:px-28">
         <!-- Lista de pagos -->
         <noticesList v-if="panelToShow == 'notices'" :notices="notices" />
-        <announcesList v-if="panelToShow == 'announces'" :announces="announces" :myPost="(filters.only_my_posts =='active')"/>
+        <announcesList v-if="panelToShow == 'announces'" 
+         :announces="announces" 
+         :myPost="(filters.only_my_posts =='active')"
+         @openModal="getSelectedAnnounce"
+        />
       </div>
       <div class="createAnnouncesFloat" v-if="panelToShow == 'announces'"  >
         <q-fab
@@ -88,13 +106,17 @@ onMounted(() => {
           direction="up"
           v-if="panelToShow == 'announces'"
         >
-          <q-fab-action class="announceOption" label-position="right" color="primary" icon="eva-plus-outline" label="Crear anuncio" @click="modal='create_announce'"/>
+          <q-fab-action class="announceOption" label-position="right" color="primary" icon="eva-plus-outline" label="Crear anuncio" @click="showModal('create_announce')"/>
           <q-fab-action class="announceOption" label-position="right" color="secondary" icon="eva-archive-outline" label="Mis anuncios" @click="getOnlyPost(true)"  v-if="filters.only_my_posts == ''"/>
           <q-fab-action class="announceOption" label-position="right" color="green-6" icon="eva-archive-outline" label="Todos los anuncios" @click="getOnlyPost(false)"  v-else/>
 
         </q-fab>
       </div>
-      <createAnnouncesModal :dialog="(modal=='create_announce')" @closeModal="closeModal" @updateList="getNotices()"/>
+      <createAnnouncesModal :dialog="(modal=='create_announce')" @closeModal="closeModal" @updateList="getOnlyPost(true)"/>
+      <template v-if="Object.values(selectedAnnounce).length > 0 ">
+        <deleteAnnounceModal :dialog="(modal=='delete')" :announce="selectedAnnounce"  @closeModal="closeModal" @updateList="getOnlyPost(filters.only_my_posts)" />
+        <updateAnnounceModal :dialog="(modal=='update')" :announce="selectedAnnounce"  @closeModal="closeModal" @updateList="getOnlyPost(filters.only_my_posts)" />
+      </template>
     </div>
 
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notice;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -53,7 +54,7 @@ class NoticeController extends Controller
 
         $notice = Notice::create([
             'title' => $request->title,
-            'description' => htmlspecialchars($request->desciption),
+            'description' => htmlspecialchars($request->description),
             'group' => $request->group,
             'category' => $request->category,
             'type' => $request->type,
@@ -65,7 +66,7 @@ class NoticeController extends Controller
 
         $this->uploadImages($notice, $request->file('img'));
 
-        return $this->returnSuccess(200, [count($request->img), count($request->file('img'))]);
+        return $this->returnSuccess(200, 'ok');
     }
 
     /**
@@ -89,17 +90,42 @@ class NoticeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Notice $notice)
+    public function update(Request $request, $id)
     {
         //
+        $announce = Notice::find($id);
+        if (!$announce) {
+            return $this->returnFail(404, 'Anuncion no encontrado');
+        }
+
+        $announce->update([
+            'title' => $request->title,
+            'description' => htmlspecialchars($request->description),
+            'group' => $request->group,
+            'category' => $request->category,
+        ]);
+        return $this->returnSuccess(200, $announce);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Notice $notice)
+    public function delete(Request $request, $id)
     {
         //
+        try {
+            //code...
+            $notice = Notice::find($id);
+
+            if ($notice->user_id == $request->user()->id) {
+                $notice->delete();
+            }
+        } catch (Exception $th) {
+            //throw $th;
+            return $this->returnFail(500, $th->getMessage());
+        }
+
+        return $this->returnSuccess(200, 'OK');
     }
     public function setViewer(Request $request, $noticeId)
     {
@@ -193,7 +219,7 @@ class NoticeController extends Controller
         if ($images) {
             for ($i = 0; $i < count($images); $i++) {
                 $path = $this->getFormatNameImage($notice, $images[$i]);
-                $imagesPath = public_path() . "/images/post/";
+                $imagesPath = public_path('storage') . "/images/post/";
                 $images[$i]->move($imagesPath, $path);
 
                 array_push($allImages, $path);
@@ -207,6 +233,6 @@ class NoticeController extends Controller
         $rand = rand(1000000, 9999999);
         $fileName = trim(str_replace(" ", "_", $notice->id));
         $extension = $image->extension();
-        return "/public/images/posts/{$rand}_{$fileName}.{$extension}";
+        return config("app.url") . "/storage/images/post/{$rand}_{$fileName}.{$extension}";
     }
 }

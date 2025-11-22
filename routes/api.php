@@ -72,5 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/byId/{id}', [NoticeController::class, 'show']);
         Route::post('/', [NoticeController::class, 'store']);
         Route::post('/set-viewer/{id}', [NoticeController::class, 'setViewer']);
+        Route::delete('/{id}', [NoticeController::class, 'delete']);
+        Route::post('/{id}', [NoticeController::class, 'update']);
     });
 });
