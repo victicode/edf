@@ -16,8 +16,7 @@ class NoticeController extends Controller
     public function index(Request $request)
     {
         //
-        $APPROVE_STATUS = 2;
-        $notices = Notice::with(["user"])->where('status', $APPROVE_STATUS)
+        $notices = Notice::with(["user"])
         ->where("type", 1)->orderBy("created_at", "desc")->get();
 
         $announces = Notice::with(["user"])
@@ -26,19 +25,11 @@ class NoticeController extends Controller
         if ($request->only_my_posts == 'active') {
             $announces->where('user_id', $request->user()->id);
         } else {
-            $announces->where('status', $APPROVE_STATUS);
+            $this->applyPaysFilter($announces, $request);
         }
-        // $this->applyPaysFilter($notices, $request);
+
 
         return $this->returnSuccess(200, ["notices" => $notices, "announces" => $announces->get()]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -78,15 +69,6 @@ class NoticeController extends Controller
 
         return $this->returnSuccess(200, $notice);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Notice $notice)
-    {
-        //
-    }
-
     /**
      * Update the specified resource in storage.
      */
@@ -143,7 +125,16 @@ class NoticeController extends Controller
 
         return $this->returnSuccess(200, 'ok');
     }
+    public function setNewStatus(Request $request, $noticeId)
+    {
+        Notice::findOrFail($noticeId)
+        ->update([
+            'status' => $request->status
+        ]);
 
+
+        return $this->returnSuccess(200, 'ok');
+    }
     private function validateFieldsFromInput($inputs)
     {
         $rules = [
@@ -186,30 +177,30 @@ class NoticeController extends Controller
             $query->where('status', intval($request->status));
         }
 
-        // Filtro por método de pago
-        if ($request->filled('pay_method')) {
-            $query->where('pay_method', intval($request->pay_method));
-        }
+        // // Filtro por método de pago
+        // if ($request->filled('pay_method')) {
+        //     $query->where('pay_method', intval($request->pay_method));
+        // }
 
-        // Filtro por tipo de pago
-        if ($request->filled('type')) {
-            $query->where('type', intval($request->type));
-        }
+        // // Filtro por tipo de pago
+        // if ($request->filled('type')) {
+        //     $query->where('type', intval($request->type));
+        // }
 
-        // Filtro por rango de fechas
-        if ($request->filled('date_from')) {
-            $query->whereDate('pay_date', '>=', $request->get('date_from'));
-        }
-        if ($request->filled('date_to')) {
-            $query->whereDate('pay_date', '<=', $request->get('date_to'));
-        }
+        // // Filtro por rango de fechas
+        // if ($request->filled('date_from')) {
+        //     $query->whereDate('pay_date', '>=', $request->get('date_from'));
+        // }
+        // if ($request->filled('date_to')) {
+        //     $query->whereDate('pay_date', '<=', $request->get('date_to'));
+        // }
 
-        // Ordenamiento
-        $validSortFields = ['created_at', 'pay_date', 'amount', 'status'];
-        $sortBy = in_array($request->get('sort_by'), $validSortFields)
-            ? $request->get('sort_by') : 'created_at';
-        $sortDir = $request->get('sort_dir') === 'asc' ? 'asc' : 'desc';
-        $query->orderBy($sortBy, $sortDir);
+        // // Ordenamiento
+        // $validSortFields = ['created_at', 'pay_date', 'amount', 'status'];
+        // $sortBy = in_array($request->get('sort_by'), $validSortFields)
+        //     ? $request->get('sort_by') : 'created_at';
+        // $sortDir = $request->get('sort_dir') === 'asc' ? 'asc' : 'desc';
+        // $query->orderBy($sortBy, $sortDir);
     }
     private function uploadImages($notice, $images)
     {

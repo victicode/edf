@@ -51,7 +51,7 @@
          </style>
        
     </head>
-    <body class="font-sans antialiased dark:bg-black dark:text-white/50" style="overflow: hidden;">
+    <body class="font-sans antialiased mobile touch dark:bg-black dark:text-white/50 " style="overflow: hidden;">
         <!-- <div class="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50 h-screen" id="app">
                 
         </div> -->

@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [UserController::class, 'getOwners']);
         Route::post('/', [UserController::class, 'store']);
         Route::post('/assing_apartmet', [DepartamentController::class, 'assingApartment']);
+        Route::get('/admin/get_pendings', [UserController::class, 'getCountPendingsForAdmin']);
     });
     Route::prefix('apartments')->name('apartment.')->group(function () {
         Route::get('/', [DepartamentController::class, 'paginationApartment']);
@@ -72,6 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/byId/{id}', [NoticeController::class, 'show']);
         Route::post('/', [NoticeController::class, 'store']);
         Route::post('/set-viewer/{id}', [NoticeController::class, 'setViewer']);
+        Route::post('/set-new-status/{id}', [NoticeController::class, 'setNewStatus']);
         Route::delete('/{id}', [NoticeController::class, 'delete']);
         Route::post('/{id}', [NoticeController::class, 'update']);
     });

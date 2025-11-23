@@ -16,7 +16,7 @@ const panelToShow = ref('notices')
 const modal = ref('')
 const floatTab = ref(false);
 const filters = ref({
-  status: 2,
+  status: 4,
   only_my_posts: '',
   notice_method: '',
   type: '',
@@ -25,16 +25,10 @@ const filters = ref({
   sort_by: 'created_at',
   sort_dir: 'desc'
 });
-const selectedAnnounce = ref({})
+const selectedNotice = ref({})
 const showModal = (modalId) => {
   modal.value = modalId
 }
-
-const getOnlyPost = (status) => {
-  filters.value.only_my_posts = status ? 'active' : ''
-  getNotices()
-}
-
 const getNotices = () => {
   loading.value = true;
   noticeStore.getNotices(filters.value)
@@ -52,9 +46,9 @@ const getNotices = () => {
     });
 }
 
-const getSelectedAnnounce = (id, modal) => {
+const getSelectedNotice = (id, modal) => {
 
-  selectedAnnounce.value = announces.value.find((announce) => announce.id == id)
+  selectedNotice.value = notices.value.find((notice) => notice.id == id)
   showModal(modal)
 }
 const closeModal = () => {
@@ -90,32 +84,29 @@ onMounted(() => {
       <!-- Content -->
       <div v-else class="px-4 py-6 md:px-28">
         <!-- Lista de pagos -->
-        <noticesList v-if="panelToShow == 'notices'" :notices="notices" />
+        <noticesList v-if="panelToShow == 'notices'" :notices="notices" @openModal="getSelectedNotice" />
         <announcesList v-if="panelToShow == 'announces'" 
          :announces="announces" 
          :myPost="(filters.only_my_posts =='active')"
          @openModal="getSelectedAnnounce"
         />
       </div>
-      <div class="createAnnouncesFloat" v-if="panelToShow == 'announces'"  >
+      <div class="createAnnouncesFloat" v-if="panelToShow == 'notices'"  >
         <q-fab
           v-model="floatTab"
           color="primary"
           size="lg"
           icon="eva-plus-outline"
           direction="up"
-          v-if="panelToShow == 'announces'"
+          v-if="panelToShow == 'notices'"
         >
-          <q-fab-action class="announceOption" label-position="right" color="primary" icon="eva-plus-outline" label="Crear anuncio" @click="showModal('create_announce')"/>
-          <q-fab-action class="announceOption" label-position="right" color="secondary" icon="eva-archive-outline" label="Mis anuncios" @click="getOnlyPost(true)"  v-if="filters.only_my_posts == ''"/>
-          <q-fab-action class="announceOption" label-position="right" color="green-6" icon="eva-archive-outline" label="Todos los anuncios" @click="getOnlyPost(false)"  v-else/>
-
+          <q-fab-action class="noticeOption" label-position="right" color="primary" icon="eva-plus-outline" label="Crear anuncio" @click="showModal('create_announce')"/>
         </q-fab>
       </div>
       <createAnnouncesModal :dialog="(modal=='create_announce')" @closeModal="closeModal" @updateList="getOnlyPost(true)"/>
-      <template v-if="Object.values(selectedAnnounce).length > 0 ">
-        <deleteAnnounceModal :dialog="(modal=='delete')" :announce="selectedAnnounce"  @closeModal="closeModal" @updateList="getOnlyPost(filters.only_my_posts)" />
-        <updateAnnounceModal :dialog="(modal=='update')" :announce="selectedAnnounce"  @closeModal="closeModal" @updateList="getOnlyPost(filters.only_my_posts)" />
+      <template v-if="Object.values(selectedNotice).length > 0 ">
+        <deleteAnnounceModal :dialog="(modal=='delete')" :announce="selectedNotice"  @closeModal="closeModal" @updateList="getOnlyPost(filters.only_my_posts)" />
+        <updateAnnounceModal :dialog="(modal=='update')" :announce="selectedNotice"  @closeModal="closeModal" @updateList="getOnlyPost(filters.only_my_posts)" />
       </template>
     </div>
 
@@ -129,7 +120,7 @@ onMounted(() => {
     align-items: end;
   }
 }
-.announceOption{
+.noticeOption{
   &.q-btn{
     transform: translateX(10px) translateY(0px)!important;
   }

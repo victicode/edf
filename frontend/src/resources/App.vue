@@ -9,14 +9,14 @@ onMounted(() => {
 })
 </script>
 <template>
-  <main class=" w-full" style="overflow: hidden; height: 100dvh;">
-
+  <q-layout view="hHh lpR fFf" style="overflow: hidden; height: 100vh;">
     <router-view class="appMobile " v-slot="{ Component }">
       <transition name="horizontal">
         <component :is="Component" />
       </transition>
     </router-view>
-  </main>
+  </q-layout>
+
 </template>
 <style>
 .appMobile {

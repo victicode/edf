@@ -43,7 +43,7 @@ watch(() => props.myPost, (newValue) => {
         <div class="notices-badge px-3 ">
           Nuevo
         </div>
-        <div class="notices-badgeStatus px-3" :class="'bg-'+announce.status_color" v-if="announce.user_id == user.id && isMyPost">
+        <div class="notices-badgeStatus px-3" :class="'bg-'+announce.status_color" v-if="(announce.user_id == user.id && isMyPost) || (announce.status == 1 && user.id == 1)">
           {{ announce.status_label }}
         </div>
         <div>

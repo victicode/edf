@@ -41,7 +41,7 @@ const nextStep = () => {
       </div>
       <Transition name="horizontal">
         <div class="flex flex-center h-full column" v-if="step==0">
-          <img :src="img[step]" alt="" style="" class="pt-12 w-5/6 md:w-1/4">
+          <img :src="img[step]" alt="" style="" class="pt-12 w-4/6 md:w-1/4">
           <div class="hiddenx md:block text-center pt-2">
             <div class="text-h4 text-bold text-gray-600">{{ title[step] }}</div>
             <div class="text-h6 mt-2" style="font-weight: 500;">{{ text[step] }}</div>
@@ -50,7 +50,7 @@ const nextStep = () => {
       </Transition>
       <Transition name="horizontal">
         <div class="flex flex-center h-full column" v-if="step==1">
-          <img :src="img[step]" alt="" style="" class="pt-12 w-5/6 md:w-1/4">
+          <img :src="img[step]" alt="" style="" class="pt-12 w-4/6 md:w-1/4">
           <div class="hiddenx md:block text-center pt-2">
             <div class="text-h4 text-bold text-gray-600">{{ title[step] }}</div>
             <div class="text-h6 mt-2" style="font-weight: 500;">{{ text[step] }}</div>
@@ -59,7 +59,7 @@ const nextStep = () => {
       </Transition>
       <Transition name="horizontal">
         <div class="flex flex-center h-full column" v-if="step==2">
-          <img :src="img[step]" alt="" style="" class="pt-12 w-5/6 md:w-1/4">
+          <img :src="img[step]" alt="" style="" class="pt-12 w-4/6 md:w-1/4">
           <div class="hiddenx md:block text-center pt-2">
             <div class="text-h4 text-bold text-gray-600">{{ title[step] }}</div>
             <div class="text-h6 mt-2" style="font-weight: 500;">{{ text[step] }}</div>
@@ -80,19 +80,19 @@ const nextStep = () => {
         <Transition name="horizontal">
           <div class="pt-10 blockx md:hiddenx" v-if="step==0">
               <div class=" text-center text-bold text-white" style="font-size: 1.25rem;">{{ title[step] }}</div>
-              <div class=" text-justify text-subtitle1 mt-2 text-gray-300 mt-5" style="font-weight: 500;">{{ text[step] }}</div>
+              <div class="text-center text-subtitle1 mt-2 text-gray-300 mt-5" style="font-weight: 500;">{{ text[step] }}</div>
           </div>
         </Transition>
         <Transition name="horizontal">
           <div class="pt-10 blockx md:hiddenx" v-if="step==1">
               <div class=" text-center text-bold text-white" style="font-size: 1.25rem;">{{ title[step] }}</div>
-              <div class=" text-justify text-subtitle1 mt-2 text-gray-300 mt-5" style="font-weight: 500;">{{ text[step] }}</div>
+              <div class="text-center text-subtitle1 mt-2 text-gray-300 mt-5" style="font-weight: 500;">{{ text[step] }}</div>
           </div>
         </Transition>
         <Transition name="horizontal">
           <div class="pt-10 blockx md:hiddenx" v-if="step==2">
               <div class=" text-center text-bold text-white" style="font-size: 1.25rem;">{{ title[step] }}</div>
-              <div class=" text-justify text-subtitle1 mt-2 text-gray-300 mt-5" style="font-weight: 500;">{{ text[step] }}</div>
+              <div class="text-center text-subtitle1 mt-2 text-gray-300 mt-5" style="font-weight: 500;">{{ text[step] }}</div>
           </div>
         </Transition>
       </div>

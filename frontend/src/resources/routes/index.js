@@ -227,6 +227,16 @@ const routes = [
           pagTitle: 'Validar pago'
         }
       },
+      {
+        path: '/admin/notices', 
+        component: () => import('@/view/admin/Notices/noticesPage.vue'),
+        name:'noticesPages',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Noticas/Anuncios'
+        }
+      },
       
 
       // ---- client Routes -----

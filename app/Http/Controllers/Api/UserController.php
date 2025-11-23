@@ -2,23 +2,26 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\Departament;
 use App\Models\User;
+use App\Models\Booking;
+use App\Models\Departament;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\Notice;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
     //
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
 
         $validated = $this->validateFieldsFromInput($request->all());
 
-        if (count($validated) > 0) return $this->returnFail(400, $validated[0]);
-
-        
-       $user = User::create([
+        if (count($validated) > 0) {
+            return $this->returnFail(400, $validated[0]);
+        }
+        $user = User::create([
             'name'      =>  $request->name,
             'email'     =>  $request->email,
             'username'  =>  $request->username,
@@ -27,30 +30,48 @@ class UserController extends Controller
             'rol_id'    =>  $request->idRol,
         ]);
 
-        if($request->idApartament != 0){
+        if ($request->idApartament != 0) {
             Departament::find($request->idApartament)->update([
                 'user_id' => $user->id
             ]);
         }
 
         return $this->returnSuccess(200, 'ok');
-
     }
 
-    public function getOwners(Request $request) {
-        $dist =  $request->rol == 1 ?'!=' : '==';
+    public function getOwners(Request $request)
+    {
+        $dist =  $request->rol == 1 ? '!=' : '==';
 
-        $owners = User::with(['apartaments', 'rol'])->where('rol_id', $dist, $request->rol)->orderBy('name', 'asc')->where('id', '!=', $request->user()->id)->get();
+        $owners = User::with(['apartaments', 'rol'])
+        ->where('rol_id', $dist, $request->rol)
+        ->orderBy('name', 'asc')
+        ->where('id', '!=', $request->user()->id)
+        ->get();
 
         return $this->returnSuccess(200, $owners);
     }
+    public function getCountPendingsForAdmin()
+    {
+        $noticeTypeForAnnunce = 2;
+        $waitStatus = [
+            'reserve' => 2,
+            'announces' => 1
+        ];
+        $reservesPendings = Booking::where('status', $waitStatus['reserve'])->get();
+        $announcesPendings = Notice::where('status', $waitStatus['announces'])
+        ->where('type', $noticeTypeForAnnunce)->get();
 
-    private function validateFieldsFromInput($inputs){
-        $rules =[
+        return $this->returnSuccess(200, [
+            'reserves' =>  $reservesPendings,
+            'announces' => $announcesPendings
+        ]);
+    }
+    private function validateFieldsFromInput($inputs)
+    {
+        $rules = [
             'name'      => ['required', 'regex:/^[a-zA-Z-À-ÿ .]+$/i'],
             'email'     => ['required', 'email', 'unique:users'],
-
-            
             'username'  => ['required', 'unique:users', 'regex:/^[a-zA-Z-À-ÿ0-9 .]+$/i'],
             'password'  => ['required', 'min:8'],
 
@@ -60,7 +81,6 @@ class UserController extends Controller
             'name.regex'        => 'Nombre no valido',
             'email.required'    => 'El email es requerido.',
             'email.unique'      => 'El email ya esta registrado.',
-
             'email.email'       => 'Email no valido',
             'username.required' => 'Nombre de usuario es requerido',
             'username.unique'   => 'Nombre de usuario ya esta registrado.',
@@ -69,10 +89,7 @@ class UserController extends Controller
             'password.min'          => 'La contraseña debe tener un minimo de 8 caracteres'
         ];
 
-
-         $validator = Validator::make($inputs, $rules, $messages)->errors();
-
+        $validator = Validator::make($inputs, $rules, $messages)->errors();
         return $validator->all() ;
-
     }
 }
