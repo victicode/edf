@@ -6,6 +6,7 @@ import iconsApp from '@/assets/icons/index'
 import { useAuthStore } from '@//services/store/auth.services';
 import { storeToRefs } from 'pinia';
 import { ZoomImg } from "vue3-zoomer";
+import { Notify } from 'quasar';
 
 const { user } = storeToRefs(useAuthStore())
 const ready = ref(false)
@@ -49,14 +50,31 @@ const setStatusAnnounce = (status) => {
   }
   useNoticeStore().setNewStatus(data)
   .then((response) => {
-    console.log(response)
+    setMessageNotifyByStatus(response.data.status)
+    setTimeout(() => {
+      router.go(-1)
+    }, 1000);
   })
   .catch((data) => {
     console.log(data)
   })
   .finally(() => loading.value = false)
 }
+const setMessageNotifyByStatus = (status) => {
+  const type = status == 2 ? 'positive' : 'negative'
+  const message = status == 2 
+  ? 'Publicación aprobada con exito'
+  : 'Publicación rechazada'
 
+  showDialog(type, message)
+}
+const showDialog = (type, text) => {
+  Notify.create({
+    color: type,
+    message: text,
+    timeout: 2000
+  })
+}
 onMounted(() => {
   setInViewUser()
   getNoticesById()
@@ -89,7 +107,7 @@ onMounted(() => {
         <div class="mt-5 text-xs text-stone-400" style="line-height: 1.5;">
           Publicado por: {{ notice.type == 1 ? 'Administrador' : dataContactFormat(notice.data_contact) }}
         </div>
-        <div v-if="user.rol_id == 1" class="mt-4 w-full justify-between flex items-center">
+        <div v-if="user.rol_id == 1 && (notice.status == 1 || notice.status == 0)" class="mt-4 w-full justify-between flex items-center">
           <q-btn label="Rechazar" unelevated class="q-mx-sm " color="negative" outline
               style="border-radius: 0.8rem; padding:0px  2rem!important; font-size: 1rem;" @click="setStatusAnnounce(0)" :loading="loading"  />
               

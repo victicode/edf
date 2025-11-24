@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [UserController::class, 'store']);
         Route::post('/assing_apartmet', [DepartamentController::class, 'assingApartment']);
         Route::get('/admin/get_pendings', [UserController::class, 'getCountPendingsForAdmin']);
+        Route::get('/with-publish', [UserController::class, 'getAllUserWithPublish']);
     });
     Route::prefix('apartments')->name('apartment.')->group(function () {
         Route::get('/', [DepartamentController::class, 'paginationApartment']);

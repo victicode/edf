@@ -1,12 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useNoticeStore } from '@/services/store/notice.store';
-import { useRouter } from 'vue-router';
 import NoticesList from '@/components/notices/noticesList.vue';
 import AnnouncesList from '@/components/notices/announcesList.vue';
 import createAnnouncesModal from '@/components/notices/createAnnouncesModal.vue';
 import deleteAnnounceModal from '@/components/notices/deleteAnnounceModal.vue';
 import updateAnnounceModal from '@/components/notices/updateAnnounceModal.vue';
+import filterAnnouncesList from '@//components/notices/filterAnnouncesList.vue';
 
 const notices = ref([]);
 const announces = ref([]);
@@ -17,13 +17,11 @@ const modal = ref('')
 const floatTab = ref(false);
 const filters = ref({
   status: 4,
-  only_my_posts: '',
-  notice_method: '',
-  type: '',
+  group: '',
+  category: '',
+  post_by: '',
   date_from: '',
   date_to: '',
-  sort_by: 'created_at',
-  sort_dir: 'desc'
 });
 const selectedNotice = ref({})
 const showModal = (modalId) => {
@@ -36,7 +34,6 @@ const getNotices = () => {
       if (response.code !== 200) throw response;
       notices.value = response.data.notices;
       announces.value = response.data.announces;
-
     })
     .catch((response) => {
       console.log(response);
@@ -47,12 +44,31 @@ const getNotices = () => {
 }
 
 const getSelectedNotice = (id, modal) => {
-
   selectedNotice.value = notices.value.find((notice) => notice.id == id)
   showModal(modal)
 }
 const closeModal = () => {
   modal.value = ''
+}
+const isUsingFilter = () => {
+  let filtersToValidate = filters.value
+  let { status } = filtersToValidate
+  let result = false
+
+  if( status != 4) {
+    result = true
+  }
+  Object.values(filtersToValidate).forEach(filter => {
+    if(filter !== ''){
+      result = true
+    }
+  });
+  
+   return result
+}
+const getNoticesWithFilter = (newFilter) =>{
+  filters.value = { ...filters.value, ...newFilter };
+  getNotices();
 }
 
 onMounted(() => {
@@ -64,7 +80,7 @@ onMounted(() => {
   <div class="h-full" style="overflow: hidden;">
     <!-- Lista de pagos -->
     <div class="h-full" style="overflow: auto; position: relative;">
-      <div class="flex justify-center mt-3 bg-stone-200 py-2 buttonsContainer" >
+      <div class="flex justify-center  mt-3 bg-stone-200 py-2 buttonsContainer" >
         <div>
           <div class="buttonSwichtNotices  px-6 mx-3" :class="{'active':panelToShow == 'notices'}" @click="panelToShow ='notices'">
             Noticias
@@ -72,9 +88,17 @@ onMounted(() => {
         </div>
         <div>
           <div class="buttonSwichtNotices  px-6 mx-3" :class="{'active':panelToShow == 'announces'}" @click="panelToShow ='announces'">
-            {{ filters.only_my_posts == 'active' ?  'Mis anuncios' : 'Anuncios'}}
+            Anuncios
           </div>
         </div>
+      </div>
+      <div class="flex justify-end md:pr-5 px-4  mt-2 ">
+        <q-btn
+          outline
+          color="primary"
+          icon="eva-funnel-outline"
+          @click="modal = 'filter'"
+        />
       </div>
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-20">
@@ -88,7 +112,6 @@ onMounted(() => {
         <announcesList v-if="panelToShow == 'announces'" 
          :announces="announces" 
          :myPost="(filters.only_my_posts =='active')"
-         @openModal="getSelectedAnnounce"
         />
       </div>
       <div class="createAnnouncesFloat" v-if="panelToShow == 'notices'"  >
@@ -100,17 +123,22 @@ onMounted(() => {
           direction="up"
           v-if="panelToShow == 'notices'"
         >
-          <q-fab-action class="noticeOption" label-position="right" color="primary" icon="eva-plus-outline" label="Crear anuncio" @click="showModal('create_announce')"/>
+          <q-fab-action class="noticeOption" label-position="right" color="primary" icon="eva-plus-outline" label="Crear noticia" @click="showModal('create_announce')"/>
         </q-fab>
       </div>
       <createAnnouncesModal :dialog="(modal=='create_announce')" @closeModal="closeModal" @updateList="getOnlyPost(true)"/>
+      <filterAnnouncesList 
+        :dialog="(modal == 'filter')" 
+        :typeSearch="panelToShow"
+        @closeModal="closeModal"
+        @updateList="getNoticesWithFilter"
+      />
       <template v-if="Object.values(selectedNotice).length > 0 ">
-        <deleteAnnounceModal :dialog="(modal=='delete')" :announce="selectedNotice"  @closeModal="closeModal" @updateList="getOnlyPost(filters.only_my_posts)" />
-        <updateAnnounceModal :dialog="(modal=='update')" :announce="selectedNotice"  @closeModal="closeModal" @updateList="getOnlyPost(filters.only_my_posts)" />
+        <deleteAnnounceModal :dialog="(modal=='delete')" :announce="selectedNotice"  @closeModal="closeModal" @updateList="getOnlyPost()" />
+        <updateAnnounceModal :dialog="(modal=='update')" :announce="selectedNotice"  @closeModal="closeModal" @updateList="getOnlyPost()" />
       </template>
+      
     </div>
-
-
   </div>
 </template>
 

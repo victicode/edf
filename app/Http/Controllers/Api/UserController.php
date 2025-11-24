@@ -67,6 +67,11 @@ class UserController extends Controller
             'announces' => $announcesPendings
         ]);
     }
+    public function getAllUserWithPublish()
+    {
+         $users = User::whereHas('announces')->get();
+         return $this->returnSuccess(200, $users);
+    }
     private function validateFieldsFromInput($inputs)
     {
         $rules = [

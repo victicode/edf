@@ -7,6 +7,7 @@ import AnnouncesList from '@/components/notices/announcesList.vue';
 import createAnnouncesModal from '@/components/notices/createAnnouncesModal.vue';
 import deleteAnnounceModal from '@/components/notices/deleteAnnounceModal.vue';
 import updateAnnounceModal from '@/components/notices/updateAnnounceModal.vue';
+import filterAnnouncesList from '@//components/notices/filterAnnouncesList.vue';
 
 const notices = ref([]);
 const announces = ref([]);
@@ -17,13 +18,12 @@ const modal = ref('')
 const floatTab = ref(false);
 const filters = ref({
   status: 2,
-  only_my_posts: '',
-  notice_method: '',
-  type: '',
+  group: '',
+  category: '',
+  post_by:'',
   date_from: '',
   date_to: '',
-  sort_by: 'created_at',
-  sort_dir: 'desc'
+  only_my_posts:''
 });
 const selectedAnnounce = ref({})
 const showModal = (modalId) => {
@@ -53,12 +53,15 @@ const getNotices = () => {
 }
 
 const getSelectedAnnounce = (id, modal) => {
-
   selectedAnnounce.value = announces.value.find((announce) => announce.id == id)
   showModal(modal)
 }
 const closeModal = () => {
   modal.value = ''
+}
+const getNoticesWithFilter = (newFilter) =>{
+  filters.value = { ...filters.value, ...newFilter };
+  getNotices();
 }
 
 onMounted(() => {
@@ -81,6 +84,15 @@ onMounted(() => {
             {{ filters.only_my_posts == 'active' ?  'Mis anuncios' : 'Anuncios'}}
           </div>
         </div>
+      </div>
+      <div class="flex justify-end md:pr-5 px-4  mt-2 ">
+        <q-btn
+          outline
+          color="primary"
+          icon="eva-funnel-outline"
+          @click="modal = 'filter'"
+          v-if="panelToShow ='announces'"
+        />
       </div>
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-20">
@@ -113,6 +125,13 @@ onMounted(() => {
         </q-fab>
       </div>
       <createAnnouncesModal :dialog="(modal=='create_announce')" @closeModal="closeModal" @updateList="getOnlyPost(true)"/>
+      <filterAnnouncesList 
+        :dialog="(modal == 'filter')" 
+        :typeSearch="panelToShow"
+        :isOnlyMyPost="filters.only_my_posts"
+        @closeModal="closeModal"
+        @updateList="getNoticesWithFilter"
+      />
       <template v-if="Object.values(selectedAnnounce).length > 0 ">
         <deleteAnnounceModal :dialog="(modal=='delete')" :announce="selectedAnnounce"  @closeModal="closeModal" @updateList="getOnlyPost(filters.only_my_posts)" />
         <updateAnnounceModal :dialog="(modal=='update')" :announce="selectedAnnounce"  @closeModal="closeModal" @updateList="getOnlyPost(filters.only_my_posts)" />

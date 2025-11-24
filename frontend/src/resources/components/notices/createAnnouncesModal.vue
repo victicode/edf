@@ -71,6 +71,7 @@ const createAnnounce = () => {
   })
 }
 const isAvailableOption = (val) => {
+  console.log(val)
   if(val == -1) {
     categoryOptions.value = [{name:'Selecciona una opción', value: -1}]
     formData.value.category = {name:'Selecciona una opción', value: -1}

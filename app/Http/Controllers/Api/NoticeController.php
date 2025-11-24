@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notice;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -127,14 +128,15 @@ class NoticeController extends Controller
     }
     public function setNewStatus(Request $request, $noticeId)
     {
-        Notice::findOrFail($noticeId)
-        ->update([
+        $notice =  Notice::findOrFail($noticeId);
+        $notice->update([
             'status' => $request->status
         ]);
 
 
-        return $this->returnSuccess(200, 'ok');
+        return $this->returnSuccess(200, ['status' => $notice->status]);
     }
+    
     private function validateFieldsFromInput($inputs)
     {
         $rules = [

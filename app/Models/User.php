@@ -71,6 +71,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Departament::class);
     }
+    public function notices()
+    {
+        return $this->hasMany(Notice::class)->where('type', 1);
+    }
+    public function announces()
+    {
+        return $this->hasMany(Notice::class)->where('type', 2);
+    }
     public function rol()
     {
         return $this->belongsTo(Rol::class);
