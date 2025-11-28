@@ -48,22 +48,22 @@ const goTo = (id) => {
           {{ moment(notice.created_at).format('DD MMM YYYY') }}
         </div>
         <div  v-if="user.id == notice.user_id">
-            <q-btn size="xs" round="" color="primary" flat="">
-              <div v-html="iconsApp.optionsBook" />
-              <q-menu>
-                <q-list style="min-width: 150px">
-                  <q-item clickable v-close-popup @click="showDialog(announce.id, 'delete')" >
-                    <q-item-section>Borrar anuncio</q-item-section>
-                  </q-item>
-                  <q-separator />
-                  <q-item clickable v-close-popup  @click="showDialog(announce.id, 'update')"  >
-                    <q-item-section>Editar anuncio</q-item-section>
-                  </q-item>
-                  <q-separator />
-                </q-list>
-              </q-menu>
-            </q-btn>
-          </div>
+          <q-btn size="xs" round="" color="primary" flat="">
+            <div v-html="iconsApp.optionsBook" />
+            <q-menu>
+              <q-list style="min-width: 150px">
+                <q-item clickable v-close-popup  @click="showDialog(notice.id, 'update')"  >
+                  <q-item-section>Editar noticia</q-item-section>
+                </q-item>
+                <q-separator />
+                <q-item clickable v-close-popup @click="showDialog(notice.id, 'delete')" >
+                  <q-item-section class="text-negative">Borrar noticia</q-item-section>
+                </q-item>
+                <q-separator />
+              </q-list>
+            </q-menu>
+          </q-btn>
+        </div>
       </div>
     </div>
   </div>

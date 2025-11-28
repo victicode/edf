@@ -32,7 +32,7 @@ const filters = ref({
   status: 4,
   group: {name:'Selecciona una opción', value: -1},
   category: {name:'Selecciona una opción', value: -1},
-  post_by:{name:'Selecciona una opción', id: -1},
+  post_by:-1,
   date_from: '',
   date_to: '',
 })
@@ -55,11 +55,12 @@ const updateList = () => {
   emit('updateList', { ...formatFilters() })
 }
 const formatFilters = () => {
+
   return {
     status: filters.value.status,
     group: filters.value.group.value == -1 ? '' : filters.value.group.value,
     category: filters.value.category.value == -1 ? '' : filters.value.category.value,
-    post_by:  filters.value.post_by.id == -1 ? '' : filters.value.post_by.id,
+    post_by:  filters.value.post_by == -1 ? '' : filters.value.post_by,
     date_from: filters.value.date_from,
     date_to: filters.value.date_to,
   }
@@ -77,10 +78,14 @@ const resetFilters = () => {
     status: 4,
     group: {name:'Selecciona una opción', value: -1},
     category: {name:'Selecciona una opción', value: -1},
-    post_by:{name:'Selecciona una opción', id: -1},
+    post_by:-1,
     date_from: '',
     date_to: '',
   }
+  categoryOptions.value = [{name:'Selecciona una opción', value: -1}]
+
+  emit('updateList', { ...formatFilters() })
+
 }
 onMounted(() => {
   getUserOptions()

@@ -49,12 +49,12 @@ const menu = [
     subtitle: 'Modulo de gestion de eventos',
     link: '/admin/events',
   },
-  {
-    title: 'Ajustes',
-    icon: iconsApp.config,
-    subtitle: 'Configura la app',
-    link: '/config',
-  },
+  // {
+  //   title: 'Ajustes',
+  //   icon: iconsApp.config,
+  //   subtitle: 'Configura la app',
+  //   link: '/config',
+  // },
 ];
 
 const goTo = (url) => {

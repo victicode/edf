@@ -136,7 +136,7 @@ class NoticeController extends Controller
 
         return $this->returnSuccess(200, ['status' => $notice->status]);
     }
-    
+
     private function validateFieldsFromInput($inputs)
     {
         $rules = [
@@ -179,23 +179,28 @@ class NoticeController extends Controller
             $query->where('status', intval($request->status));
         }
 
-        // // Filtro por método de pago
-        // if ($request->filled('pay_method')) {
-        //     $query->where('pay_method', intval($request->pay_method));
-        // }
+        // Filtro por grupo
+        if ($request->filled('group')) {
+            $query->where('group', intval($request->group));
+        }
 
-        // // Filtro por tipo de pago
-        // if ($request->filled('type')) {
-        //     $query->where('type', intval($request->type));
-        // }
+        // Filtro por category
+        if ($request->filled('category')) {
+            $query->where('category', intval($request->category));
+        }
 
-        // // Filtro por rango de fechas
-        // if ($request->filled('date_from')) {
-        //     $query->whereDate('pay_date', '>=', $request->get('date_from'));
-        // }
-        // if ($request->filled('date_to')) {
-        //     $query->whereDate('pay_date', '<=', $request->get('date_to'));
-        // }
+        // Filtro por usuario
+        if ($request->filled('post_by')) {
+            $query->where('user_id', intval($request->post_by));
+        }
+
+        // Filtro por rango de fechas
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->get('date_from'));
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->get('date_to'));
+        }
 
         // // Ordenamiento
         // $validSortFields = ['created_at', 'pay_date', 'amount', 'status'];

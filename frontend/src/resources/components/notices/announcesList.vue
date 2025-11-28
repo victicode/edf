@@ -43,41 +43,46 @@ watch(() => props.myPost, (newValue) => {
         <div class="notices-badge px-3 ">
           Nuevo
         </div>
-        <div class="notices-badgeStatus px-3" :class="'bg-'+announce.status_color" v-if="(announce.user_id == user.id && isMyPost) || (announce.status == 1 && user.id == 1)">
+        <div class="notices-badgeStatus px-3" :class="'bg-'+announce.status_color" v-if="(announce.user_id == user.id && isMyPost) || (announce.status !== 2 && user.id == 1)">
           {{ announce.status_label }}
         </div>
         <div>
           <div class="notice__item--title">{{announce.title}}</div>
+          <div class="text-grey-6 mb-1" style="font-size: 0.65rem;">
+            {{ announce.group_label }} > {{ announce.category_label }}
+          </div>
           <div class="notice__item--description text-stone-400 my-1">
             {{ announce.description.substring(0,94) }}...
           </div>
 
         </div>
       </div>
-      <div class="notice__item-bottom pl-4 flex items-center justify-between pr-3 py-2">
-        <div class="notice__item-bottom--postBy" @click="goTo(announce.id)">
-          Publicado por: {{dataContactFormat(announce.data_contact)}}
-        </div>
-        <div class="notice__item-bottom--dayPost flex items-center justify-between ">
-          <div class="mr-2">
-            {{ moment(announce.created_at).format('DD MMM YYYY') }}
+      <div class="notice__item-bottom pl-4 pr-3 py-2">
+        <div class="flex items-center justify-between ">
+          <div class="notice__item-bottom--postBy pt-1" @click="goTo(announce.id)">
+            Publicado por: {{dataContactFormat(announce.data_contact)}}
           </div>
-          <div  v-if="user.id == announce.user_id">
-            <q-btn size="xs" round="" color="primary" flat="">
-              <div v-html="iconsApp.optionsBook" />
-              <q-menu>
-                <q-list style="min-width: 150px">
-                  <q-item clickable v-close-popup @click="showDialog(announce.id, 'delete')" >
-                    <q-item-section>Borrar anuncio</q-item-section>
-                  </q-item>
-                  <q-separator />
-                  <q-item clickable v-close-popup  @click="showDialog(announce.id, 'update')"  >
-                    <q-item-section>Editar anuncio</q-item-section>
-                  </q-item>
-                  <q-separator />
-                </q-list>
-              </q-menu>
-            </q-btn>
+          <div class="notice__item-bottom--dayPost flex items-center justify-between ">
+            <div class="mr-2">
+              {{ moment(announce.created_at).format('DD MMM YYYY') }}
+            </div>
+            <div  v-if="user.id == announce.user_id">
+              <q-btn size="xs" round="" color="primary" flat="">
+                <div v-html="iconsApp.optionsBook" />
+                <q-menu>
+                  <q-list style="min-width: 150px">
+                    <q-item clickable v-close-popup  @click="showDialog(announce.id, 'update')"  >
+                      <q-item-section>Editar anuncio</q-item-section>
+                    </q-item>
+                    <q-separator />
+                    <q-item clickable v-close-popup @click="showDialog(announce.id, 'delete')" >
+                      <q-item-section class="text-negative">Borrar anuncio</q-item-section>
+                    </q-item>
+                    <q-separator />
+                  </q-list>
+                </q-menu>
+              </q-btn>
+            </div>
           </div>
         </div>
       </div>

@@ -3,10 +3,13 @@ import { ref, onMounted } from 'vue';
 import { useNoticeStore } from '@/services/store/notice.store';
 import NoticesList from '@/components/notices/noticesList.vue';
 import AnnouncesList from '@/components/notices/announcesList.vue';
-import createAnnouncesModal from '@/components/notices/createAnnouncesModal.vue';
 import deleteAnnounceModal from '@/components/notices/deleteAnnounceModal.vue';
 import updateAnnounceModal from '@/components/notices/updateAnnounceModal.vue';
-import filterAnnouncesList from '@//components/notices/filterAnnouncesList.vue';
+import filterAnnouncesList from '@/components/notices/filterAnnouncesList.vue';
+import createNoticeModal from '@/components/notices/createNoticeModal.vue';
+import updateNoticeModal from '@/components/notices/updateNoticeModal.vue';
+import deleteNoticeModal from '@/components/notices/deleteNoticeModal.vue';
+
 
 const notices = ref([]);
 const announces = ref([]);
@@ -15,6 +18,7 @@ const noticeStore = useNoticeStore();
 const panelToShow = ref('notices')
 const modal = ref('')
 const floatTab = ref(false);
+const activeFilterSearch = ref('active')
 const filters = ref({
   status: 4,
   group: '',
@@ -51,26 +55,45 @@ const closeModal = () => {
   modal.value = ''
 }
 const isUsingFilter = () => {
-  let filtersToValidate = filters.value
-  let { status } = filtersToValidate
-  let result = false
+  const filtersToValidate = {...filters.value}
+  const { status } = filtersToValidate
+  let result = ''
+
 
   if( status != 4) {
-    result = true
+    result = 'active-filter'
   }
-  Object.values(filtersToValidate).forEach(filter => {
-    if(filter !== ''){
-      result = true
+  Object.values(filtersToValidate).forEach((filter, index) => {
+    if(index != 0){
+      if(filter !== ''){
+        result = 'active-filter'
+      }
     }
   });
-  
-   return result
+  activeFilterSearch.value = result
 }
-const getNoticesWithFilter = (newFilter) =>{
+const getNoticesWithFilter = (newFilter) => {
   filters.value = { ...filters.value, ...newFilter };
+  isUsingFilter()
   getNotices();
 }
 
+const resetFilter = () => {
+  filters.value = {
+    status: 4,
+    group: '',
+    category: '',
+    post_by: '',
+    date_from: '',
+    date_to: '',
+  }
+  isUsingFilter()
+
+}
+const setPanelShow = (value) => {
+  panelToShow.value = value
+  resetFilter()
+}
 onMounted(() => {
   getNotices();
 });
@@ -82,12 +105,12 @@ onMounted(() => {
     <div class="h-full" style="overflow: auto; position: relative;">
       <div class="flex justify-center  mt-3 bg-stone-200 py-2 buttonsContainer" >
         <div>
-          <div class="buttonSwichtNotices  px-6 mx-3" :class="{'active':panelToShow == 'notices'}" @click="panelToShow ='notices'">
+          <div class="buttonSwichtNotices  px-6 mx-3" :class="{'active':panelToShow == 'notices'}" @click="setPanelShow('notices')">
             Noticias
           </div>
         </div>
         <div>
-          <div class="buttonSwichtNotices  px-6 mx-3" :class="{'active':panelToShow == 'announces'}" @click="panelToShow ='announces'">
+          <div class="buttonSwichtNotices  px-6 mx-3" :class="{'active':panelToShow == 'announces'}" @click="setPanelShow('announces')">
             Anuncios
           </div>
         </div>
@@ -96,8 +119,10 @@ onMounted(() => {
         <q-btn
           outline
           color="primary"
+          :class="activeFilterSearch"
           icon="eva-funnel-outline"
           @click="modal = 'filter'"
+          v-if="panelToShow=='announces'"
         />
       </div>
       <!-- Loading State -->
@@ -123,10 +148,11 @@ onMounted(() => {
           direction="up"
           v-if="panelToShow == 'notices'"
         >
-          <q-fab-action class="noticeOption" label-position="right" color="primary" icon="eva-plus-outline" label="Crear noticia" @click="showModal('create_announce')"/>
+          <q-fab-action class="noticeOption" label-position="right" color="primary" icon="eva-plus-outline" label="Crear noticia" @click="showModal('create_notice')"/>
         </q-fab>
       </div>
-      <createAnnouncesModal :dialog="(modal=='create_announce')" @closeModal="closeModal" @updateList="getOnlyPost(true)"/>
+
+      <createNoticeModal :dialog="(modal=='create_notice')" @closeModal="closeModal" @updateList="getNotices()" />
       <filterAnnouncesList 
         :dialog="(modal == 'filter')" 
         :typeSearch="panelToShow"
@@ -134,8 +160,8 @@ onMounted(() => {
         @updateList="getNoticesWithFilter"
       />
       <template v-if="Object.values(selectedNotice).length > 0 ">
-        <deleteAnnounceModal :dialog="(modal=='delete')" :announce="selectedNotice"  @closeModal="closeModal" @updateList="getOnlyPost()" />
-        <updateAnnounceModal :dialog="(modal=='update')" :announce="selectedNotice"  @closeModal="closeModal" @updateList="getOnlyPost()" />
+        <deleteNoticeModal :dialog="(modal=='delete')" :notice="selectedNotice"  @closeModal="closeModal" @updateList="getNotices()" />
+        <updateNoticeModal :dialog="(modal=='update')" :notice="selectedNotice"  @closeModal="closeModal" @updateList="getNotices()" />
       </template>
       
     </div>
@@ -143,6 +169,10 @@ onMounted(() => {
 </template>
 
 <style  lang="scss">
+.q-btn.active-filter{
+  background: $primary !important;
+  color: white !important;
+}
 .createAnnouncesFloat{
   & .q-fab__actions {
     align-items: end;

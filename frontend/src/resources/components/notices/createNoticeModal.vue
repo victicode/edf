@@ -6,28 +6,20 @@ import { Notify } from 'quasar';
 const emit = defineEmits(['closeModal', 'updateList'])
 const props = defineProps({
   dialog: Boolean,
-  announce: Object
 })
 const noticeStore = useNoticeStore();
 
-const groups = noticeStore.group.slice(1)
-const groupOptions = [{name:'Selecciona una opción', value: -1}, ...groups]
-const categoryOptions = ref([{name:'Selecciona una opción', value: -1}, ...noticeStore.category[props.announce.group]])
-
 const loading = ref(false)
 const dialog = ref(props.dialog)
+const formData = ref({
+  title:'',
+  description:'',
+  group: 0,
+  category: 0,
+  imagen:[],
+})
 
-const setAnnounce = () => {
-  return {
-    title: props.announce.title,
-    description: props.announce.description,
-    group: groupOptions.find((group) => group.value == props.announce.group),
-    category: categoryOptions.value.find((category) => category.value == props.announce.category),
-    imagen: props.announce.img ? JSON.parse(props.announce.img) : [],
-  }
-}
 
-const formData = ref(setAnnounce())
 const hideModal = () => {
   emit('closeModal')
   cleanForm()
@@ -38,24 +30,30 @@ const updateList = () => {
 
 }
 const cleanForm = () => {
-//  
+  formData.value = {
+    title:'',
+    description:'',
+    group: 0,
+    category: 0,
+    imagen:[],
+  }
 }
-const updateAnnounce = () => {
+const createAnnounce = () => {
   loading.value = true
-  const ANNOUNCE_TYPE = 2
+  const NOTICE_TYPE = 1
 
   const dataForm =  new FormData
   dataForm.append('title', formData.value.title)
   dataForm.append('description', formData.value.description)
-  dataForm.append('group', formData.value.group.value)
-  dataForm.append('category', formData.value.category.value)
-  dataForm.append('type', ANNOUNCE_TYPE)
+  dataForm.append('group', formData.value.group)
+  dataForm.append('category', formData.value.category)
+  dataForm.append('type', NOTICE_TYPE)
 
   formData.value.imagen.forEach((file) => {
     dataForm.append('img[]', file);
   })
 
-  noticeStore.updateNotice(dataForm, props.announce.id)
+  noticeStore.createNotice(dataForm)
   .then((data) => {
     showNotify('positive', 'Tu anuncio fue enviado para revisión')
     updateList()
@@ -67,14 +65,6 @@ const updateAnnounce = () => {
   .finally(() => {
     loading.value = false
   })
-}
-const isAvailableOption = (val) => {
-  if(val == -1) {
-    categoryOptions.value = [{name:'Selecciona una opción', value: -1}]
-    formData.value.category = {name:'Selecciona una opción', value: -1}
-    return
-  }
-  categoryOptions.value = [{name:'Selecciona una opción', value: -1}, ...noticeStore.category[val]]
 }
 
 const showNotify = (type, text) => {
@@ -90,22 +80,20 @@ const onRejected = (e) => {
   :'Error al subir imagen, verifica que sea una imagen valida';
   showNotify('negative', errorMessage)
 }
-
 watch(() => props.dialog, (newValue) => {
   dialog.value = newValue
-  formData.value = setAnnounce()
 });
 
 </script>
 <template>
-  <q-dialog v-model="dialog" class="updateAnnounceDialog" persistent backdrop-filter="blur(0.5px)">
+  <q-dialog v-model="dialog" class="createAnnounceDialog" persistent backdrop-filter="blur(0.5px)">
     <q-card class="dialog_document w-full " style="border-radius:1rem">
       <q-form
-        @submit="updateAnnounce()"
+        @submit="createAnnounce()"
       >
         <q-card-section class="q-px-none">
           <div class="text-h6 text-black pb-2 px-5" style="border-bottom: 1px solid lightgray;">
-            Editar anuncio
+            Publicar noticia
           </div>
         </q-card-section>
         <section class="content__modalSectionRifa md:mt-5 py-0 ">
@@ -123,37 +111,6 @@ watch(() => props.dialog, (newValue) => {
                   color="primary"
                   :rules="[ val => val && val.length > 0 || 'Titulo del anuncio es obligatorio']"
                 />
-            </div>
-            <div class="col-md-6 col-12 mt-1 px-2 md:px-12">
-              <div class="text-subtitle2 text-black">
-                Grupo *
-              </div>
-              <q-select 
-                class="form__inputsR mt-1"
-                v-model="formData.group"
-                :options="groupOptions"
-                option-label="name"
-                option-value="value"
-                emit-value
-                map-options
-                :rules="[ val => val.value != -1 || 'Grupo es obligatorio']"
-                @update:model-value="isAvailableOption"
-                dense borderless />
-            </div>
-            <div class="col-md-6 col-12 mt-1 px-2 md:px-12">
-              <div class="text-subtitle2 text-black">
-                Categoria *
-              </div>
-              <q-select 
-                class="form__inputsR mt-1"
-                v-model="formData.category"
-                :options="categoryOptions"
-                option-label="name"
-                option-value="value"
-                emit-value
-                map-options
-                :rules="[ val => val.value != -1 || 'Categoria es obligatoria']"
-                dense borderless />
             </div>
             <div class="col-md-6 col-12 mt-1 px-2 md:px-12">
               <div class="text-subtitle2 text-black">
@@ -219,7 +176,7 @@ watch(() => props.dialog, (newValue) => {
   </q-dialog>
 </template>
 <style lang="scss">
-.updateAnnounceDialog{
+.createAnnounceDialog{
   max-height: 95dvh;
   & .q-dialog__inner--minimized > div{
     max-height: 95dvh!important;
