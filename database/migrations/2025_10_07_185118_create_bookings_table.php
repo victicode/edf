@@ -22,7 +22,7 @@ return new class extends Migration
             $table->time('time_to');
             $table->double('amount');
             $table->longText('vaucher');
-            $table->longText('reference');            
+            $table->longText('reference');
             $table->longText('note');
             $table->integer('pay_mehtod');
 

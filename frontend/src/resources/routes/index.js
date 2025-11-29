@@ -227,6 +227,17 @@ const routes = [
           pagTitle: 'Eventos'
         }
       },
+      {
+        path: '/admin/events/form/add', 
+        component: () => import('@/view/admin/Events/createEvent.vue'),
+        name:'eventsCreate',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Crear evento'
+        }
+      },
+      
 
       // ---- client Routes -----
 

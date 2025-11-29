@@ -1,17 +1,17 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useReserveStore } from '@/services/store/reserve.store';
+import { useEventStore } from '@/services/store/event.store';
 import { useRouter } from 'vue-router';
-import eventsList from '@/view/admin/Events/eventsList.vue';
+import eventsList from '@/components/events/eventsList.vue';
 const events = ref([]);
 const loading = ref(false);
-const reserveStore = useReserveStore();
+const eventStore = useEventStore();
 const router = useRouter();
 const dialog = ref('');
-const selectedReserve = ref({})
-const getReserves = () => {
+const selectedEvent = ref({})
+const getEvents = () => {
   loading.value = true;
-  reserveStore.getReservesByUser()
+  eventStore.getEvents()
     .then((response) => {
       if (response.code !== 200) throw response;
       events.value = response.data;
@@ -26,8 +26,8 @@ const getReserves = () => {
 const getDialogData = (e) => {
   return e.target.closest('.q-item').dataset
 }
-const selectReserve = (id) => {
-  selectedReserve.value = events.value.find(reserve => reserve.id == id)
+const selectEvent = (id) => {
+  selectedEvent.value = events.value.find(event => event.id == id)
 }
 const goTo = (url) => {
   router.push(url);
@@ -36,7 +36,7 @@ const goTo = (url) => {
 
 
 onMounted(() => {
-  getReserves();
+  getEvents();
 });
 </script>
 
@@ -58,7 +58,7 @@ onMounted(() => {
     <!-- Botón flotante para crear reserva -->
     <div class="px-4 md:flex  md:justify-center items-center md:w-full md:px-12" style="height: 10%;">
       <q-btn color="primary" unelevated class="w-full mt-0 md:mx-24 createBookingButton md:w-full"
-        style="border-radius: 0.5rem; width: 100%;" @click="goTo('/client/events/form/add')">
+        style="border-radius: 0.5rem; width: 100%;" @click="goTo('/admin/events/form/add')">
         <div class="flex items-center py-2">
           <q-icon name="eva-plus-outline" />
           <div class="q-pt-xs text-bold pl-1">
@@ -67,7 +67,7 @@ onMounted(() => {
         </div>
       </q-btn>
     </div>
-    <template v-if="Object.values(selectedReserve).length > 0">
+    <template v-if="Object.values(selectedEvent).length > 0">
     </template>
   </div>
 </template>

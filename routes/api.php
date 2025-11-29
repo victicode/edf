@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\ComunAreaController;
 use App\Http\Controllers\Api\DepartamentController;
+use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\NoticeController;
 use App\Http\Controllers\Api\NotificationController;
 
@@ -50,6 +51,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/byArea/{id}', [BookingController::class, 'getBookingByAreaId']);
         Route::post('/cancel/{id}', [BookingController::class, 'cancelBooking']);
         Route::get('/pendings', [BookingController::class, 'getPendings']);
+    });
+    Route::prefix('events')->name('event.')->group(function () {
+        Route::get('/', [EventController::class, 'get']);
+        Route::post('/', [EventController::class, 'create']);
+        // Route::get('/availableBooking/{id}', [EventController::class, 'getAvaibleBookingByDay']);
+        // Route::get('/byId/{id}', [EventController::class, 'getBookingById']);
+        // Route::get('/byArea/{id}', [EventController::class, 'getBookingByAreaId']);
+        // Route::post('/cancel/{id}', [EventController::class, 'cancelBooking']);
+        // Route::get('/pendings', [EventController::class, 'getPendings']);
     });
     Route::prefix('pays')->name('pay.')->group(function () {
         Route::get('/', [PayController::class, 'getPaysByUser']);

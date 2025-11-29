@@ -28,15 +28,10 @@ const showDialog = (e) => {
     dialog.value = dialogData.dialog;
   }, 500);
 }
-const getPaymentStatus = (booking) => {
-  if (booking.amount > 0) {
-    return !booking.pay
-      ? 'No pagada'
-      : booking.pay.status == 1
-        ? 'Pendiente de aprobación'
-        : 'Pagado';
-  }
-  return booking.status == 3 ? 'Confirmado' : 'Cancelado';
+const formatLocation = (event) => {
+  let location = event.location || event?.booking?.comun_area.name
+
+  return location || '---'
 }
 
 const getPaymentAmount = (booking) => {
@@ -55,26 +50,21 @@ const getPaymentAmount = (booking) => {
         style="position: relative;">
 
         <!-- Sección superior - Detalles de la reserva -->
-        <div class="px-4 pb-4 pt-2 border-b border-dashed border-gray-300">
+        <div class="md:px-4 md:pb-4 pb-2 px-3 pt-2  border-gray-300">
           <!-- Header con nombre y estado -->
-          <div class="flex justify-between items-start mb-2">
+          <div class="flex justify-between items-start mb-1">
             <div class="flex-1">
-              <h3 class="text-lg font-bold text-gray-900 mb-2">
-                {{ event.comun_area?.name || 'Área Común' }}
+              <h3 class="text-lg font-bold text-gray-900 mb-1">
+                {{ event.title || 'Evento' }}
               </h3>
             </div>
-            <!-- Estado badge -->
-            <span :class="'bg-' + event.status_color"
-              class="inline-block px-3 py-2 text-xs font-bold text-white badgeEvents">
-              {{ event.status_label }}
-            </span>
           </div>
 
           <!-- Contenido principal con imagen y detalles -->
           <div class="flex items-center space-x-4">
             <!-- Imagen del área -->
             <div class="w-16 h-16 bg-gray-200 rounded-xl flex items-center justify-center flex-shrink-0">
-              <div v-html="iconsApp[event.comun_area.icon]" />
+              <div v-html="iconsApp['events']" />
             </div>
 
             <!-- Detalles de la reserva -->
@@ -100,9 +90,9 @@ const getPaymentAmount = (booking) => {
                 </span>
               </div>
               <div class="flex items-center text-sm text-gray-700">
-                <div v-html="iconsApp.moneyIcon" />
+                <div v-html="iconsApp.location" />
                 <span class="font-medium">
-                  {{ getPaymentAmount(event) }}
+                  {{ formatLocation(event) }}
                 </span>
               </div>
             </div>
@@ -110,49 +100,22 @@ const getPaymentAmount = (booking) => {
         </div>
 
         <!-- Sección inferior - Estado de pago -->
-        <div class="p-4 bg-gray-50">
-          <div class="flex justify-between items-center">
-            <div class="flex items-center">
-              <svg v-if="event.status == 3" class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <svg v-else class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                </path>
-              </svg>
-              <span class="text-sm font-medium text-gray-700">{{ getPaymentStatus(event) }}</span>
-            </div>
-            <div class="flex items-center">
-              <q-btn unelevated rounded color="warning" size="sm" class="ml-3" v-if="event.status == 1"
-                @click="goTo('/client/events/pay-event/' + event.id)">
-                <q-tooltip class="bg-primary  text-white text-body2" :offset="[10, 10]">
-                  Proceder con el pago
-                </q-tooltip>
-                <div v-html="iconsApp.procedToPay"></div>
-              </q-btn>
-              <div flat rounded color="primary" size="sm" class="ml-3 cursor-pointer">
-                <div v-html="iconsApp.optionsBook" />
-                <q-menu>
-                  <q-list style="min-width: 150px">
-                    <q-item clickable v-close-popup @click="goTo('/client/events/view/' + event.id)">
-                      <q-item-section>Ver detalles</q-item-section>
-                    </q-item>
-                    <q-item clickable v-close-popup @click="showDialog($event)" data-dialog="cancel"
-                      :data-event="event.id" v-if="event.status != 0">
-                      <q-item-section>Cancelar reserva</q-item-section>
-                    </q-item>
-                    <q-separator />
-                    <q-item clickable v-close-popup v-if="event.status == 1" @click="goTo('/client/events/pay-event/' + event.id)">
-                      <q-item-section>Pagar</q-item-section>
-                    </q-item>
-                    <q-item clickable v-close-popup v-if="event.status == 3">
-                      <q-item-section>Descarga pase</q-item-section>
-                    </q-item>
-                    <q-separator />
-                  </q-list>
-                </q-menu>
-              </div>
+        <div class="md:px-4 md:py-4 pb-3 px-3 bg-gray-50">
+          <div class="flex justify-end items-center">
+            <div flat rounded color="primary" size="sm" class="ml-3 cursor-pointer">
+              <div v-html="iconsApp.optionsBook" />
+              <q-menu>
+                <q-list style="min-width: 150px">
+                  <q-item clickable v-close-popup @click="goTo('/client/events/view/' + event.id)">
+                    <q-item-section>Ver detalles</q-item-section>
+                  </q-item>
+                  <q-item clickable v-close-popup @click="showDialog($event)" data-dialog="cancel"
+                    :data-event="event.id">
+                    <q-item-section>Eliminar evento</q-item-section>
+                  </q-item>
+                  <q-separator />
+                </q-list>
+              </q-menu>
             </div>
           </div>
         </div>
