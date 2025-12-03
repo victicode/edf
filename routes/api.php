@@ -55,8 +55,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('events')->name('event.')->group(function () {
         Route::get('/', [EventController::class, 'get']);
         Route::post('/', [EventController::class, 'create']);
+        Route::get('/byId/{id}', [EventController::class, 'show']);
         // Route::get('/availableBooking/{id}', [EventController::class, 'getAvaibleBookingByDay']);
-        // Route::get('/byId/{id}', [EventController::class, 'getBookingById']);
         // Route::get('/byArea/{id}', [EventController::class, 'getBookingByAreaId']);
         // Route::post('/cancel/{id}', [EventController::class, 'cancelBooking']);
         // Route::get('/pendings', [EventController::class, 'getPendings']);

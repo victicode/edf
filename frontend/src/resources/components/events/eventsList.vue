@@ -1,6 +1,7 @@
 <script setup>
 import iconsApp from '@/assets/icons/index'
 import moment from 'moment';
+import { useRouter } from 'vue-router';
 // import cancelReserveModal from '@/components/events/cancelReserveModal.vue';
 
 moment.locale('es', {
@@ -9,7 +10,7 @@ moment.locale('es', {
     '_'
   ),
 })
-
+const router = useRouter()
 const emit = defineEmits(['openModal'])
 const props = defineProps({
   events: {
@@ -29,7 +30,7 @@ const showDialog = (e) => {
   }, 500);
 }
 const formatLocation = (event) => {
-  let location = event.location || event?.booking?.comun_area.name
+  let location = event?.booking?.comun_area.name || event.location 
 
   return location || '---'
 }
@@ -52,11 +53,28 @@ const getPaymentAmount = (booking) => {
         <!-- Sección superior - Detalles de la reserva -->
         <div class="md:px-4 md:pb-4 pb-2 px-3 pt-2  border-gray-300">
           <!-- Header con nombre y estado -->
-          <div class="flex justify-between items-start mb-1">
-            <div class="flex-1">
+          <div class="flex justify-between items-center mb-1">
+            <div class="ellipsis" style="width: 90%;">
               <h3 class="text-lg font-bold text-gray-900 mb-1">
                 {{ event.title || 'Evento' }}
               </h3>
+            </div>
+            <div class="" style="width: 10%;">
+              <div flat rounded color="primary" size="sm" class="ml-3 cursor-pointer">
+                <div v-html="iconsApp.optionsBook" />
+                <q-menu>
+                  <q-list style="min-width: 150px">
+                    <q-item clickable v-close-popup @click="goTo('/admin/events/view/' + event.id)">
+                      <q-item-section>Ver detalles</q-item-section>
+                    </q-item>
+                    <q-item clickable v-close-popup @click="showDialog($event)" data-dialog="cancel"
+                      :data-event="event.id">
+                      <q-item-section>Eliminar evento</q-item-section>
+                    </q-item>
+                    <q-separator />
+                  </q-list>
+                </q-menu>
+              </div>
             </div>
           </div>
 
@@ -102,21 +120,7 @@ const getPaymentAmount = (booking) => {
         <!-- Sección inferior - Estado de pago -->
         <div class="md:px-4 md:py-4 pb-3 px-3 bg-gray-50">
           <div class="flex justify-end items-center">
-            <div flat rounded color="primary" size="sm" class="ml-3 cursor-pointer">
-              <div v-html="iconsApp.optionsBook" />
-              <q-menu>
-                <q-list style="min-width: 150px">
-                  <q-item clickable v-close-popup @click="goTo('/client/events/view/' + event.id)">
-                    <q-item-section>Ver detalles</q-item-section>
-                  </q-item>
-                  <q-item clickable v-close-popup @click="showDialog($event)" data-dialog="cancel"
-                    :data-event="event.id">
-                    <q-item-section>Eliminar evento</q-item-section>
-                  </q-item>
-                  <q-separator />
-                </q-list>
-              </q-menu>
-            </div>
+            
           </div>
         </div>
       </div>
@@ -131,11 +135,11 @@ const getPaymentAmount = (booking) => {
           </path>
         </svg>
       </div>
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">No tienes reservas</h3>
-      <p class="text-gray-600 text-center mb-6">Aún no has realizado ninguna reserva de áreas comunes.</p>
-      <button @click="goTo('/client/events/form/add')"
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">No tienes eventos listados</h3>
+      <p class="text-gray-600 text-center mb-6">Aún no has realizado ningun evento.</p>
+      <button @click="goTo('/admin/events/form/add')"
         class="px-6 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors">
-        Crear primer reserva
+        Crear primer evento
       </button>
     </div>
 </template>

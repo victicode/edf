@@ -228,6 +228,16 @@ const routes = [
         }
       },
       {
+        path: '/admin/events/view/:id',
+        component: () => import('@/view/admin/Events/viewEvent.vue'),
+        name:'eventViewAdmin',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Detalles de evento'
+        }
+      },
+      {
         path: '/admin/events/form/add', 
         component: () => import('@/view/admin/Events/createEvent.vue'),
         name:'eventsCreate',
