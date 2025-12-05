@@ -145,9 +145,15 @@ onMounted(() => {
                   {{ formatLocation(eventData) }}
                 </span>
               </div>
-
-              <!-- Asistentes -->
-              <div
+              <!-- Datos de reserva asociada -->
+              <div class="flex justify-between items-center pb-1" v-if="eventData.booking">
+                <span class="text-gray-600 font-medium">Reserva asociada</span>
+                <span @click="" class="text-gray-900 font-semibold cursor-pointer" style="text-decoration: underline;">
+                  #{{ eventData.booking.booking_number }}
+                </span>
+              </div>
+               <!-- Asistentes -->
+               <div
                 class="flex justify-between items-center pb-2"
                 v-if="eventData.assists !== null || eventData.not_assits !== null"
                 style="border-bottom: 1px solid rgba(211, 211, 211, 0.534);"
@@ -160,26 +166,20 @@ onMounted(() => {
                   </span>
                 </span>
               </div>
-
-              <!-- Datos de reserva asociada -->
-              <div class="flex justify-between items-center pb-1" v-if="eventData.booking">
-                <span class="text-gray-600 font-medium">Reserva asociada</span>
-                <span @click="" class="text-gray-900 font-semibold cursor-pointer" style="text-decoration: underline;">
-                  #{{ eventData.booking.booking_number }}
-                </span>
-              </div>
             </div>
           </div>
 
           <!-- Botones -->
-          <div class="w-full px-5 pb-5">
+          <!-- <div class="w-full px-5 pb-5">
             <button
               @click="goToEventsList"
-              class="w-full py-3 bg-primary text-white rounded-xl font-medium hover:bg-gray-600 transition-colors"
+              class="w-full flex flex-center py-3 bg-primary text-white rounded-xl font-medium hover:bg-gray-600 transition-colors"
+              
             >
-              Volver al listado
+            <q-icon name="eva-bell-outline" class="mx-2" size="1.2rem" />
+              Enviar recordatorio
             </button>
-          </div>
+          </div> -->
         </div>
       </div>
 

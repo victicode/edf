@@ -102,13 +102,13 @@ export const useEventStore = defineStore('Event', {
       })
     },
 
-    async updateEvent(data) {
+    async updateEvent(data, id) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.put('/api/events/'+data.id, data)
+        ApiService.post('/api/events/'+id, data)
         .then(({data}) => {
           if(data.code !=200) throw data;
           

@@ -54,10 +54,61 @@ class EventController extends Controller
         }
         return $this->returnSuccess(200, 'ok');
     }
+    public function update(Request $request, $id)
+    {
+        $LOCATION_TYPE_COMUN_AREA = 1;
+
+        $LOCATION_TYPE_STANDAR = 2;
+        $validated = $this->validateFieldsFromInput($request->all());
+        $event = Event::with(['booking.comunArea'])->find($id);
+        $bookingToEvent = $event->booking_id;
+
+        if (count($validated) > 0) {
+            return $this->returnFail(400, $validated[0]);
+        }
+        if (!$event) {
+            return $this->returnFail(404, 'Evento no encontrado');
+        }
+        $event->update([
+            'title' => $request->title,
+            'description' => htmlspecialchars($request->description),
+            'date' => date('Y-m-d', strtotime($request->date)),
+            'time_from' => $request->time_from,
+            'time_to' => $request->time_to,
+            'location' => $request->location ?? $event->location,
+        ]);
+
+        if (
+            $request->type_location == $LOCATION_TYPE_COMUN_AREA
+            && $event->booking?->comunArea->id != $request->area
+        ) {
+            $this->deleteEventReserve($event);
+            $bookingToEvent =  $this->createEventReserve($request)->id;
+        }
+        if ($request->type_location == $LOCATION_TYPE_STANDAR) {
+            $this->deleteEventReserve($event);
+            $bookingToEvent = null;
+        }
+
+        $event->update([
+            'booking_id' => $bookingToEvent,
+        ]);
+        return $this->returnSuccess(200, 'ok');
+    }
+    public function destroy($id)
+    {
+        $event = Event::find($id);
+        if (!$event) {
+            return $this->returnFail(404, 'Evento no encontrado');
+        }
+        $this->deleteEventReserve($event);
+        $event->delete();
+        return $this->returnSuccess(200, 'ok');
+    }
     private function validateFieldsFromInput($inputs)
     {
         $rules = [
-            'title'         => ['required', 'regex:/^[a-z 0-9 A-Z-À-ÿ  .\-]+$/i'],
+            'title'         => ['required', 'regex:/^[a-z 0-9 A-Z-À-ÿ ,.\-]+$/i'],
             'date'          => ['required', 'date'],
             'time_from'     => ['required'],
             'time_to'       => ['required'],
@@ -93,5 +144,13 @@ class EventController extends Controller
             'is_exclusive' => 1
         ]);
         return $booking;
+    }
+    private function deleteEventReserve(Event $event)
+    {
+        $booking = Booking::find($event->booking_id);
+        if (!$booking) {
+            return $this->returnFail(404, 'Reserva no encontrada');
+        }
+        $booking->delete();
     }
 }

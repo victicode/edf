@@ -64,7 +64,7 @@ const goTo = (url) => {
 onMounted(() => {
   getPendingCount()
 })
-</script>
+</script>nde
 <template>
   <div class="h-full w-full px-2">
     <div class="row md:pt-10 pt-5  md:px-20">

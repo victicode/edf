@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useEventStore } from '@/services/store/event.store';
 import { useRouter } from 'vue-router';
 import eventsList from '@/components/events/eventsList.vue';
+import deleteEventModal from '@/components/events/deleteEventModal.vue';
 const events = ref([]);
 const loading = ref(false);
 const eventStore = useEventStore();
@@ -23,11 +24,16 @@ const getEvents = () => {
       loading.value = false;
     });
 }
-const getDialogData = (e) => {
-  return e.target.closest('.q-item').dataset
-}
 const selectEvent = (id) => {
   selectedEvent.value = events.value.find(event => event.id == id)
+  showDialog('delete')
+}
+const closeModal = () => {
+  dialog.value = '';
+  selectedEvent.value = {};
+}
+const showDialog = (dialogType) => {
+  dialog.value = dialogType
 }
 const goTo = (url) => {
   router.push(url);
@@ -52,7 +58,7 @@ onMounted(() => {
 
       <!-- Content -->
       <div v-else class="px-4 py-6 md:px-28">
-        <eventsList :events="events"/>
+        <eventsList :events="events" @selectEvent="selectEvent"/>
       </div>
     </div>
     <!-- Botón flotante para crear reserva -->
@@ -68,6 +74,7 @@ onMounted(() => {
       </q-btn>
     </div>
     <template v-if="Object.values(selectedEvent).length > 0">
+      <deleteEventModal :dialog="(dialog === 'delete')" :event="selectedEvent" @closeModal="closeModal" @updateList="getEvents"/>
     </template>
   </div>
 </template>

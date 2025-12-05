@@ -16,34 +16,26 @@ const myLocale = {
   format24h: true,
   pluralDay: 'dias'
 }
-
 const comunAreaStore = useComunAreaStore()
 const eventStore = useEventStore()
-const emitter = inject('emitter')
 const comunAreas = ref([])
-const selectedComunArea = ref({})
 const router = useRouter()
-const disabledTime = ref(true)
+const route = useRoute()
 const ready = ref(false)
 const loading = ref(false)
 const step = ref(1)
-const formData = ref({
-  name:'',
-  description:'',
-  date: '',
-  location:'',
-  area:'',
-  typeArea:-1,
-  time_from: '',
-  time_to: '',
-})
+const locationOption = [
+  { value:-1, name:'Seleccione una opción'},
+  { value: 1, name:'Si'},
+  { value: 2, name:'No'},
+]
+
+const event = ref({})
 const minOptionsFrom = ref([0])
 
 
 const backButton = () => {
-  if (step.value == 2) {
-    cleanForm()
-    // return
+  if (step.value == 2) {    // return
   }
   step.value--
 }
@@ -56,28 +48,12 @@ const nextStep = () => {
   step.value++
 
 }
-const cleanForm = () => {
-  formData.value = {
-    name:'',
-    description:'',
-    date: '',
-    location:'',
-    area:'',
-    typeArea:{ value:-1, name:'Seleccione una opción'},
-    time_from: '',
-    time_to: '',
-  }
-  disabledTime.value = true
-}
+
 const getComunsArea = () => {
-  emitter.emit('pagTitle', 'Registra el evento')
   comunAreaStore.getAllComunAreas()
     .then((response) => {
       if (response.code !== 200) throw response
       comunAreas.value = response.data
-      setTimeout(() => {
-        ready.value = true
-      }, 100)
     })
     .catch((response) => {
       showNotify('positive', 'Error al obtener areas comunes')
@@ -98,23 +74,24 @@ const showNotify = (type, text) => {
 
 const createEvent = () => {
   loading.value = true
+  cleanAnother(event.value.typeArea)
   const dataEventForm =  new FormData
-  dataEventForm.append('title', formData.value.title)
-  dataEventForm.append('description', formData.value.description)
-  dataEventForm.append('date', formData.value.date)
-  dataEventForm.append('time_from', formData.value.time_from)
-  dataEventForm.append('time_to', formData.value.time_to)
-  dataEventForm.append('type_location', formData.value.typeArea)
-  if(formData.value.typeArea == 1) {
-    dataEventForm.append('area', formData.value.area.id)
+  dataEventForm.append('title', event.value.title)
+  dataEventForm.append('description', event.value.description)
+  dataEventForm.append('date', event.value.date)
+  dataEventForm.append('time_from', event.value.time_from)
+  dataEventForm.append('time_to', event.value.time_to)
+  dataEventForm.append('type_location', event.value.typeArea)
+  if(event.value.typeArea == 1) {
+    dataEventForm.append('area', event.value.area.id)
   }
-  dataEventForm.append('location', formData.value.location)
+  dataEventForm.append('location', event.value.location)
 
 
-  eventStore.createEvent(dataEventForm)
+  eventStore.updateEvent(dataEventForm, event.value.id)
     .then((response) => {
       console.log(response)
-      showNotify('positive', 'Evento registrado con exito')
+      showNotify('positive', 'Evento editado con exito')
       setTimeout(() => {
         loading.value = false
         router.go(-1)
@@ -125,22 +102,37 @@ const createEvent = () => {
       console.log(response)
       setTimeout(() => {
         loading.value = false
-        showNotify('negative', 'Error al registrar Evento')
+        showNotify('negative', 'Error al editar evento')
       }, 1000);
 
     })
 }
 const cleanAnother = (e) => {
   if(e == 1){
-    formData.value.location = '.'
+    event.value.location = '.'
   }
   if(e == 2){
-    formData.value.area = ''
+    event.value.area = ''
   }
 }
 
+const getEventToUpdate = () => {
+  eventStore.getEventById(route.params.id)
+  .then((data) => {
+    event.value = data.data
+    event.value.typeArea = event.value.booking_id ? 1 : 2
+    event.value.area = event.value.booking?.comun_area
+    setTimeout(() => {
+      ready.value = true
+    }, 1000)
+  })
+  .catch((response) => {
+    console.log(response)
+  })
+}
 onMounted(() => {
   getComunsArea()
+  getEventToUpdate()
 })
 
 </script>
@@ -148,14 +140,14 @@ onMounted(() => {
   <div class="md:px-20 md:mx-16  h-full " style="overflow: hidden; position: relative;">
     <div class="h-full" v-if="ready">
       <q-form @submit="nextStep()" class="h-full ">
-        <div style="height: 90%; overflow: auto;" >
+        <div style="height: 90%; overflow-x: hidden;" >
           <Transition name="horizontal">
             <div class="h-full"  v-if="step == 1 ">
               <div class=" w-full h-full ">
                 <div class="pb-10">
                   <div class="row w-full pt-5">
                     
-                    <div class="col-12  row">
+                    <div class="col-12 row">
                       <div class="col-12 row md:px-5 ">
                         <div class="col-12 text-subtitle1 headerSection my-1 py-2 px-4">
                           Datos del evento
@@ -169,7 +161,7 @@ onMounted(() => {
                               dense
                               borderless
                               clearable
-                              v-model="formData.title"
+                              v-model="event.title"
                               class="form__inputsReverse mt-1"
                               color="primary"
                               :rules="[ val => val && val.length > 0 || 'Nombre de area es requerido']"
@@ -179,7 +171,7 @@ onMounted(() => {
                             <div class="text-subtitle2 text-black" style="font-weight: medium;">
                               Descripción
                             </div>
-                            <q-input dense borderless clearable type="textarea" v-model="formData.description"
+                            <q-input dense borderless clearable type="textarea" v-model="event.description"
                               class="form__inputsReverse mt-1" color="primary" />
                           </div>
                         </div>
@@ -193,12 +185,12 @@ onMounted(() => {
                             <div class="text-subtitle2 text-black" style="font-weight: medium;">
                               Fecha del evento:
                             </div>
-                            <q-input v-model="formData.date" :rules="[val => !(!val) || 'Fecha es requerida']" dense
+                            <q-input v-model="event.date" :rules="[val => !(!val) || 'Fecha es requerida']" dense
                               borderless clearable class="form__inputsReverse mt-1" color="primary">
                               <template v-slot:append>
                                 <q-icon name="eva-calendar-outline" class="cursor-pointer">
                                   <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                    <q-date mask="DD-MM-YYYY" v-model="formData.date" :options="optionsFn"
+                                    <q-date mask="DD-MM-YYYY" v-model="event.date" :options="optionsFn"
                                       :navigation-min-year-month="moment().format('YYYY/MM')" :locale="myLocale">
                                       <div class="row items-center justify-end">
                                         <q-btn v-close-popup label="Aceptar" color="primary" flat />
@@ -220,12 +212,13 @@ onMounted(() => {
                             <div class="text-subtitle2 text-black" style="font-weight: medium;">
                               Desde:
                             </div>
-                            <q-input v-model="formData.time_from" mask="time" :rules="['time']" dense borderless
+                            <q-input v-model="event.time_from" mask="time"
+                              dense borderless
                               clearable class="form__inputsReverse mt-1 q-pb-sm" color="primary">
                               <template v-slot:append>
                                 <q-icon name="eva-clock-outline" class="cursor-pointer">
                                   <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                    <q-time v-model="formData.time_from"
+                                    <q-time v-model="event.time_from"
                                       :minute-options="minOptionsFrom" format24h>
                                       <div class="row items-center justify-end">
                                         <q-btn v-close-popup label="Aceptar" color="primary" flat />
@@ -241,12 +234,12 @@ onMounted(() => {
                             <div class="text-subtitle2 text-black" style="font-weight: medium;">
                               Hasta:
                             </div>
-                            <q-input v-model="formData.time_to" mask="time" :rules="['time']" dense borderless clearable
+                            <q-input v-model="event.time_to" mask="time" dense borderless clearable
                               class="form__inputsReverse mt-1 q-pb-sm" color="primary" >
                               <template v-slot:append>
                                 <q-icon name="eva-clock-outline" class="cursor-pointer">
                                   <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                    <q-time v-model="formData.time_to" format24h 
+                                    <q-time v-model="event.time_to" format24h 
                                       :minute-options="minOptionsFrom">
                                       <div class="row items-center justify-end">
                                         <q-btn v-close-popup label="Aceptar" color="primary" flat />
@@ -257,13 +250,6 @@ onMounted(() => {
                               </template>
                             </q-input>
                           </div>
-                        </div>
-                        <div class="col-12 row mt-0 px-3 md:px-2" v-if="selectedComunArea.type == 2">
-                          <q-checkbox v-model="formData.is_exclusive" color="primary">
-                            <div class="text-grey-9 mt-1">
-                              Reservar de forma exclusiva
-                            </div>
-                          </q-checkbox>
                         </div>
                       </div>
                     </div>
@@ -290,29 +276,25 @@ onMounted(() => {
                             </div>
                             <q-select 
                               class="form__inputsReverse mt-1"
-                              v-model="formData.typeArea"
-                              :options="[
-                               { value:-1, name:'Seleccione una opción'},
-                               { value: 1, name:'Si'},
-                               { value: 2, name:'No'},]"
+                              v-model="event.typeArea"
+                              :options="locationOption"
                               option-label="name"
                               option-value="value"
                               emit-value
                               map-options
-                              @update:model-value="cleanAnother"
                               :rules="[ val => val != -1 || 'Debes seleccionar un recinto']"
                               dense borderless />
                               
                           </div>
                         </div>
-                        <div class="col-12 row mt-3 px-3 md:px-2" v-if="formData.typeArea == 1">
+                        <div class="col-12 row mt-3 px-3 md:px-2" v-if="event.typeArea == 1">
                           <div class="col-12">
                             <div class="text-subtitle2 text-black">
                               Selecciona el recinto/ubicación
                             </div>
                             <q-select 
                               class="form__inputsReverse mt-1"
-                              v-model="formData.area"
+                              v-model="event.area"
                               :options="comunAreas"
                               option-label="name"
                               option-value="value"
@@ -325,7 +307,7 @@ onMounted(() => {
                               </div>
                           </div>
                         </div>
-                        <div class="col-12 row mt-3 px-3 md:px-2" v-if="formData.typeArea == 2">
+                        <div class="col-12 row mt-3 px-3 md:px-2" v-if="event.typeArea == 2">
                           <div class="col-12">
                             <div class="text-subtitle2 text-black">
                               Ubicación/Lugar
@@ -334,7 +316,7 @@ onMounted(() => {
                               dense
                               borderless
                               clearable
-                              v-model="formData.location"
+                              v-model="event.location"
                               class="form__inputsReverse mt-1"
                               color="primary"
                               :rules="[ val => val && val.length > 0 || 'Nombre de area es requerido']" />

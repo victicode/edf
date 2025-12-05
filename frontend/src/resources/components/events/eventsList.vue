@@ -11,7 +11,7 @@ moment.locale('es', {
   ),
 })
 const router = useRouter()
-const emit = defineEmits(['openModal'])
+const emit = defineEmits(['selectEvent'])
 const props = defineProps({
   events: {
     type: Array,
@@ -21,18 +21,14 @@ const props = defineProps({
 const goTo = (url) => {
   router.push(url);
 }
-
-const showDialog = (e) => {
-  const dialogData = getDialogData(e)
-  selectReserve(dialogData.reserve)
-  setTimeout(() => {
-    dialog.value = dialogData.dialog;
-  }, 500);
-}
 const formatLocation = (event) => {
   let location = event?.booking?.comun_area.name || event.location 
 
   return location || '---'
+}
+
+const selectEvent = (eventId) => {
+  emit('selectEvent', eventId)
 }
 
 const getPaymentAmount = (booking) => {
@@ -51,7 +47,7 @@ const getPaymentAmount = (booking) => {
         style="position: relative;">
 
         <!-- Sección superior - Detalles de la reserva -->
-        <div class="md:px-4 md:pb-4 pb-2 px-3 pt-2  border-gray-300">
+        <div class="md:px-6 md:pt-4 pb-2 px-3 pt-2  border-gray-300">
           <!-- Header con nombre y estado -->
           <div class="flex justify-between items-center mb-1">
             <div class="ellipsis" style="width: 90%;">
@@ -60,19 +56,23 @@ const getPaymentAmount = (booking) => {
               </h3>
             </div>
             <div class="" style="width: 10%;">
-              <div flat rounded color="primary" size="sm" class="ml-3 cursor-pointer">
+              <div class="ml-3 cursor-pointer md:flex md:justify-end">
                 <div v-html="iconsApp.optionsBook" />
                 <q-menu>
                   <q-list style="min-width: 150px">
                     <q-item clickable v-close-popup @click="goTo('/admin/events/view/' + event.id)">
                       <q-item-section>Ver detalles</q-item-section>
                     </q-item>
-                    <q-item clickable v-close-popup @click="showDialog($event)" data-dialog="cancel"
+                    <q-item clickable v-close-popup @click="goTo('/admin/events/form/update/' + event.id)">
+                      <q-item-section>Editar evento</q-item-section>
+                    </q-item>
+                    <q-separator />
+                    <q-item clickable v-close-popup @click="selectEvent(event.id)" data-dialog="cancel"
                       :data-event="event.id">
                       <q-item-section>Eliminar evento</q-item-section>
                     </q-item>
-                    <q-separator />
                   </q-list>
+                  
                 </q-menu>
               </div>
             </div>
@@ -118,7 +118,7 @@ const getPaymentAmount = (booking) => {
         </div>
 
         <!-- Sección inferior - Estado de pago -->
-        <div class="md:px-4 md:py-4 pb-3 px-3 bg-gray-50">
+        <div class="md:px-4 md:py-4 md:pb-0 pb-3 px-3 bg-gray-50">
           <div class="flex justify-end items-center">
             
           </div>

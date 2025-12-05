@@ -193,7 +193,8 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
                   >
                     <template v-slot:append>
                       <q-icon name="eva-clock-outline" class="cursor-pointer">
-                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                        <q-popup-proxy cover transition-show="scale" 
+                          transition-hide="scale">
                           <q-time v-model="comunArea.timeFrom">
                             <div class="row items-center justify-end">
                               <q-btn v-close-popup label="Aceptar" color="primary" flat />

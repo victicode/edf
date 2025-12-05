@@ -56,6 +56,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [EventController::class, 'get']);
         Route::post('/', [EventController::class, 'create']);
         Route::get('/byId/{id}', [EventController::class, 'show']);
+        Route::delete('/{id}', [EventController::class, 'destroy']);
+        Route::post('/{id}', [EventController::class, 'update']);
+
         // Route::get('/availableBooking/{id}', [EventController::class, 'getAvaibleBookingByDay']);
         // Route::get('/byArea/{id}', [EventController::class, 'getBookingByAreaId']);
         // Route::post('/cancel/{id}', [EventController::class, 'cancelBooking']);

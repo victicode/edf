@@ -247,6 +247,16 @@ const routes = [
           pagTitle: 'Crear evento'
         }
       },
+      {
+        path: '/admin/events/form/update/:id', 
+        component: () => import('@/view/admin/Events/updateEvent.vue'),
+        name:'eventsUpdate',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Editar evento'
+        }
+      },
       
 
       // ---- client Routes -----
