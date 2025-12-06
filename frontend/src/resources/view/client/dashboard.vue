@@ -48,7 +48,7 @@ const menu = [
     title: 'Eventos',
     icon: iconsApp.events,
     subtitle: 'Consulta los eventos programados',
-    link: '/client/services/list',
+    link: '/client/events',
   },
   {
     title: 'Atención',

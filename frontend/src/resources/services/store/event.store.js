@@ -193,6 +193,23 @@ export const useEventStore = defineStore('Event', {
         });
       })
     },
+    async setAssitByData(id, data){
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.post('/api/events/set-assits/'+id, data)
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+          
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+      })
+    },
     filterQuery(filter){
       try {
         const params = new URLSearchParams();

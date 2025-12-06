@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Event;
 use App\Models\Booking;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\RealtimeNotification;
 
 class EventController extends Controller
 {
@@ -52,14 +54,15 @@ class EventController extends Controller
                 'booking_id' => $bookingToEvent->id
             ]);
         }
+        $this->sendNotification($event);
         return $this->returnSuccess(200, 'ok');
     }
     public function update(Request $request, $id)
     {
         $LOCATION_TYPE_COMUN_AREA = 1;
-
         $LOCATION_TYPE_STANDAR = 2;
         $validated = $this->validateFieldsFromInput($request->all());
+
         $event = Event::with(['booking.comunArea'])->find($id);
         $bookingToEvent = $event->booking_id;
 
@@ -104,6 +107,23 @@ class EventController extends Controller
         $this->deleteEventReserve($event);
         $event->delete();
         return $this->returnSuccess(200, 'ok');
+    }
+    public function setAssist(Request $request, $id)
+    {
+        $event = Event::with(['booking.comunArea'])->find($id);
+        $assits = $this->selectTypeAssit($request, $event);
+
+        if (in_array($request->user()->id, $assits)) {
+            return $this->returnSuccess(200, 'ok');
+        }
+        array_push($assits, $request->user()->id);
+
+        $event->update([
+            $request->assitType == 0 ? "not_assits" : "assits"
+            => json_encode($assits)
+        ]);
+
+        return $this->returnSuccess(200, $event);
     }
     private function validateFieldsFromInput($inputs)
     {
@@ -152,5 +172,44 @@ class EventController extends Controller
             return $this->returnFail(404, 'Reserva no encontrada');
         }
         $booking->delete();
+    }
+    private function sendNotification($event)
+    {
+        $users = User::where('rol_id', 2)->get();
+        $dataNotificaction = $this->getDataToNotification($event);
+
+        try {
+            foreach ($users as $user) {
+                $user->notify(new RealtimeNotification(
+                    title: $dataNotificaction["title"],
+                    message: $dataNotificaction["message"],
+                    url: $dataNotificaction["url"],
+                    meta: $dataNotificaction["meta"],
+                ));
+            }
+        } catch (\Throwable $e) {
+            // Silenciar errores de notificación para no romper el flujo
+        }
+    }
+    private function getDataToNotification($event)
+    {
+        return [
+            "title" => "Nuevo evento programado",
+            "message" => "El evento: " . $event->title
+                . ", fue programado entra y confirma tu asistencia",
+            "url" => "/client/events/view/" . $event->id,
+            "meta" =>  ['event_id' => $event->id],
+        ];
+    }
+    private function selectTypeAssit($request, $event)
+    {
+        $assit = [];
+        if ($request->assitType == 0) {
+            $assit = json_decode($event->not_assits, true);
+        }
+        if ($request->assitType == 1) {
+            $assit = json_decode($event->assits, true);
+        }
+        return $assit;
     }
 }

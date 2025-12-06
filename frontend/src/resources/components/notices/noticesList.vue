@@ -9,6 +9,7 @@ moment.locale('es', {
   months: 'enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre'.split('_'),
 })
 const emit = defineEmits(['openModal'])
+
 const props = defineProps({
   notices: {
     type: Array,

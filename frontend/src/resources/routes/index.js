@@ -412,6 +412,26 @@ const routes = [
           pagTitle: 'Información'
         }
       },
+      {
+        path: '/client/events', 
+        component: () => import('@/view/client/Events/eventsPage.vue'),
+        name:'eventsClientPages',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Eventos'
+        }
+      },
+      {
+        path: '/client/events/view/:id',
+        component: () => import('@/view/client/Events/viewEvent.vue'),
+        name:'eventClientViewAdmin',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Detalles de evento'
+        }
+      },
       
     ]
   },

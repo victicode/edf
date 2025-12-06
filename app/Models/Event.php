@@ -15,7 +15,7 @@ class Event extends Model
         'time_from',
         'time_to',
         'location',
-        'assists',
+        'assits',
         'not_assits',
         'booking_id'
     ];

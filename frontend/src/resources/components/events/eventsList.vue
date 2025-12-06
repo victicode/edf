@@ -1,8 +1,9 @@
 <script setup>
+import { useAuthStore } from '@//services/store/auth.services';
 import iconsApp from '@/assets/icons/index'
 import moment from 'moment';
+import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
-// import cancelReserveModal from '@/components/events/cancelReserveModal.vue';
 
 moment.locale('es', {
   monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
@@ -10,6 +11,7 @@ moment.locale('es', {
     '_'
   ),
 })
+const { user } = storeToRefs(useAuthStore())
 const router = useRouter()
 const emit = defineEmits(['selectEvent'])
 const props = defineProps({
@@ -50,8 +52,8 @@ const getPaymentAmount = (booking) => {
         <div class="md:px-6 md:pt-4 pb-2 px-3 pt-2  border-gray-300">
           <!-- Header con nombre y estado -->
           <div class="flex justify-between items-center mb-1">
-            <div class="ellipsis" style="width: 90%;">
-              <h3 class="text-lg font-bold text-gray-900 mb-1">
+            <div class="ellipsis" style="width: 90%;" @click="goTo('/client/events/view/' + event.id)">
+              <h3 class="text-lg font-bold text-gray-900 mb-1 cursor-pointer">
                 {{ event.title || 'Evento' }}
               </h3>
             </div>
@@ -60,17 +62,19 @@ const getPaymentAmount = (booking) => {
                 <div v-html="iconsApp.optionsBook" />
                 <q-menu>
                   <q-list style="min-width: 150px">
-                    <q-item clickable v-close-popup @click="goTo('/admin/events/view/' + event.id)">
+                    <q-item clickable v-close-popup @click="goTo('/client/events/view/' + event.id)">
                       <q-item-section>Ver detalles</q-item-section>
                     </q-item>
-                    <q-item clickable v-close-popup @click="goTo('/admin/events/form/update/' + event.id)">
-                      <q-item-section>Editar evento</q-item-section>
-                    </q-item>
-                    <q-separator />
-                    <q-item clickable v-close-popup @click="selectEvent(event.id)" data-dialog="cancel"
-                      :data-event="event.id">
-                      <q-item-section>Eliminar evento</q-item-section>
-                    </q-item>
+                    <template v-if="user.rol_id == 1">
+                      <q-item clickable v-close-popup @click="goTo('/admin/events/form/update/' + event.id)">
+                        <q-item-section>Editar evento</q-item-section>
+                      </q-item>
+                      <q-separator />
+                      <q-item clickable v-close-popup @click="selectEvent(event.id)" data-dialog="cancel"
+                        :data-event="event.id">
+                        <q-item-section>Eliminar evento</q-item-section>
+                      </q-item>
+                    </template>
                   </q-list>
                   
                 </q-menu>
