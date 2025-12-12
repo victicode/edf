@@ -123,7 +123,7 @@ class EventController extends Controller
             => json_encode($assits)
         ]);
 
-        return $this->returnSuccess(200, $event);
+        return $this->returnSuccess(200, ['assits' => $event->assits, 'not_assits' => $event->not_assits]);
     }
     private function validateFieldsFromInput($inputs)
     {
