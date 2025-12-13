@@ -66,7 +66,6 @@ const getNotificationIcon = (item) => {
   } else if (title.includes('service') || title.includes('servicio')) {
     return 'eva-settings-outline'
   }
-  console.log(item?.data?.meta)
   return item?.data?.meta?.icon || 'eva-bell-outline'
 }
 
@@ -104,7 +103,11 @@ const formatTimeAgo = (dateString) => {
     return `${days} día${days > 1 ? 's' : ''}`
   }
 }
-
+const descriptionByScreenSize = (item) => {
+  return window.screen.width > 780
+  ? `${item.data?.message || '' }`
+  : `${item.data?.message ? item.data?.message.substr(0, 30) : '' }...`
+}
 onMounted(() => {
   load()
 })
@@ -168,7 +171,7 @@ onMounted(() => {
                          {{ item.data?.title || 'Notificación' }}
                        </div>
                        <div class="notification-message mt-1">
-                         {{ item.data?.message ? item.data?.message.substr(0, 30) : '' }}...
+                         {{descriptionByScreenSize(item)}}
                        </div>
                      </div>
                      

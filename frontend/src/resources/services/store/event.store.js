@@ -1,53 +1,16 @@
 import { defineStore } from 'pinia'
 import ApiService from '@/services/axios'
 
-export const useNoticeStore = defineStore('Notices', {
-  state: () => ({
-    group: [
-      { name: "Información", value: 0 },
-      { name: "Automotores", value: 1 },
-      { name: "Empleos", value: 2 },
-      { name: "Inmuebles", value: 3 },
-      { name: "Oportunidades", value: 4},
-    ],
-    category: [
-      [
-        { name: "Información junta de condominio", value: 0},
-      ],
-      [
-        { name: "Venta de automovil", value: 0},
-        { name: "Venta de maquinaria", value: 1},
-        { name: "Venta de respuesto", value: 2},
-        { name: "Compra de automovil", value: 3},
-        { name: "Compra de maquinaria", value: 4},
-        { name: "Compra de respuesto", value: 5},
-        { name: "Servicios", value: 6},
-      ],
-      [
-        { name: "Oferta laboral", value: 0},
-        { name: "Servicios", value: 1},
-      ],
-      [
-        { name: "Venta de inmueble", value: 0},
-        { name: "Alquier de inmueble", value: 1},
-        { name: "Servicios", value: 2},
-      ],
-      [
-        { name: "Oportunidad", value: 0},
-      ],
-    ]
-  }),
+export const useEventStore = defineStore('Event', {
   actions: {
-    async getNotices(filters) {
+    async getEvents(filters) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
-
         ApiService.setHeader();
         const query = this.filterQuery(filters);
-        const url = '/api/notices' + (query ? `?${query}` : '');
-
+        const url = '/api/events' + (query ? `?${query}` : '');
         ApiService.get(url)
         .then(({data}) => {
           if(data.code !=200) throw data;
@@ -60,13 +23,13 @@ export const useNoticeStore = defineStore('Notices', {
         
       })
     },
-    async createNotice(data) {
+    async createEvent(data) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.post('/api/notices', data)
+        ApiService.post('/api/events', data)
         .then(({data}) => {
           if(data.code !=200) throw data;
           
@@ -82,13 +45,33 @@ export const useNoticeStore = defineStore('Notices', {
       })
 
     },
-    async getNoticeById(id) {
+    async createEventPay(postData){
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.get('/api/notices/byId/'+id)
+        ApiService.post('/api/pays/events', postData)
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+  
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+        
+      })
+
+    },
+     
+    async getEventById(id) {
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.get('/api/events/byId/'+id)
         .then(({data}) => {
           if(data.code !=200) throw data;
   
@@ -100,13 +83,32 @@ export const useNoticeStore = defineStore('Notices', {
         
       })
     },
-    async updateNotice(data, id) {
+    async getEventsByArea(area){
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.post('/api/notices/'+id, data)
+        ApiService.get('/api/events/byArea/'+area)
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+  
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+        
+      })
+    },
+
+    async updateEvent(data, id) {
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.post('/api/events/'+id, data)
         .then(({data}) => {
           if(data.code !=200) throw data;
           
@@ -122,13 +124,31 @@ export const useNoticeStore = defineStore('Notices', {
       })
 
     },
-    async deleteNotices(id) {
+    async getAvailableEventInDayByArea(data){
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.delete('/api/notices/'+id)
+        ApiService.get('/api/events/availableBooking/'+data.idArea+'?date='+data.date+'&')
+        .then(({data}) => {
+          if(data.code !=200) throw data;
+          
+          resolve(data);
+        }).catch(( {response}) => {
+          console.log(response)
+          reject(response.data.error);
+        });
+      })
+
+    },
+    async deleteEvent(id) {
+      return await new Promise((resolve, reject) => {
+        if (!ApiService.getToken()) {
+          throw '';
+        }
+        ApiService.setHeader();
+        ApiService.delete('/api/events/'+id)
         .then(({data}) => {
           if(data.code !=200) throw data;
           
@@ -139,13 +159,13 @@ export const useNoticeStore = defineStore('Notices', {
         });
       })
     },
-    async getPendingNotices(){
+    async cancelEvent(id) {
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.get('/api/notices/pendings')
+        ApiService.post('/api/events/cancel/'+id)
         .then(({data}) => {
           if(data.code !=200) throw data;
           
@@ -156,13 +176,13 @@ export const useNoticeStore = defineStore('Notices', {
         });
       })
     },
-    async setViewer(id){
+    async getPendingEvent(){
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.post('/api/notices/set-viewer/'+id)
+        ApiService.get('/api/events/pendings')
         .then(({data}) => {
           if(data.code !=200) throw data;
           
@@ -173,30 +193,13 @@ export const useNoticeStore = defineStore('Notices', {
         });
       })
     },
-    async setNewStatus(data){
+    async setAssitByData(id, data){
       return await new Promise((resolve, reject) => {
         if (!ApiService.getToken()) {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.post('/api/notices/set-new-status/'+data.id, data)
-        .then(({data}) => {
-          if(data.code !=200) throw data;
-          
-          resolve(data);
-        }).catch(( {response}) => {
-          console.log(response)
-          reject(response.data.error);
-        });
-      })
-    },
-    async getUserWithPublish(){
-      return await new Promise((resolve, reject) => {
-        if (!ApiService.getToken()) {
-          throw 'no-data'
-        }
-        ApiService.setHeader()
-        ApiService.get('/api/users/with-publish')
+        ApiService.post('/api/events/set-assits/'+id, data)
         .then(({data}) => {
           if(data.code !=200) throw data;
           
@@ -212,20 +215,16 @@ export const useNoticeStore = defineStore('Notices', {
         const params = new URLSearchParams();
         if (!filter || typeof filter !== 'object') return '';
         if (filter.status !== undefined && Number(filter.status) !== 4) params.set('status', String(filter.status));
-        if (filter.group && filter.group !==-1) params.set('group', String(filter.group));
-        if (filter.category && filter.category !==-1) params.set('category', String(filter.category));
-        if (filter.post_by && filter.post_by !==-1) params.set('post_by', String(filter.post_by));
+        if (filter.area_id) params.set('area_id', String(filter.area_id));
         if (filter.date_from) params.set('date_from', String(filter.date_from));
         if (filter.date_to) params.set('date_to', String(filter.date_to));
-        if (filter.only_my_posts) params.set('only_my_posts', String(filter.only_my_posts));
-
-        return params.toString()+ '&' ;
+        if (filter.amount_type) params.set('amount_type', String(filter.amount_type));
+        if (filter.sort_by) params.set('sort_by', String(filter.sort_by));
+        if (filter.sort_dir) params.set('sort_dir', String(filter.sort_dir));
+        return params.toString();
       } catch (e) {
         return '';
       }
-    },
-    getCategoryByGroup(idGroup){
-      return this.category[idGroup]
     }
     
   },

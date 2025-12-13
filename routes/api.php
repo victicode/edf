@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\ComunAreaController;
 use App\Http\Controllers\Api\DepartamentController;
+use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\NoticeController;
 use App\Http\Controllers\Api\NotificationController;
 
@@ -24,6 +25,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [UserController::class, 'getOwners']);
         Route::post('/', [UserController::class, 'store']);
         Route::post('/assing_apartmet', [DepartamentController::class, 'assingApartment']);
+        Route::get('/admin/get_pendings', [UserController::class, 'getCountPendingsForAdmin']);
+        Route::get('/with-publish', [UserController::class, 'getAllUserWithPublish']);
     });
     Route::prefix('apartments')->name('apartment.')->group(function () {
         Route::get('/', [DepartamentController::class, 'paginationApartment']);
@@ -49,6 +52,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/cancel/{id}', [BookingController::class, 'cancelBooking']);
         Route::get('/pendings', [BookingController::class, 'getPendings']);
     });
+    Route::prefix('events')->name('event.')->group(function () {
+        Route::get('/', [EventController::class, 'get']);
+        Route::post('/', [EventController::class, 'create']);
+        Route::get('/byId/{id}', [EventController::class, 'show']);
+        Route::delete('/{id}', [EventController::class, 'destroy']);
+        Route::post('/{id}', [EventController::class, 'update']);
+        Route::post('/set-assits/{id}', [EventController::class, 'setAssist']);
+        // Route::get('/availableBooking/{id}', [EventController::class, 'getAvaibleBookingByDay']);
+        // Route::get('/byArea/{id}', [EventController::class, 'getBookingByAreaId']);
+        // Route::post('/cancel/{id}', [EventController::class, 'cancelBooking']);
+        // Route::get('/pendings', [EventController::class, 'getPendings']);
+    });
     Route::prefix('pays')->name('pay.')->group(function () {
         Route::get('/', [PayController::class, 'getPaysByUser']);
         Route::post('/bookings', [PayController::class, 'storePay']);
@@ -70,5 +85,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('notices')->name('notice.')->group(function () {
         Route::get('/', [NoticeController::class, 'index']);
         Route::get('/byId/{id}', [NoticeController::class, 'show']);
+        Route::post('/', [NoticeController::class, 'store']);
+        Route::post('/set-viewer/{id}', [NoticeController::class, 'setViewer']);
+        Route::post('/set-new-status/{id}', [NoticeController::class, 'setNewStatus']);
+        Route::delete('/{id}', [NoticeController::class, 'delete']);
+        Route::post('/{id}', [NoticeController::class, 'update']);
     });
 });

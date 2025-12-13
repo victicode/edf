@@ -1,17 +1,15 @@
 <script setup>
 import iconsApp from '@/assets/icons/index';
-import { useAuthStore } from '@/services/store/auth.services';
-import { useReserveStore } from '@/services/store/reserve.store';
-import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/services/store/users.store';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-const { user } = storeToRefs(useAuthStore())
-const pendindgReserveCount = ref(0);
-const getPendingReserve = () => {
-  useReserveStore().getPendingReserve()
+const pendindgsCount = ref([]);
+
+const getPendingCount = () => {
+  useUserStore().getAllPendingsForAdmin()
   .then((response) => {
-    pendindgReserveCount.value = response.data.length
+    pendindgsCount.value = response.data
   })
   .catch((error) => {
     console.log(error)
@@ -27,12 +25,12 @@ const menu = [
     link: '/admin/comun-area/list',
   },
   
-  {
-    title: 'Servicios',
-    icon: iconsApp.services,
-    subtitle: 'Gestión de servicios',
-    link: '/services',
-  },
+  // {
+  //   title: 'Servicios',
+  //   icon: iconsApp.services,
+  //   subtitle: 'Gestión de servicios',
+  //   link: '/services',
+  // },
   {
     title: 'Reservas',
     icon: iconsApp.reserve,
@@ -43,14 +41,20 @@ const menu = [
     title: 'Noticias',
     icon: iconsApp.news,
     subtitle: 'Envia información sobre: eventos, servicio, etc',
-    link: '/news',
+    link: '/admin/notices',
   },
   {
-    title: 'Ajustes',
-    icon: iconsApp.config,
-    subtitle: 'Configura la app',
-    link: '/config',
+    title: 'Eventos',
+    icon: iconsApp.events,
+    subtitle: 'Modulo de gestion de eventos',
+    link: '/admin/events',
   },
+  // {
+  //   title: 'Ajustes',
+  //   icon: iconsApp.config,
+  //   subtitle: 'Configura la app',
+  //   link: '/config',
+  // },
 ];
 
 const goTo = (url) => {
@@ -58,9 +62,9 @@ const goTo = (url) => {
 }
 
 onMounted(() => {
-  getPendingReserve()
+  getPendingCount()
 })
-</script>
+</script>nde
 <template>
   <div class="h-full w-full px-2">
     <div class="row md:pt-10 pt-5  md:px-20">
@@ -76,9 +80,14 @@ onMounted(() => {
               </div>
             </div>
             <div v-html="items.icon" class="flex justify-end mt-2 md:mt-0" />
-            <template v-if="items.title=='Reservas'">
-              <div class="badgeCountReserve flex flex-center" v-if="pendindgReserveCount > 0">
-                {{ pendindgReserveCount }}
+            <template v-if="items.title=='Reservas' && Object.values(pendindgsCount).length > 0">
+              <div class="badgeCountReserve flex flex-center" v-if="pendindgsCount.reserves.length > 0">
+                {{ pendindgsCount.reserves.length }}
+              </div>
+            </template>
+            <template v-if="items.title=='Noticias' && Object.values(pendindgsCount).length > 0">
+              <div class="badgeCountReserve flex flex-center" v-if="pendindgsCount.announces.length > 0">
+                {{ pendindgsCount.announces.length }}
               </div>
             </template>
           </div>

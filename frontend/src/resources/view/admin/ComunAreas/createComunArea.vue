@@ -86,14 +86,14 @@ import { useComunAreaStore } from '@/services/store/comunArea.store';
               Nombre del area
             </div>
             <q-input
-                dense
-                borderless
-                clearable
-                v-model="formData.name"
-                class="form__inputsR mt-1"
-                color="primary"
-                :rules="[ val => val && val.length > 0 || 'Nombre de area es requerido']"
-              />
+              dense
+              borderless
+              clearable
+              v-model="formData.name"
+              class="form__inputsR mt-1"
+              color="primary"
+              :rules="[ val => val && val.length > 0 || 'Nombre de area es requerido']"
+            />
           </div>
           <div class="col-md-6 col-12 mt-1 px-2 md:px-12">
             <div class="text-subtitle2 text-black">

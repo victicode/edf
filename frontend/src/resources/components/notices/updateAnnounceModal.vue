@@ -6,24 +6,28 @@ import { Notify } from 'quasar';
 const emit = defineEmits(['closeModal', 'updateList'])
 const props = defineProps({
   dialog: Boolean,
+  announce: Object
 })
 const noticeStore = useNoticeStore();
 
 const groups = noticeStore.group.slice(1)
 const groupOptions = [{name:'Selecciona una opción', value: -1}, ...groups]
-const categoryOptions = ref([{name:'Selecciona una opción', value: -1}])
+const categoryOptions = ref([{name:'Selecciona una opción', value: -1}, ...noticeStore.category[props.announce.group]])
 
 const loading = ref(false)
 const dialog = ref(props.dialog)
-const formData = ref({
-  title:'',
-  description:'',
-  group: {name:'Selecciona una opción', value: -1},
-  category: {name:'Selecciona una opción', value: -1},
-  imagen:[],
-})
 
+const setAnnounce = () => {
+  return {
+    title: props.announce.title,
+    description: props.announce.description,
+    group: groupOptions.find((group) => group.value == props.announce.group),
+    category: categoryOptions.value.find((category) => category.value == props.announce.category),
+    imagen: props.announce.img ? JSON.parse(props.announce.img) : [],
+  }
+}
 
+const formData = ref(setAnnounce())
 const hideModal = () => {
   emit('closeModal')
   cleanForm()
@@ -34,30 +38,24 @@ const updateList = () => {
 
 }
 const cleanForm = () => {
-  formData.value = {
-    title:'',
-    description:'',
-    group: {name:'Selecciona una opción', value: -1},
-    category: {name:'Selecciona una opción', value: -1},
-    imagen:[],
-  }
+//  
 }
-const createAnnounce = () => {
+const updateAnnounce = () => {
   loading.value = true
   const ANNOUNCE_TYPE = 2
 
   const dataForm =  new FormData
   dataForm.append('title', formData.value.title)
   dataForm.append('description', formData.value.description)
-  dataForm.append('group', formData.value.group)
-  dataForm.append('category', formData.value.category)
+  dataForm.append('group', formData.value.group.value)
+  dataForm.append('category', formData.value.category.value)
   dataForm.append('type', ANNOUNCE_TYPE)
 
   formData.value.imagen.forEach((file) => {
     dataForm.append('img[]', file);
   })
 
-  noticeStore.createNotice(dataForm)
+  noticeStore.updateNotice(dataForm, props.announce.id)
   .then((data) => {
     showNotify('positive', 'Tu anuncio fue enviado para revisión')
     updateList()
@@ -78,6 +76,7 @@ const isAvailableOption = (val) => {
   }
   categoryOptions.value = [{name:'Selecciona una opción', value: -1}, ...noticeStore.category[val]]
 }
+
 const showNotify = (type, text) => {
   Notify.create({
     color: type,
@@ -91,20 +90,22 @@ const onRejected = (e) => {
   :'Error al subir imagen, verifica que sea una imagen valida';
   showNotify('negative', errorMessage)
 }
+
 watch(() => props.dialog, (newValue) => {
   dialog.value = newValue
+  formData.value = setAnnounce()
 });
 
 </script>
 <template>
-  <q-dialog v-model="dialog" class="createAnnounceDialog" persistent backdrop-filter="blur(0.5px)">
+  <q-dialog v-model="dialog" class="updateAnnounceDialog" persistent backdrop-filter="blur(0.5px)">
     <q-card class="dialog_document w-full " style="border-radius:1rem">
       <q-form
-        @submit="createAnnounce()"
+        @submit="updateAnnounce()"
       >
         <q-card-section class="q-px-none">
           <div class="text-h6 text-black pb-2 px-5" style="border-bottom: 1px solid lightgray;">
-            Publicar anuncio
+            Editar anuncio
           </div>
         </q-card-section>
         <section class="content__modalSectionRifa md:mt-5 py-0 ">
@@ -218,7 +219,7 @@ watch(() => props.dialog, (newValue) => {
   </q-dialog>
 </template>
 <style lang="scss">
-.createAnnounceDialog{
+.updateAnnounceDialog{
   max-height: 95dvh;
   & .q-dialog__inner--minimized > div{
     max-height: 95dvh!important;

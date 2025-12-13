@@ -66,16 +66,16 @@ const routes = [
           pagTitle: 'Finanzas'
         }
       },
-      {
-        path: '/services', 
-        component: () => import('@/view/admin/servicesPage.vue'),
-        name:'servicesAdmin',
-        beforeEnter: auth,
-        meta:{
-          title: 'Bienvenido',
-          pagTitle: 'Sevicios'
-        }
-      },
+      // {
+      //   path: '/services', 
+      //   component: () => import('@/view/admin/servicesPage.vue'),
+      //   name:'servicesAdmin',
+      //   beforeEnter: auth,
+      //   meta:{
+      //     title: 'Bienvenido',
+      //     pagTitle: 'Sevicios'
+      //   }
+      // },
       {
         path: '/reserves', 
         component: () => import('@/view/admin/reservesPage.vue'),
@@ -84,16 +84,6 @@ const routes = [
         meta:{
           title: 'Bienvenido',
           pagTitle: 'Reservas'
-        }
-      },
-      {
-        path: '/comun-area', 
-        component: () => import('@/view/admin/comunAreasPage.vue'),
-        name:'comunAreaAdmin',
-        beforeEnter: auth,
-        meta:{
-          title: 'Bienvenido',
-          pagTitle: 'Areas comunes'
         }
       },
       {
@@ -106,26 +96,16 @@ const routes = [
           pagTitle: 'Banlances'
         }
       },
-      {
-        path: '/news', 
-        component: () => import('@/view/admin/newsPage.vue'),
-        name:'newsAdmin',
-        beforeEnter: auth,
-        meta:{
-          title: 'Bienvenido',
-          pagTitle: 'Noticias'
-        }
-      },
-      {
-        path: '/config', 
-        component: () => import('@/view/admin/configPage.vue'),
-        name:'Configuración',
-        beforeEnter: auth,
-        meta:{
-          title: 'Bienvenido',
-          pagTitle: 'Dashboard'
-        }
-      },
+      // {
+      //   path: '/config', 
+      //   component: () => import('@/view/admin/configPage.vue'),
+      //   name:'Configuración',
+      //   beforeEnter: auth,
+      //   meta:{
+      //     title: 'Bienvenido',
+      //     pagTitle: 'Dashboard'
+      //   }
+      // },
       {
         path: '/admin/users/list', 
         component: () => import('@/view/admin/users/usersList.vue'),
@@ -225,6 +205,56 @@ const routes = [
         meta:{
           title: 'Bienvenido',
           pagTitle: 'Validar pago'
+        }
+      },
+      {
+        path: '/admin/notices', 
+        component: () => import('@/view/admin/Notices/noticesPage.vue'),
+        name:'noticesPages',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Noticas/Anuncios'
+        }
+      },
+      {
+        path: '/admin/events', 
+        component: () => import('@/view/admin/Events/eventsPage.vue'),
+        name:'eventsPages',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Eventos'
+        }
+      },
+      {
+        path: '/admin/events/view/:id',
+        component: () => import('@/view/admin/Events/viewEvent.vue'),
+        name:'eventViewAdmin',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Detalles de evento'
+        }
+      },
+      {
+        path: '/admin/events/form/add', 
+        component: () => import('@/view/admin/Events/createEvent.vue'),
+        name:'eventsCreate',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Crear evento'
+        }
+      },
+      {
+        path: '/admin/events/form/update/:id', 
+        component: () => import('@/view/admin/Events/updateEvent.vue'),
+        name:'eventsUpdate',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Editar evento'
         }
       },
       
@@ -380,6 +410,26 @@ const routes = [
         meta:{
           title: 'Bienvenido',
           pagTitle: 'Información'
+        }
+      },
+      {
+        path: '/client/events', 
+        component: () => import('@/view/client/Events/eventsPage.vue'),
+        name:'eventsClientPages',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Eventos'
+        }
+      },
+      {
+        path: '/client/events/view/:id',
+        component: () => import('@/view/client/Events/viewEvent.vue'),
+        name:'eventClientViewAdmin',
+        beforeEnter: auth,
+        meta:{
+          title: 'Bienvenido',
+          pagTitle: 'Detalles de evento'
         }
       },
       

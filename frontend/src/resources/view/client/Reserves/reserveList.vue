@@ -171,7 +171,7 @@ onMounted(() => {
                     <div v-html="iconsApp.procedToPay"></div>
                   </q-btn>
                   <div flat rounded color="primary" size="sm" class="ml-3 cursor-pointer">
-                    <div v-html="iconsApp.optionsBook"></div>
+                    <div v-html="iconsApp.optionsBook" />
                     <q-menu>
                       <q-list style="min-width: 150px">
                         <q-item clickable v-close-popup @click="goTo('/client/reserves/view/' + reserve.id)">

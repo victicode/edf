@@ -2,14 +2,12 @@
 import { Notify } from 'quasar'
 import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useReserveStore } from '@/services/store/reserve.store';
 
 import { RadioGroup, Radio } from 'vant';
 
 import { useComunAreaStore } from '@/services/store/comunArea.store';
 
   const emit = defineEmits(['closeModal', 'updateList'])
-  const reserveStore = useReserveStore()
 
   const props = defineProps({
     dialog: Boolean,

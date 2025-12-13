@@ -240,9 +240,7 @@ import { RadioGroup, Radio } from 'vant';
       padding: 0.1rem 1rem;
     }
   }
-}
 
-@media (max-width: 780px) {
 .filterDialog{
   & .dialog_document{
     max-height: 100%!important;
