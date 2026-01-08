@@ -42,7 +42,7 @@ export const useAuthStore = defineStore('auth', {
         // ApiService.setHeader()
         ApiService.get('/sanctum/csrf-cookie')
         .then((response) => {
-          ApiService.post('api/login', credentials)
+          ApiService.post('/api/login', credentials)
           .then(({data}) => {
             if(!data.data.token){
               throw data;
@@ -94,7 +94,7 @@ export const useAuthStore = defineStore('auth', {
       return await new Promise((resolve) => {
         if (ApiService.getToken()) {
           ApiService.setHeader();
-          ApiService.get("api/auth/logout")
+          ApiService.get("/api/auth/logout")
             .then(({ data }) => {
               if(data.code !== 200){
                 throw data;

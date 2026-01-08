@@ -1,5 +1,11 @@
 {
-  "appId": "com.edfteam.edfapp",
-  "appName": "EDF APP",
-  "webDir": "dist"
+    "appId": "com.edfteam.edfapp",
+    "appName": "EDF APP",
+    "webDir": "dist",
+    "server": {
+        "allowNavigation": ["10.10.10.69:8030", "192.168.31.20:8030"],
+        "androidScheme": "http",
+        "cleartext": true,
+        "androidAllowMixedContent": true
+    }
 }
