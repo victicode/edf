@@ -108,7 +108,7 @@ const routes = [
       // },
       {
         path: '/admin/users/list', 
-        component: () => import('@/view/admin/users/usersList.vue'),
+        component: () => import('@/view/admin/Users/usersList.vue'),
         name:'usersList',
         beforeEnter: auth,
         meta:{
@@ -139,7 +139,7 @@ const routes = [
 
       {
         path: '/admin/users/form/add', 
-        component: () => import('@/view/admin/users/createUser.vue'),
+        component: () => import('@/view/admin/Users/createUser.vue'),
         name:'usersAdd',
         beforeEnter: auth,
         meta:{
@@ -149,7 +149,7 @@ const routes = [
       },
       {
         path: '/admin/users/assing-apartment/:id', 
-        component: () => import('@/view/admin/users/assingApartment.vue'),
+        component: () => import('@/view/admin/Users/assingApartment.vue'),
         name:'assingDepartment',
         beforeEnter: auth,
         meta:{

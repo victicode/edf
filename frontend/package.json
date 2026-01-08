@@ -3,7 +3,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite --host 10.10.10.69 --port 8031",
+        "dev": "vite --host 192.168.1.229 --port 8031",
         "dev-home": "vite --host 192.168.31.20 --port 8031"
     },
     "devDependencies": {
@@ -11,6 +11,7 @@
         "@vitejs/plugin-vue": "^5.2.1",
         "autoprefixer": "^10.4.20",
         "axios": "^1.7.4",
+        "baseline-browser-mapping": "^2.9.13",
         "concurrently": "^9.0.1",
         "laravel-echo": "^2.2.4",
         "laravel-vite-plugin": "^1.0",
