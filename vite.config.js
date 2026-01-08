@@ -28,8 +28,8 @@ export default defineConfig({
     },
     server: {
             // Respond to all network requests
-            host: "10.10.10.69",
-            port: 8021,
+            host: "192.168.1.229",
+            port: 8031,
             strictPort: true,
             // Defines the origin of the generated asset URLs during development, this must be set to the
             // Vite dev server URL and selected port. In general, `process.env.DDEV_PRIMARY_URL` will give
@@ -41,6 +41,6 @@ export default defineConfig({
             // 👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇
             // Configure CORS securely for the Vite dev server to allow requests from *.ddev.site domains,
             // supports additional hostnames (via regex). If you use another `project_tld`, adjust this.
-            cors: { origin: /^https?:\/\/(?:(?:[^:]+\.)?localhost|127\.0\.0\.1|10\.10\.10\.69|192\.168\.31\.20|\[::1\])(?::\d+)?$/ },
+            cors: { origin: /^https?:\/\/(?:(?:[^:]+\.)?localhost|127\.0\.0\.1|192\.168\.1\.229|192\.168\.31\.20|\[::1\])(?::\d+)?$/ },
         },
 });

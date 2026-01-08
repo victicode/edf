@@ -4,17 +4,20 @@ import { useRoute, useRouter } from 'vue-router'
 import { useEventStore } from '@/services/store/event.store'
 import iconsApp from '@/assets/icons/index'
 import moment from 'moment'
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@//services/store/auth.services'
 
 const route = useRoute()
 const router = useRouter()
 const eventStore = useEventStore()
-
+const { user } = storeToRefs(useAuthStore())
 const eventData = ref(null)
 const loading = ref(false)
+const loadingButton = ref(false)
 const error = ref(null)
-
+const confirmAssits = ref(true);
 const eventId = route.params.id || route.query.id
-
+const assistVote = ref({})
 const getEventById = async (id) => {
   try {
     loading.value = true
@@ -22,6 +25,7 @@ const getEventById = async (id) => {
 
     const response = await eventStore.getEventById(id)
     eventData.value = response.data
+    yetAssist()
   } catch (err) {
     console.error('Error al obtener el evento:', err)
     error.value = err || 'Error al cargar el evento'
@@ -47,14 +51,53 @@ const formatLocation = (event) => {
 }
 
 const setAssist = (type) => {
+  loadingButton.value = true;
   const data = {
     assitType: type 
   }
   eventStore.setAssitByData(eventData.value.id, data)
   .then((response) => {
     console.log(response)
+    eventData.value.assits = response.data.assits
+    eventData.value.not_assits = response.data.not_assits
+
+    yetAssist()
+  })
+  .catch((response) => {
+    console.log(response)
+  })
+  .finally(() => {
+    loadingButton.value = false;
   })
 }
+const yetAssist = () => {
+ let assits = JSON.parse(eventData.value.assits)
+ let notAssits = JSON.parse(eventData.value.not_assits)
+ 
+  if(assits.includes(user.value.id) || notAssits.includes(user.value.id)){
+    confirmAssits.value = false 
+  }
+  youAssistVote()
+}
+const youAssistVote = () => {
+  let assits = JSON.parse(eventData.value.assits)
+  let notAssits = JSON.parse(eventData.value.not_assits)
+ 
+  if(assits.includes(user.value.id)){
+    assistVote.value = {
+      title: 'Haz marcado que asistiras',
+      icon: 'eva-checkmark-outline',
+      color: 'positive'
+    }
+  }
+  else{
+    assistVote.value = {
+      title: 'Haz marcado que no asistiras',
+      icon: 'eva-close-outline',
+      color: 'negative'
+    }
+  }
+} 
 onMounted(() => {
   if (eventId) {
     getEventById(eventId)
@@ -166,36 +209,48 @@ onMounted(() => {
 
           <!-- Botones -->
           <div class="w-full pb-5 row">
-            <div class="col-12 col-md-6 px-5">
-              <q-btn
-                @click="setAssist(0)"
-                class="w-full flex flex-center py-3"
-                outline
-                color="primary"
-                no-caps
-                style="border-radius: 0.8rem;"
-              >
-                <q-icon name="eva-bell-outline" class="mx-2" size="1.2rem" />
-                <div>
-                  No voy a asistir
+            <template v-if="confirmAssits">
+              <div class="col-12 col-md-6 px-5">
+                <q-btn
+                  @click="setAssist(0)"
+                  class="w-full flex flex-center py-3"
+                  outline
+                  color="primary"
+                  no-caps
+                  style="border-radius: 0.8rem;"
+                  :loading="loadingButton"
+                >
+                  <q-icon name="eva-bell-outline" class="mx-2" size="1.2rem" />
+                  <div>
+                    No voy a asistir
+                  </div>
+                </q-btn>
+              </div>
+              <div class="col-12 col-md-6 px-5">
+                <q-btn
+                  @click="setAssist(1)"
+                  class="w-full flex flex-center py-3" 
+                  unelevated
+                  color="primary"
+                  no-caps
+                  style="border-radius: 0.8rem;"
+                  :loading="loadingButton"
+                >
+                  <q-icon name="eva-bell-outline" class="mx-2" size="1.2rem" />
+                  <div>
+                    Voy a asistir
+                  </div>
+                </q-btn>
+              </div>
+            </template>
+            <template v-else>
+              <div class="flex flex-center col-12">
+                <div class="flex flex-center py-3 px-14 assistVote" :class="`b-${assistVote.color}`">
+                  <q-icon :name="assistVote.icon" :color="assistVote.color" size="1.5rem" class="text-bold"/>
+                  <div :class="'text-'+assistVote.color" style="font-size: 1rem;" class="text-bold ml-2">{{assistVote.title}}</div>
                 </div>
-              </q-btn>
-            </div>
-            <div class="col-12 col-md-6 px-5">
-              <q-btn
-                @click="setAssist(1)"
-                class="w-full flex flex-center py-3" 
-                unelevated
-                color="primary"
-                no-caps
-                style="border-radius: 0.8rem;"
-              >
-                <q-icon name="eva-bell-outline" class="mx-2" size="1.2rem" />
-                <div>
-                  Voy a asistir
-                </div>
-              </q-btn>
-            </div>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -228,6 +283,16 @@ onMounted(() => {
 </template>
 
 <style lang="scss">
+.assistVote {
+  border: 1px solid;
+  border-radius: 0.7rem;
+}
+.b-positive{
+  border-color: $positive;
+}
+.b-negative{
+  border-color: $negative;
+}
 .dateFact {
   border-bottom: 1px solid $primary;
   border-left: 1px solid $primary;
