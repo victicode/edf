@@ -134,7 +134,7 @@ import { useRouter } from 'vue-router';
               borderless
               clearable
               v-model="formData.name"
-              class="form__inputsR mt-2"
+              class="form__inputsCR mt-2"
               color="primary"
               :rules="[ val => val && val.length > 0 || 'Nombre es requerido']"
             />
@@ -147,7 +147,7 @@ import { useRouter } from 'vue-router';
               borderless
               clearable
               v-model="formData.username"
-              class="form__inputsR mt-2"
+              class="form__inputsCR mt-2"
               color="primary"
               :rules="[ val => val && val.length > 0 || 'Nombre de usuario es requerido']"
             />
@@ -160,7 +160,7 @@ import { useRouter } from 'vue-router';
               borderless
               clearable
               v-model="formData.email"
-              class="form__inputsR mt-2"
+              class="form__inputsCR mt-2"
               color="primary"
               :rules="[ val => val && val.length > 0 || 'Correo electronico es requerido']"
             />
@@ -173,7 +173,7 @@ import { useRouter } from 'vue-router';
             borderless
             clearable
             v-model="formData.password"
-            class="form__inputsR mt-2"
+            class="form__inputsCR mt-2"
             color="primary"
             :type="isPwd ? 'password' : 'text'" 
             :rules="[ val => val && val.length > 0 || 'Contraseña es requerida']"
@@ -219,7 +219,7 @@ import { useRouter } from 'vue-router';
           </div>
           <q-select
             borderless
-            class="form__inputsR mt-2"
+            class="form__inputsCR mt-2"
             v-model="formData.rol_id"
             option-value="id"
             option-label="title"
@@ -234,7 +234,7 @@ import { useRouter } from 'vue-router';
           </div>
           <q-select
             borderless
-            class="form__inputsR mt-2"
+            class="form__inputsCR mt-2"
             v-model="formData.apartment"
             option-value="id"
             option-label="number"
@@ -288,7 +288,7 @@ import { useRouter } from 'vue-router';
 .phoneUser.form__inputsSelect .prefixInput .q-field__inner{
   border: 0px solid rgb(223, 223, 223);
 }
-.form__inputsR{
+.form__inputsCR{
   & .q-field__inner {
     box-shadow: 0px 3px 5px 0px #bfbfbfa3;
     border-radius: 0.8rem;
@@ -297,7 +297,7 @@ import { useRouter } from 'vue-router';
   }
 }
 @media (max-width: 780px) {
-  .form__inputsR{
+  .form__inputsCR{
     & .q-field__inner {
 
       padding: 0px 1rem;
