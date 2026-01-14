@@ -14,7 +14,9 @@ use App\Http\Controllers\Api\NoticeController;
 use App\Http\Controllers\Api\NotificationController;
 
 Route::post('/login', [AuthController::class, 'login']);
-
+Route::get('/mili', function (Request $request) {
+        return 'bellaqutaaaaa';
+    });
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/user', function (Request $request) {

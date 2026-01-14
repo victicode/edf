@@ -9,8 +9,8 @@ window.Echo = new Echo({
   key: import.meta.env.VITE_PUSHER_APP_KEY,
   cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
   forceTLS: true,
-  // authEndpoint: "http://10.10.10.69:8030/broadcasting/auth",
-  authEndpoint: 'http://192.168.31.20:8030/broadcasting/auth',
+  authEndpoint: 'https://website-c67adca2.sfr.hrf.mybluehost.me/broadcasting/auth',
+  // authEndpoint: 'http://192.168.31.20:8030/broadcasting/auth',
 
   auth: {
     headers: {

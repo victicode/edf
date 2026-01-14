@@ -7,6 +7,7 @@
         "dev-home": "vite --host 192.168.31.20 --port 8031"
     },
     "devDependencies": {
+        "@capacitor/assets": "^3.0.5",
         "@quasar/vite-plugin": "^1.9.0",
         "@vitejs/plugin-vue": "^5.2.1",
         "autoprefixer": "^10.4.20",
@@ -24,8 +25,10 @@
     },
     "dependencies": {
         "@capacitor/android": "^7.4.4",
+        "@capacitor/app": "^7.1.1",
         "@capacitor/cli": "^7.4.4",
         "@capacitor/core": "^7.4.4",
+        "@capacitor/splash-screen": "^7.0.4",
         "@quasar/extras": "^1.16.15",
         "mitt": "^3.0.1",
         "moment": "^2.30.1",
