@@ -1,0 +1,7 @@
+- Cambio de diseño que enviara Katy
+- que haya espacio entre en la barra de navegacion nativa del telefono y el final de la app
+- crear modulo de trabajadores
+- crear modulo de cuentas por pagar, a proveedores, tipo de proveedor, subir facturas.
+- recordatorios luego de 15 dias de morosidad.
+- bloquear usuarios con mas de dos meses de morosidad
+- pagos por mantenimiento 
