@@ -5,8 +5,8 @@ import { useRouter } from 'vue-router'
 import { Notify } from 'quasar'
 import tutorial from '@/components/login/tutorial.vue';
 import storage from '@/services/storage'
-import bg from '@/assets/img/util/bg3.webp'
-
+import bg from '@/assets/img/backgrounds/bg.webp'
+import logoWite from '@/assets/img/logo/logo-white.webp';
 const authServices = useAuthStore()
 const tutorialView = ref(storage.getItem('tutorial'))
 const login = reactive({
@@ -70,51 +70,46 @@ const endTutorial = () => {
 <template>
   <div class="h-full bg-white">
     <Transition name="horizontalPage">
-      <div class="h-full  md:w-2/3 md:mx-auto login__container" v-if="tutorialView == 'true'"
+      <div class="h-full md:w-1/2 md:mx-auto login__container" v-if="tutorialView == 'true'"
         :style="{ backgroundImage: 'url(' + bg + ')' }">
-        <div style="background: rgb(255 255 255 / 76%);" class="h-full  md:w-full login__container">
-          <section class="text-left text-white md:px-8 px-8 h-1/6 flex justify-center column bg-sky-600"
-            style=" border-bottom-left-radius: 3rem; border-bottom-right-radius: 3rem;">
-            <div class="font-bold font-sans  text-3xl">Inicia sesion</div>
-            <div class="text-subtitle2 mt-1 md:pl-1 text-gray-300">
-              Inicia sesión con tu cuenta
-            </div>
-          </section>
-          <section class="mt-0 md:mt-12 ">
+        <div style="" class="h-full  md:w-full login__container">
+          <section class="mt-0 md:pt-12 ">
             <q-form @submit="authLogin" class="w-full h-full">
               <div class="mx-auto form__cont md:px-8">
                 <div class="w-full h-full">
                   <div class="relative md:px-10 px-5 h-full w-full form pt-12 md:pt-0">
-                    <div class="font-bold text-3xl text-sky-600 form_welcome">
-                      Bienvenido!
+                    <img :src="logoWite" alt="logo" class="md:w-1/6 w-2/5 mx-auto mt-12" />
+                    <div class="text-white mt-5 text-center" style="font-weight:600; font-size: 1.85rem">
+                      INGRESO
                     </div>
-                    <div class="w-full mt-10 md:mt-8 ">
-                      <q-input v-model="login.username" :rules="rules('user')" placeholder="Usuario" color="primary">
+                    <div class="w-full mt-6 md:mt-8 ">
+                      <q-input class="auth_input" color="white" 
+                      v-model="login.username" :rules="rules('user')"  rounded standout>
                         <template v-slot:prepend>
-                          <q-icon name="eva-person-outline" color="sky-600" />
+                          <div class="pl-2" style="font-size:1rem; font-weight:500">Usuario</div>
                         </template>
                       </q-input>
-
-                      <q-input v-model="login.password" :rules="rules('password')" placeholder="Contraseña"
-                        color="primary" :type="isPwd ? 'password' : 'text'" class="q-pt-lg">
+                      <q-input class="q-pt-lg auth_input" color="grey-1" v-model="login.password" :rules="rules('password')" 
+                      placeholder="••••••••••" :type="isPwd ? 'password' : 'text'" rounded standout>
                         <template v-slot:prepend>
-                          <q-icon name="eva-lock-outline" color="sky-600" />
+                          <div class="pl-2" style="font-size:1rem; font-weight:500">Contraseña</div>
                         </template>
                         <template v-slot:append>
-                          <q-icon :name="isPwd ? 'eva-eye-off-outline' : 'eva-eye-outline'" class="cursor-pointer"
+                          <q-icon :name="isPwd ? 'eva-eye-off-outline' : 'eva-eye-outline'" class="cursor-pointer" color="grey-1"
                             @click="isPwd = !isPwd" />
                         </template>
                       </q-input>
-                      <p class="mt-2 text-grey-7 cursor-pointer">¿Olvidaste tu contraseña?</p>
+
+                
+                      <p class="mt-2 cursor-pointer md:mt-8 mt-1 text-white text-subtitle1" >¿Perdió su contraseña?</p>
                     </div>
                   </div>
+                  <div class="md:px-16 px-6 mt-5 flex justify-center">
+                    <q-btn flat class="btn__login w-auto md:w-1/2" no-caps="" :loading="loading" size="lg" type="submit">
+                      <div class="text-h6 text-bold md:px-2 px-12 text-white">Ingresar</div>
+                    </q-btn>
+                  </div>
                 </div>
-              </div>
-              <div class="md:px-16 px-3 mt-2 flex justify-end ">
-                <q-btn flat class="btn__login" color="white" :loading="loading" size="lg" type="submit">
-                  <div class="md:hidden blockx text-subtitle1 text-bold px-2 text-white">Continuar</div>
-                  <q-icon name="eva-arrow-forward-outline" size="lg" class="icon_login_b px-2 " color="white" />
-                </q-btn>
               </div>
             </q-form>
           </section>
@@ -146,8 +141,44 @@ const endTutorial = () => {
 
 
 <style lang="scss">
+.auth_input{
+  & .q-field__control{
+    background: white;
+  }
+  &.q-field--standout.q-field--highlighted .q-field__control{
+    background: white;
+  }
+  &.q-field--standout.q-field--highlighted .q-field__native{
+    //color: #9b9b9b;
+    color:rgb(0, 0, 0)!important;
+    font-size: 1rem!important;
+
+    &::placeholder {
+      color: #9b9b9b!important;
+
+    }
+
+  }
+  &.q-field--standout .q-icon:before{
+    color: darkgray;  
+  }
+  &.q-field--standout .q-field__prepend{
+    color:rgb(0, 0, 0)!important;
+    font-weight: 500;
+    font-size: 0.95rem!important;
+  }
+  & .q-field__bottom--animated{
+    padding-top: 6px;
+    & > .col > div{
+      background: white;
+      width: max-content;
+      padding: 0.6rem ;
+      border-radius: 0.3rem;
+    }
+  }
+}
 .login__container {
-  background-size: 100% 50% !important;
+  background-size: 100% 100% !important;
   background-position: bottom;
   background-repeat: no-repeat;
 
@@ -155,11 +186,12 @@ const endTutorial = () => {
 
 .btn__login {
   --tw-bg-opacity: 1;
-  background-color: rgb(2 132 199 / var(--tw-bg-opacity, 1));
+  background-color: #c8a34b;
   box-shadow: 0px .2rem 1rem 0px rgba(0, 0, 0, 0.345);
   transition: all 0.5s ease;
-  border-radius: 80%;
-  padding: 0;
+  border-radius: 1rem;
+  padding: 0.8rem;
+  font-weight: 800;
   min-width: 2.5em;
   min-height: 2.6em;
 
@@ -188,8 +220,7 @@ const endTutorial = () => {
 
 @media (max-width: 780px) {
   .btn__login {
-    width: 100%;
-    border-radius: 1rem;
+    border-radius: 5rem;
 
     & .icon_login_b {
       display: none;
