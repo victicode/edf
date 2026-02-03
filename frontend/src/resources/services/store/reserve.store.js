@@ -51,15 +51,16 @@ export const useReserveStore = defineStore('Reserve', {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.post('/api/pays/bookings', postData)
-        .then(({data}) => {
-          if(data.code !=200) throw data;
-  
-          resolve(data);
-        }).catch(( {response}) => {
-          console.log(response)
-          reject(response.data.error);
-        });
+        ApiService.post('/api/pays/bookings', postData.data)
+          .then(({ data }) => {
+            if (data.code != 200) throw data
+
+            resolve(data)
+          })
+          .catch(({ response }) => {
+            console.log(response)
+            reject(response.data.error)
+          })
         
       })
 

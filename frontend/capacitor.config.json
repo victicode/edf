@@ -1,5 +1,32 @@
 {
-  "appId": "com.edfteam.edfapp",
-  "appName": "EDF APP",
-  "webDir": "dist"
+    "appId": "com.edfteam.edfapp",
+    "appName": "PACIFIK",
+    "webDir": "dist",
+    "server": {
+        "allowNavigation": [
+            "10.10.10.69:8030",
+            "192.168.31.20:8030",
+            "website-231aa050.sfr.hrf.mybluehost.me"
+        ],
+        "androidScheme": "http",
+        "cleartext": true,
+        "androidAllowMixedContent": true
+    },
+    "plugins": {
+        "SplashScreen": {
+            "launchShowDuration": 0,
+            "launchAutoHide": true,
+            "backgroundColor": "#0e344c",
+            "androidSplashResourceName": "splash",
+            "androidScaleType": "CENTER_CROP",
+            "showSpinner": false,
+            "androidSpinnerStyle": "large",
+            "iosSpinnerStyle": "small",
+            "spinnerColor": "#999999",
+            "splashFullScreen": false,
+            "splashImmersive": false,
+            "layoutName": "launch_screen",
+            "useDialog": false
+        }
+    }
 }

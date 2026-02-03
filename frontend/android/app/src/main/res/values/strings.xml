@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PACIFIK</string>
+    <string name="title_activity_main">PACIFIK</string>
+    <string name="package_name">com.edfteam.edfapp</string>
+    <string name="custom_url_scheme">com.edfteam.edfapp</string>
+</resources>

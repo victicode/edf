@@ -8,12 +8,12 @@ import { useRouter } from 'vue-router';
 const { user } = storeToRefs(useAuthStore())
 const router = useRouter()
 const menu = [
-  {
-    title: 'Mi Perfil',
-    icon: iconsApp.users2,
-    subtitle: 'Configura tu perfil',
-    link: '/client/profile',
-  },
+  // {
+  //   title: 'Mi Perfil',
+  //   icon: iconsApp.users2,
+  //   subtitle: 'Configura tu perfil',
+  //   link: '/client/profile',
+  // },
   {
     title: 'Apartamento',
     icon: iconsApp.departmet,

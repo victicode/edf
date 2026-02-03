@@ -95,7 +95,7 @@ class ComunAreaController extends Controller
             'maxTime'       => ['required'],
             'timeFrom'      => ['required'],
             'timeTo'        => ['required'],
-            'rules'         => ['required', 'regex:/^[a-z 0-9 A-Z-À-ÿ ., \- \r \n  &]+$/i'],
+            // 'rules'         => ['required', 'regex:/^[a-z 0-9 A-Z-À-ÿ ., \- \r \n  &]+$/i'],
         ];
 
         $messages = [

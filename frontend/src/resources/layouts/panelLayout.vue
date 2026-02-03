@@ -2,7 +2,7 @@
 import headerLayout from '@/components/layout/headerLayout.vue';
 import infoNewSideBar from '@/components/layout/infoNewSideBar.vue';
 import navbarAdmin from '@/components/layout/navbarAdmin.vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/services/store/auth.services';
 import loaderPage from '@/components/layout/loaderPage.vue';
@@ -12,6 +12,7 @@ import storage from '@/services/storage'
 import { useNotificationsStore } from '@/services/store/notifications.store'
 import { useQuasar } from 'quasar'
 
+const router = useRouter()
 const route = useRoute()
 const ready = ref(false)
 const { user } = storeToRefs(useAuthStore())
@@ -32,6 +33,7 @@ onMounted(() => {
     .catch(() => {
       console.log('ups')
       storage.deleteItem("access_token");
+      router.push('/login')
     })
 
 })
@@ -65,11 +67,11 @@ watch(() => notificationsStore.lastIncoming, (notif) => {
   }
 
   $q.notify({
-    classes:'q-mt-lg', 
-    color: 'primary', 
-    message: `${title ? title + '' : ''}`, 
-    icon: 'eva-bell-outline', 
-    position: 'top-right' 
+    classes: 'q-mt-lg',
+    color: 'primary',
+    message: `${title ? title + '' : ''}`,
+    icon: 'eva-bell-outline',
+    position: 'top-right'
   })
 })
 const isShowablePage = () => {
@@ -84,11 +86,11 @@ const showNavbar = () => {
   <div class="h-full bg-stone-100 w-full" style="position: relative; overflow: hidden;">
     <template v-if="ready">
       <headerLayout class="header__container" v-if="!isShowablePage()" />
-      <section
-        :class="{ 
-          'withoutNav': isShowablePage(), 
-          'page__container': showNavbar(), 
-          'page_continerFull': !showNavbar()}">
+      <section :class="{
+        'withoutNav': isShowablePage(),
+        'page__container': showNavbar(),
+        'page_continerFull': !showNavbar()
+      }">
         <router-view v-slot="{ Component }">
           <transition name="horizontal">
             <component :is="Component" />
@@ -106,7 +108,6 @@ const showNavbar = () => {
 </template>
 
 <style lang="scss">
-
 .header__container {
   height: 12%;
   overflow: hidden;

@@ -9,25 +9,25 @@ import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 export default defineConfig({
   base: '/',
   plugins: [
-    vue({ 
-      template: {transformAssetUrls},
+    vue({
+      template: { transformAssetUrls },
     }),
     vueDevTools(),
     quasar({
-      sassVariables: fileURLToPath(new URL('./src/resources/plugins/quasar/quasar-variables.sass', import.meta.url)),
-  }),
+      sassVariables: fileURLToPath(
+        new URL('./src/resources/plugins/quasar/quasar-variables.sass', import.meta.url)
+      ),
+    }),
   ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src/resources', import.meta.url)),
-      'vue': 'vue/dist/vue.esm-bundler.js',
-
+      vue: 'vue/dist/vue.esm-bundler.js',
     },
   },
   server: {
     // Respond to all network requests
-    host: "10.10.10.69",
-    port: 8021,
+    host: '192.168.1.229',
     strictPort: true,
     // Defines the origin of the generated asset URLs during development, this must be set to the
     // Vite dev server URL and selected port. In general, `process.env.DDEV_PRIMARY_URL` will give
@@ -39,6 +39,6 @@ export default defineConfig({
     // 👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇
     // Configure CORS securely for the Vite dev server to allow requests from *.ddev.site domains,
     // supports additional hostnames (via regex). If you use another `project_tld`, adjust this.
-    cors: { origin: /^https?:\/\/(?:(?:[^:]+\.)?localhost|127\.0\.0\.1|10\.10\.10\.69|192\.168\.31\.20|192\.168\.1\.229|\[::1\])(?::\d+)?$/ },
-},
+    origin:'/^https?:\/\/((?:(?:[^\.]+\.)?localhost|127\.0\.0\.1|10\.10\.10\.69|192\.168\.31\.20|192\.168\.1\.229|website-231aa050\.sfr\.hrf\.mybluehost\.me)|\[::1\])(?::\d+)?$',
+  },
 })

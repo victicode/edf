@@ -6,7 +6,9 @@ import storage from '@/services/storage'
 
 axios.defaults.withCredentials = true
 axios.defaults.withXSRFToken = true
-axios.defaults.baseURL = 'http://10.10.10.69:8030/';
+// axios.defaults.baseURL = 'http://192.168.31.20:8030'
+axios.defaults.baseURL = 'https://website-c67adca2.sfr.hrf.mybluehost.me'
+
 
 const ApiService = {
   
@@ -25,6 +27,7 @@ const ApiService = {
     axios.defaults.headers.common[
       "Accept"
     ] = `application/json`;
+
   },
 
   query(resource, params) {
@@ -38,7 +41,7 @@ const ApiService = {
    * @returns {*}
    */
   get(resource, slug = "") {
-    return axios.get(`${resource}/${slug}`);
+    return axios.get(`${resource}${slug}`);
   },
 
   /**
@@ -59,7 +62,7 @@ const ApiService = {
    * @returns {IDBRequest<IDBValidKey> | Promise<void>}
    */
   update(resource, slug, params) {
-    return axios.put(`${resource}/${slug}`, params);
+    return axios.put(`${resource}`, params);
   },
 
   /**

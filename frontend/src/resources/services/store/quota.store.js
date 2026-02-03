@@ -53,7 +53,7 @@ export const useQuotaStore = defineStore('Quota', {
           throw '';
         }
         ApiService.setHeader();
-        ApiService.post('/api/pays/quotas', postData.dataForm)
+        ApiService.post('/api/pays/quotas', postData.data)
         .then(({data}) => {
           if(data.code !=200) throw data;
   
