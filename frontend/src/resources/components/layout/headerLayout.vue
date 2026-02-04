@@ -4,6 +4,7 @@ import { useAuthStore } from '@/services/store/auth.services';
 import { inject, ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useNotificationsStore } from '@/services/store/notifications.store'
+import logo from '@/assets/img/logo/logo-white.webp'
 const route = useRoute()
 const router = useRouter()
 const { user } = storeToRefs(useAuthStore())
@@ -30,27 +31,29 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="md:px-8 md:mx-28 pt-2 px-3 flex justify-between items-center bg-primary header__container"
-    style=" border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem;">
+  <section class="md:px-8 md:mx-28 py-4 px-4 flex justify-between items-start bg-primary header__container">
     <template v-if="['dashboardAdmin', 'financePage', 'usersAdmin'].includes(route.name)">
-      <div class="flex items-center">
-        <div class="userAvatar flex flex-center">
-          {{ user.name.charAt(0) }}
-        </div>
-        <div class="ml-3">
-          <div class="text-white" style="font-size: 1rem;">
-            Hola {{ user.name }}
+      <div>
+          <div>
+            <q-icon name="eva-menu-outline" color="white" size="1.5rem" />
           </div>
-          <div class="text-gray-100 " style="font-size: 0.85rem;">
-            {{ user.rol_id == 1 ? 'Admin' : 'P-201' }}
+          <div class="text-white my-2">
+            <div class="text-subtitle2" style="font-weight:400; ">¡Hola!</div>
+            <div class="text-subtitle1" style="font-weight:600; text-transform: capitalize;">{{user.name}}</div>
           </div>
-        </div>
+          <div class="text-white">
+            <div class="text-subtitle2" style="font-weight:400; ">Mantenimiento Enero</div>
+            <div>375.25</div>
+          </div>
       </div>
-      <div class="relative">
-        <q-badge class="badgeNotificationCount" 
-        v-if="notificationsStore.unreadCount > 0" color="red"  :label="notificationsStore.unreadCount" />
-        <q-btn id="notiftyButton" :icon="materialIcons.roundNotifications" unelevated color="white" flat size="1rem" round
-          @click="router.push({ name: 'notificationsPage' })" />
+      <div class="flex items-start">
+        <img :src="logo" alt="" style="height:5rem" class="mt-8">
+        <div class="relative">
+          <q-badge class="badgeNotificationCount" 
+          v-if="notificationsStore.unreadCount > 0" color="red"  :label="notificationsStore.unreadCount" />
+          <q-icon :name="materialIcons.roundNotifications" color="white" size="1.8rem"
+            @click="router.push({ name: 'notificationsPage' })" />
+        </div>
       </div>
     </template>
     <template v-else>
@@ -75,7 +78,8 @@ onMounted(() => {
   z-index: 2;
 }
 .header__container {
-  box-shadow: 0px -0.1rem 1rem 0px rgb(0 0 0 / 38%);
+  //box-shadow: 0px -0.1rem 1rem 0px rgb(0 0 0 / 38%);
+  border-radius: 1rem;
 }
 
 .userAvatar {

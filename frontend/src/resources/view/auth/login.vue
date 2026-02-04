@@ -40,6 +40,7 @@ const showNotify = (type, text) => {
 }
 const authLogin = () => {
   loading.value = true
+
   authServices.login(login)
     .then((response) => {
       errorMessage.value = response
@@ -148,7 +149,7 @@ const endTutorial = () => {
   &.q-field--standout.q-field--highlighted .q-field__control{
     background: white;
   }
-  &.q-field--standout.q-field--highlighted .q-field__native{
+  &.q-field--standout .q-field__native{
     //color: #9b9b9b;
     color:rgb(0, 0, 0)!important;
     font-size: 1rem!important;
@@ -208,6 +209,9 @@ const endTutorial = () => {
       color: rgb(2 132 199 / var(--tw-bg-opacity, 1)) !important;
 
     }
+  }
+  & .q-spinner{
+    color: white!important;
   }
 
 }

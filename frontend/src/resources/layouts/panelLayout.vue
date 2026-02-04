@@ -83,7 +83,7 @@ const showNavbar = () => {
 </script>
 
 <template>
-  <div class="h-full bg-stone-100 w-full" style="position: relative; overflow: hidden;">
+  <div class="h-full bg-white w-full pt-2" style="position: relative; overflow: hidden;">
     <template v-if="ready">
       <headerLayout class="header__container" v-if="!isShowablePage()" />
       <section :class="{
@@ -109,19 +109,19 @@ const showNavbar = () => {
 
 <style lang="scss">
 .header__container {
-  height: 12%;
+  height: 17%;
   overflow: hidden;
 }
 
 .page__container {
-  height: 78%;
+  height: 73%;
   overflow: hidden;
   // overflow-x: hidden;
   // overflow-y: auto;
 }
 
 .page_continerFull {
-  height: 88%;
+  height: 83%;
   overflow: hidden;
   // overflow-x: hidden;
   // overflow-y: auto;

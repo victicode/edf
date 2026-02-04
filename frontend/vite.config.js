@@ -6,7 +6,7 @@ import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 
 
 export default defineConfig(({ mode }) => {
-  
+
   const env = loadEnv(mode, process.cwd(), '');
   const myIp = env.VITE_SERVER_IP || 'localhost';
   const myPort = 8031;
@@ -36,7 +36,6 @@ export default defineConfig(({ mode }) => {
         host: myIp 
       },
       origin: `http://${myIp}:${myPort}`,
-      
       cors: true,
     },
   }
