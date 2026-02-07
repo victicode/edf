@@ -78,35 +78,35 @@ const endTutorial = () => {
             <q-form @submit="authLogin" class="w-full h-full">
               <div class="mx-auto form__cont md:px-8">
                 <div class="w-full h-full">
-                  <div class="relative md:px-10 px-5 h-full w-full form pt-12 md:pt-0">
+                  <div class="relative md:px-10 px-8 h-full w-full form pt-12 md:pt-0">
                     <img :src="logoWite" alt="logo" class="md:w-1/6 w-2/5 mx-auto mt-12" />
                     <div class="text-white mt-5 text-center" style="font-weight:600; font-size: 1.85rem">
                       INGRESO
                     </div>
                     <div class="w-full mt-6 md:mt-8 ">
-                      <q-input class="auth_input" color="white" 
-                      v-model="login.username" :rules="rules('user')"  rounded standout>
+                      <q-input class="auth_input" color="white" v-model="login.username" :rules="rules('user')" rounded
+                        standout>
                         <template v-slot:prepend>
                           <div class="pl-2" style="font-size:1rem; font-weight:500">Usuario</div>
                         </template>
                       </q-input>
-                      <q-input class="q-pt-lg auth_input" color="grey-1" v-model="login.password" :rules="rules('password')" 
-                      placeholder="••••••••••" :type="isPwd ? 'password' : 'text'" rounded standout>
+                      <q-input class="q-pt-lg auth_input" color="grey-1" v-model="login.password"
+                        :rules="rules('password')" placeholder="••••••••••" :type="isPwd ? 'password' : 'text'" rounded
+                        standout>
                         <template v-slot:prepend>
                           <div class="pl-2" style="font-size:1rem; font-weight:500">Contraseña</div>
                         </template>
                         <template v-slot:append>
-                          <q-icon :name="isPwd ? 'eva-eye-off-outline' : 'eva-eye-outline'" class="cursor-pointer" color="grey-1"
-                            @click="isPwd = !isPwd" />
+                          <q-icon :name="isPwd ? 'eva-eye-off-outline' : 'eva-eye-outline'" class="cursor-pointer"
+                            color="grey-1" @click="isPwd = !isPwd" />
                         </template>
                       </q-input>
-
-                
-                      <p class="mt-2 cursor-pointer md:mt-8 mt-1 text-white text-subtitle1" >¿Perdió su contraseña?</p>
+                      <p class="mt-2 cursor-pointer md:mt-8 text-white text-subtitle1">¿Perdió su contraseña?</p>
                     </div>
                   </div>
                   <div class="md:px-16 px-6 mt-5 flex justify-center">
-                    <q-btn flat class="btn__login w-auto md:w-1/2" no-caps="" :loading="loading" size="lg" type="submit">
+                    <q-btn flat class="btn__login w-auto md:w-1/2" no-caps="" :loading="loading" size="lg"
+                      type="submit">
                       <div class="text-h6 text-bold md:px-2 px-12 text-white">Ingresar</div>
                     </q-btn>
                   </div>
@@ -142,42 +142,49 @@ const endTutorial = () => {
 
 
 <style lang="scss">
-.auth_input{
-  & .q-field__control{
+.auth_input {
+  & .q-field__control {
     background: white;
   }
-  &.q-field--standout.q-field--highlighted .q-field__control{
+
+  &.q-field--standout.q-field--highlighted .q-field__control {
     background: white;
   }
-  &.q-field--standout .q-field__native{
+
+  &.q-field--standout .q-field__native {
     //color: #9b9b9b;
-    color:rgb(0, 0, 0)!important;
-    font-size: 1rem!important;
+    color: rgb(0, 0, 0) !important;
+    font-size: 1rem !important;
 
     &::placeholder {
-      color: #9b9b9b!important;
+      color: #9b9b9b !important;
 
     }
 
   }
-  &.q-field--standout .q-icon:before{
-    color: darkgray;  
+
+  &.q-field--standout .q-icon:before {
+    color: darkgray;
   }
-  &.q-field--standout .q-field__prepend{
-    color:rgb(0, 0, 0)!important;
+
+  &.q-field--standout .q-field__prepend {
+    color: rgb(0, 0, 0) !important;
     font-weight: 500;
-    font-size: 0.95rem!important;
+    font-size: 0.95rem !important;
   }
-  & .q-field__bottom--animated{
+
+  & .q-field__bottom--animated {
     padding-top: 6px;
-    & > .col > div{
+
+    &>.col>div {
       background: white;
       width: max-content;
-      padding: 0.6rem ;
+      padding: 0.6rem;
       border-radius: 0.3rem;
     }
   }
 }
+
 .login__container {
   background-size: 100% 100% !important;
   background-position: bottom;
@@ -210,8 +217,9 @@ const endTutorial = () => {
 
     }
   }
-  & .q-spinner{
-    color: white!important;
+
+  & .q-spinner {
+    color: white !important;
   }
 
 }

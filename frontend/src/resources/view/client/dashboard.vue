@@ -4,6 +4,11 @@ import { useAuthStore } from '@/services/store/auth.services';
 import bg from '@/assets/img/util/bg3.webp'
 import iconsApp from '@/assets/icons/index'
 import { useRouter } from 'vue-router';
+import anuncios from '@/assets/img/menu/anuncios.svg'
+import atencion from '@/assets/img/menu/atencion.svg'
+import mi_departamento from '@/assets/img/menu/mi_departamento.svg'
+import mis_reservas from '@/assets/img/menu/mis_reservas.svg'
+import pagos from '@/assets/img/menu/pagos.svg'
 
 const { user } = storeToRefs(useAuthStore())
 const router = useRouter()
@@ -26,18 +31,6 @@ const menu = [
     subtitle: 'Gestiona tu reservas',
     link: '/client/reserves/list',
   },
-  // {
-  //   title: 'Visitas',
-  //   icon: iconsApp.visitor,
-  //   subtitle: 'Gestiona tu pase de visitas',
-  //   link: '/client/visits/list',
-  // },
-  // {
-  //   title: 'Servicios',
-  //   icon: iconsApp.services,
-  //   subtitle: 'Consulta los servicios',
-  //   link: '/client/services/list',
-  // },
   {
     title: 'Anuncios',
     icon: iconsApp.news2,

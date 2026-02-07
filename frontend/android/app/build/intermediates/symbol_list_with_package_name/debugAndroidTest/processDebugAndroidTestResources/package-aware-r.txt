@@ -1,0 +1,3 @@
+com.edfteam.edfapp.test
+style WhiteBackgroundDialogTheme
+style WhiteBackgroundTheme

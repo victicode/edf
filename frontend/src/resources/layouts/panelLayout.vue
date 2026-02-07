@@ -109,19 +109,20 @@ const showNavbar = () => {
 
 <style lang="scss">
 .header__container {
-  height: 17%;
+  max-height: 23%;
+  height: auto;
   overflow: hidden;
 }
 
 .page__container {
-  height: 73%;
+  height: 67%;
   overflow: hidden;
   // overflow-x: hidden;
   // overflow-y: auto;
 }
 
 .page_continerFull {
-  height: 83%;
+  height: 77%;
   overflow: hidden;
   // overflow-x: hidden;
   // overflow-y: auto;

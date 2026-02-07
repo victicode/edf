@@ -8,7 +8,7 @@ axios.defaults.withCredentials = true
 axios.defaults.withXSRFToken = true
 // axios.defaults.baseURL = 'http://192.168.31.20:8030'
 // axios.defaults.baseURL = 'https://website-c67adca2.sfr.hrf.mybluehost.me'
-axios.defaults.baseURL = 'http://192.168.1.229:8030'
+axios.defaults.baseURL = import.meta.env.VITE_LARAVEL_API_URL
 
 const ApiService = {
   
