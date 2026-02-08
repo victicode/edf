@@ -13,7 +13,7 @@ const logout = () => {
     class="bg-white text-dark shadow-0 fixed-bottom bottom-tab q-py-md-xs q-px-md-lg flex q-py-xs userNavbar">
     <q-route-tab class="q-px-xs-sm q-pt-sm q-px-md-lg" :to="'/dashboard'" exact>
       <div class="flex flex-center column">
-        <div v-html="iconsApp.menu" />
+        <div v-html="iconsApp.home3" />
         <span class="q-mt-xs text-dark text-subtitle2">Inicio</span>
       </div>
     </q-route-tab>
@@ -31,8 +31,8 @@ const logout = () => {
     </q-route-tab>
     <q-route-tab class="q-px-xs-sm q-pt-sm q-px-md-lg" @click="logout()">
       <div class="flex flex-center column">
-
-        <q-icon name="eva-log-out-outline" size="31px" color="grey-6" />
+        <div v-html="iconsApp.exit2" />
+        <!-- <q-icon name="eva-log-out-outline" size="31px" color="grey-6" /> -->
         <span class="q-mt-xs text-dark text-subtitle2 ">Salir</span>
       </div>
     </q-route-tab>
@@ -54,11 +54,11 @@ const logout = () => {
 
   & .q-tab--active {
     & span {
-      color: #ffc701 !important;
+      color: #02205d !important;
     }
 
     & path {
-      stroke: #ffc701;
+      stroke: #02205d !important;
     }
   }
 }

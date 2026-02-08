@@ -71,7 +71,7 @@ onMounted(() => {
         </div>
       </q-btn>
     </div>
-    <div class=" pb-5" style="overflow: auto; height: 88%;">
+    <div class=" pb-2 md:pb-8" style="overflow: auto; height: 88%;">
       <div class="mt-5 md:mt-0 px-2 md:mx-24  pb-5" v-if="ready">
         <!-- <div class="px-2 pt-6 md:pt-3 mt-4  apartamentContainer relative" style="" > -->
         <template v-if="comunAreas.length > 0">
@@ -98,16 +98,17 @@ onMounted(() => {
               </div>
             </div>
             <div class="flex w-full justify-end py-1" style="border-top: 1px solid lightgrey;">
-              <div class="position-relative relative" >
+              <div class="position-relative relative">
                 <q-btn :icon="materialIcons.outlinedFactCheck" class="mx-1" flat color="yellow-9" round size="0.85rem"
-                  @click="goTo('/admin/comun-area/bookings/'+comunArea.id+'/list')">
+                  @click="goTo('/admin/comun-area/bookings/' + comunArea.id + '/list')">
                   <q-tooltip transition-show="flip-right" transition-hide="flip-left"
                     :class="'bg-black text-body2 px-2'">
                     Historial de reservas
                   </q-tooltip>
                 </q-btn>
-                <div style="" class="flex flex-center  countReserve-badge" v-if="comunArea.bookings_to_validate_count > 0 ">
-                    {{ comunArea.bookings_to_validate_count }}
+                <div style="" class="flex flex-center  countReserve-badge"
+                  v-if="comunArea.bookings_to_validate_count > 0">
+                  {{ comunArea.bookings_to_validate_count }}
                 </div>
               </div>
               <div>
@@ -165,14 +166,18 @@ onMounted(() => {
   </div>
 </template>
 <style lang="scss">
-.countReserve-badge{
-  background: red; 
-  color: white; 
-  height: 1.2rem; width: 1.2rem; 
-  border-radius: 2rem; 
-  position: absolute; top: 0; right: 5px;
+.countReserve-badge {
+  background: red;
+  color: white;
+  height: 1.2rem;
+  width: 1.2rem;
+  border-radius: 2rem;
+  position: absolute;
+  top: 0;
+  right: 5px;
   font-size: 0.7rem;
 }
+
 .itemBadge {
   color: white;
   font-size: 0.9rem;

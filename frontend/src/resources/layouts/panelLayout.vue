@@ -21,7 +21,9 @@ const notificationsStore = useNotificationsStore()
 const $q = useQuasar()
 const prevUnread = ref(0)
 const lastShownId = ref(null)
-
+const goBack = () => {
+  router.go(-1)
+}
 onMounted(() => {
   useAuthStore().currentUser()
     .then((response) => {
@@ -91,9 +93,15 @@ const showNavbar = () => {
         'page__container': showNavbar(),
         'page_continerFull': !showNavbar()
       }">
+        <transition name="horizontal">
+          <div class="backButton flex items-center pt-4 px-4 w-max" v-if="!showNavbar()" @click="goBack()">
+            <q-btn outline round color="backButton" icon="eva-arrow-back-outline" />
+            <div class="ml-2 backButton-text">REGRESAR</div>
+          </div>
+        </transition>
         <router-view v-slot="{ Component }">
           <transition name="horizontal">
-            <component :is="Component" />
+            <component :is="Component" style="height: 90%;" />
           </transition>
         </router-view>
       </section>
@@ -108,9 +116,36 @@ const showNavbar = () => {
 </template>
 
 <style lang="scss">
+.text-backButton {
+  color: #c9a344 !important;
+}
+
+.bg-backButton {
+  background-color: #c9a344 !important;
+}
+
+.backButton-text {
+  font-size: 1.1rem;
+  color: rgb(63, 63, 63);
+  font-weight: 500;
+}
+
+.backButton {
+  height: 10%;
+
+  & .q-btn--outline:before {
+    border-width: 3px;
+  }
+
+  & .q-btn .q-icon {
+    font-size: 2.1em;
+  }
+}
+
 .header__container {
   max-height: 23%;
   height: auto;
+  min-height: 16%;
   overflow: hidden;
 }
 
@@ -122,7 +157,7 @@ const showNavbar = () => {
 }
 
 .page_continerFull {
-  height: 77%;
+  height: 84%;
   overflow: hidden;
   // overflow-x: hidden;
   // overflow-y: auto;

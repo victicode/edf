@@ -80,7 +80,7 @@ const endTutorial = () => {
                 <div class="w-full h-full">
                   <div class="relative md:px-10 px-8 h-full w-full form pt-12 md:pt-0">
                     <img :src="logoWite" alt="logo" class="md:w-1/6 w-2/5 mx-auto mt-12" />
-                    <div class="text-white mt-5 text-center" style="font-weight:600; font-size: 1.85rem">
+                    <div class="text-white mt-5 text-center" style="font-weight:600; font-size: 1.6rem">
                       INGRESO
                     </div>
                     <div class="w-full mt-6 md:mt-8 ">

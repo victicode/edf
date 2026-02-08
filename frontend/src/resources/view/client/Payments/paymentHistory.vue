@@ -42,8 +42,8 @@ const getPays = () => {
 
 const goTo = (pay) => {
   let url = pay.type === 1
-  ? ('/client/quota/view/'+pay.quota_id)
-  : ('/client/reserves/view/'+pay.booking_id)
+    ? ('/client/quota/view/' + pay.quota_id)
+    : ('/client/reserves/view/' + pay.booking_id)
 
   router.push(url);
 }
@@ -62,9 +62,9 @@ const closeModal = () => {
 }
 
 const getTitlePay = (pay) => {
-  let typeOperation = pay.type === 1 
-  ? pay.quota.month_label
-  : '#'+pay.booking.booking_number
+  let typeOperation = pay.type === 1
+    ? pay.quota.month_label
+    : '#' + pay.booking.booking_number
   return `${pay.title_pay} ${typeOperation}`
 }
 
@@ -95,13 +95,8 @@ onMounted(() => {
 
 <template>
   <div class="h-full" style="overflow: hidden;">
-    <div class="flex justify-end pt-4 md:px-28 md:mx-5 mx-4">
-      <q-btn
-        outline
-        color="primary"
-        icon="eva-funnel-outline"
-        @click="showDialog"
-      />
+    <div class="flex justify-end pt-0 md:px-28 md:mx-5 mx-4">
+      <q-btn outline color="primary" icon="eva-funnel-outline" @click="showDialog" />
     </div>
     <!-- Lista de pagos -->
     <div class="h-full" style="overflow: auto;">
@@ -114,31 +109,26 @@ onMounted(() => {
       <div v-else class="px-4 py-6 md:px-28">
         <!-- Lista de pagos -->
         <div v-if="pays.length > 0" class="space-y-3 md:px-5">
-          <div 
-            v-for="pay in pays" 
-            :key="pay.id"
+          <div v-for="pay in pays" :key="pay.id"
             class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden md:mb-5 cursor-pointer quotaItem"
-            style="position: relative;"
-            @click="goTo(pay)"
-          >
-            
+            style="position: relative;" @click="goTo(pay)">
+
             <!-- Sección superior - Detalles del pago -->
-            <div class="px-4 pb-4 pt-2" >
+            <div class="px-4 pb-4 pt-2">
               <!-- Header con título y badge -->
               <div class="flex justify-between items-start mb-0 pb-1" style="border-bottom: 1px dashed #111827;">
                 <div class="flex-1">
                   <h3 class="text-lg font-bold text-gray-900 mb-1 titleQuota">
-                    {{ getTitlePay(pay) }}  
+                    {{ getTitlePay(pay) }}
                     <!-- Badge "New" opcional -->
-                    <span 
-                      v-if="pay.created_at && moment(pay.created_at).isAfter(moment().subtract(7, 'days'))"
+                    <span v-if="pay.created_at && moment(pay.created_at).isAfter(moment().subtract(7, 'days'))"
                       class="absolute top-2 right-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded-md">
                       Nuevo
                     </span>
                   </h3>
                 </div>
                 <!-- Estado badge -->
-                
+
               </div>
 
               <!-- Contenido principal con detalle -->
@@ -180,22 +170,12 @@ onMounted(() => {
               <div class="flex justify-between items-center">
                 <div class="flex items-center">
                   <!-- Icono de estado -->
-                  <q-icon 
-                    :name="pay.status_icon" 
-                    :color="pay.status_color"
-                    size="1.5rem"
-                  />
+                  <q-icon :name="pay.status_icon" :color="pay.status_color" size="1.5rem" />
                   <span class="ml-2 text-sm font-medium text-gray-700">{{ pay.status_label }}</span>
                 </div>
                 <div class="flex items-center">
                   <!-- Botón de recibo si está disponible -->
-                  <q-btn 
-                    v-if="pay.vaucher && pay.status === 2" 
-                    flat 
-                    rounded 
-                    color="primary" 
-                    size="sm" 
-                    class="ml-3" 
+                  <q-btn v-if="pay.vaucher && pay.status === 2" flat rounded color="primary" size="sm" class="ml-3"
                     @click="showReceipt(pay)">
                     <div class="flex items-center">
                       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -228,28 +208,27 @@ onMounted(() => {
     </div>
 
     <!-- Modal de filtros -->
-    <paymentFilterModal 
-      :dialog="dialog" 
-      @closeModal="closeModal"
-      @updateList="updateFilters" 
-    />
+    <paymentFilterModal :dialog="dialog" @closeModal="closeModal" @updateList="updateFilters" />
   </div>
 </template>
 
-<style scoped>
-.quotaItem{
+<style scoped lang="scss">
+.quotaItem {
   transition: all ease 0.5s;
-  &:hover{
+
+  &:hover {
     opacity: 0.7;
   }
 }
-.titleQuota{
+
+.titleQuota {
   transition: all ease 1s;
-  &:hover{
+
+  &:hover {
     text-decoration: underline;
   }
 
 }
+
 /* Estilos adicionales si es necesario */
 </style>
-
