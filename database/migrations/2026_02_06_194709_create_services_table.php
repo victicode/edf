@@ -11,8 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('services_vendors', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('document');
+            $table->integer('status');
+            $table->integer('type');
+            $table->timestamps();
+        });
         Schema::create('services', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('category');
+            $table->integer('status');
+            $table->integer('type');
+            $table->integer('is_favorite')->nullable();
+            $table->unsignedBigInteger('services_vendor_id');
+            $table->foreign('services_vendor_id')->nulleable()->references('id')->on('services_vendors')->onDelete('cascade');
             $table->timestamps();
         });
     }

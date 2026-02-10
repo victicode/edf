@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('finance_orders', function (Blueprint $table) {
             $table->id();
+            $table->string('description');
+            $table->string("order_number");
+            $table->double('amount');
+            $table->string('category');
+            $table->integer('status');
+            $table->integer('type');
+            $table->unsignedBigInteger('services_vendor_id');
+            $table->foreign('services_vendor_id')->nulleable()->references('id')->on('services_vendors')->onDelete('cascade');
+            $table->unsignedBigInteger('pay_id');
+            $table->foreign('pay_id')->nulleable()->references('id')->on('pays')->onDelete('cascade');
             $table->timestamps();
         });
     }

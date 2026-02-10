@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('multa', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('departament_id')->nullable();
+            $table->foreign('departament_id')->nulleable()->references('id')->on('departaments')->onDelete('cascade');
+            $table->unsignedBigInteger('rule_id')->nullable();
+            $table->foreign('rule_id')->nulleable()->references('id')->on('rules')->onDelete('cascade');
+            $table->integer('type');
+            $table->double('amount')->nullable();
+            $table->unsignedBigInteger('pay_id')->nullable();
+            $table->foreign('pay_id')->nulleable()->references('id')->on('pays')->onDelete('cascade');
+            $table->integer('status');
+
             $table->timestamps();
         });
     }

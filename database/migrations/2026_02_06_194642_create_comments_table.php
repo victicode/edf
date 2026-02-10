@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
+            $table->longText('content');
+            $table->longText('images')->nullable(); 
+            $table->longText('like')->nullable();
+            $table->longText('dislike')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->nulleable()->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('post_id');
+            $table->foreign('post_id')->nulleable()->references('id')->on('posts')->onDelete('cascade');
             $table->timestamps();
         });
     }

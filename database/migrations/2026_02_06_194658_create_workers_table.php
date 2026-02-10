@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('workers', function (Blueprint $table) {
             $table->id();
+            $table->string('job');
+            $table->string('place');
+            $table->integer('status');
+            $table->integer('type');
+            $table->date('init_date');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->nulleable()->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
