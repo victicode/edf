@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
+use Exception;
 use App\Models\User;
+use App\Models\Notice;
 use App\Models\Booking;
 use App\Models\Departament;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Notice;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\RealtimeNotification;
 
 class UserController extends Controller
 {
@@ -96,5 +98,42 @@ class UserController extends Controller
 
         $validator = Validator::make($inputs, $rules, $messages)->errors();
         return $validator->all() ;
+    }
+    public function saveTokenMovile(Request $request)
+    {
+        try {
+             $request->validate(['token' => 'required|string']);
+        
+        // Asumiendo que usas Auth
+            $user = $request->user();
+            $user->update(['device_token' => $request->token]);
+        } catch (Exception $th) {
+            return $this->returnFail(400, $th->getMessage());
+            //throw $th;
+        }
+       
+
+        return $this->returnSuccess(200, 'ok');
+    }
+    public function pruebaRealtimeNotification() 
+    {
+        $user = User::find(8);
+        try {
+            $user->notify(new RealtimeNotification(
+                title: 'Pago de reserva aceptado',
+                message: 'Tu pago por la reserva #0004588 fue aprobada.',
+                url: '/client/reserves/view/2',
+                meta: [
+                    'booking_id' => 2,
+                    'icon' => 'eva-checkmark-outline',
+                ]
+            ));
+            return $this->returnSuccess(200, 'bien');
+        } catch (Exception $e) {
+
+            return $this->returnSuccess(400, $e->getMessage());
+            // Silenciar errores de notificación para no romper el flujo
+        }
+
     }
 }

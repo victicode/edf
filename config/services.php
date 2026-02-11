@@ -34,5 +34,8 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
+    'fcm' => [
+        // Usamos base_path para obtener la ruta completa del disco (C:\xampp\...)
+        'key' => base_path(env('FIREBASE_CREDENTIALS', 'storage/app/firebase_credentials.json')),
+    ],
 ];

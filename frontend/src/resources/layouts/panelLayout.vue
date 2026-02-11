@@ -11,6 +11,7 @@ import logoutModal from '@/components/layout/logoutModal.vue';
 import storage from '@/services/storage'
 import { useNotificationsStore } from '@/services/store/notifications.store'
 import { useQuasar } from 'quasar'
+import { PushNotificationsService } from '@/services/notifications_push/PushNotifications';
 
 const router = useRouter()
 const route = useRoute()
@@ -30,6 +31,7 @@ onMounted(() => {
       if (user.value.rol_id) {
         ready.value = true
         getNotifications()
+        PushNotificationsService.init();
       }
     })
     .catch(() => {
@@ -82,10 +84,13 @@ const isShowablePage = () => {
 const showNavbar = () => {
   return ['dashboardAdmin', 'financePage', 'usersAdmin'].includes(route.name)
 }
+const showBack = () => {
+  return !(['dashboardAdmin', 'financePage', 'usersAdmin', 'reservePay', 'quotaPay'].includes(route.name))
+}
 </script>
 
 <template>
-  <div class="h-full bg-white w-full pt-2" style="position: relative; overflow: hidden;">
+  <div class="h-full bg-white w-full pt-8" style="position: relative; overflow: hidden;">
     <template v-if="ready">
       <headerLayout class="header__container" v-if="!isShowablePage()" />
       <section :class="{
@@ -94,9 +99,11 @@ const showNavbar = () => {
         'page_continerFull': !showNavbar()
       }">
         <transition name="horizontal">
-          <div class="backButton flex items-center pt-4 px-4 w-max" v-if="!showNavbar()" @click="goBack()">
-            <q-btn outline round color="backButton" icon="eva-arrow-back-outline" />
-            <div class="ml-2 backButton-text">REGRESAR</div>
+          <div class="md:px-28 md:mx-28">
+            <div class="backButton  flex items-center pt-4 px-4 w-max" v-if="showBack()" @click="goBack()">
+              <q-btn outline round color="backButton" icon="eva-arrow-back-outline" />
+              <div class="ml-2 backButton-text">REGRESAR</div>
+            </div>
           </div>
         </transition>
         <router-view v-slot="{ Component }">

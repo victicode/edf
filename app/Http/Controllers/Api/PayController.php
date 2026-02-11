@@ -53,17 +53,14 @@ class PayController extends Controller
             $query->where('status', intval($request->status));
         }
 
-        // Filtro por método de pago
         if ($request->filled('pay_method')) {
             $query->where('pay_method', intval($request->pay_method));
         }
 
-        // Filtro por tipo de pago
         if ($request->filled('type')) {
             $query->where('type', intval($request->type));
         }
 
-        // Filtro por rango de fechas
         if ($request->filled('date_from')) {
             $query->whereDate('pay_date', '>=', $request->get('date_from'));
         }

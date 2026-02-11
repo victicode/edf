@@ -7,7 +7,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
-class RealtimeNotification extends Notification
+// --- ESTAS SON LAS 3 IMPORTACIONES QUE TE FALTAN ---
+use NotificationChannels\Fcm\FcmChannel;
+use NotificationChannels\Fcm\FcmMessage;
+use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
+
+class RealtimeNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -21,7 +26,7 @@ class RealtimeNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database', 'broadcast'];
+        return ['database', 'broadcast', FcmChannel::class];
     }
 
     public function toArray(object $notifiable): array
@@ -37,5 +42,18 @@ class RealtimeNotification extends Notification
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         return new BroadcastMessage($this->toArray($notifiable));
+    }
+    public function toFcm($notifiable): FcmMessage
+    {
+        return FcmMessage::create()
+            // CORRECCIÓN 1: Es 'data', no 'setData'
+            ->data(['url' => $this->url ?? '']) 
+            
+            // CORRECCIÓN 2: Es 'notification', no 'setNotification'
+            ->notification( 
+                FcmNotification::create()
+                    ->title($this->title)
+                    ->body($this->message)
+            );
     }
 }

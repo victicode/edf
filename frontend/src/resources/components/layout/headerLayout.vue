@@ -59,11 +59,10 @@ onMounted(() => {
     <div class="flex items-start">
       <img :src="logo" alt="PACIFIK-LOGO-WHITE" class="imgLogoHeader"
         :class="{ 'mt-8 h-28': isHomePage, 'mt-5 h-20': !isHomePage }">
-      <div class="relative">
+      <div class="relative" @click="router.push({ name: 'notificationsPage' })">
         <q-badge class="badgeNotificationCount" v-if="notificationsStore.unreadCount > 0" color="red"
           :label="notificationsStore.unreadCount" />
-        <q-icon :name="materialIcons.roundNotifications" color="white" size="1.8rem"
-          @click="router.push({ name: 'notificationsPage' })" />
+        <q-icon :name="materialIcons.roundNotifications" color="white" size="1.8rem" />
       </div>
     </div>
   </section>

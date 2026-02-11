@@ -29,6 +29,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'status',
+        'device_token',
         'rol_id',
     ];
 
@@ -82,5 +83,9 @@ class User extends Authenticatable
     public function rol()
     {
         return $this->belongsTo(Rol::class);
+    }
+    public function routeNotificationForFcm()
+    {
+        return $this->device_token;
     }
 }
